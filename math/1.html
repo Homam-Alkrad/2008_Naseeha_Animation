@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع النصيحة 🌟</title>
+
+    <style>
+        body {
+            margin: 0;
+            background: linear-gradient(135deg, 
+                #87CEEB 0%,     /* سماوي فاتح */
+                #98D8E8 25%,    /* أزرق سماوي */
+                #B8E6FF 50%,    /* أزرق فاتح */
+                #E0F6FF 75%,    /* أبيض مزرق */
+                #F0F8FF 100%    /* أبيض سماوي */
+            );
+            cursor: default;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        /* إضافة غيوم خفيفة بسيطة */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 200px 60px at 25% 25%, rgba(255,255,255,0.3) 40%, transparent 41%),
+                radial-gradient(ellipse 150px 50px at 75% 20%, rgba(255,255,255,0.25) 40%, transparent 41%),
+                radial-gradient(ellipse 180px 55px at 50% 80%, rgba(255,255,255,0.25) 40%, transparent 41%);
+            z-index: 0;
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .text-container {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            width: 100%;
+        }
+
+        h1 {
+            margin: 20px 0;
+            color: #2C5282;
+            font-weight: 900;
+            font-size: 5vw;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            margin: 15px 0;
+            color: #2D3748;
+            font-weight: 700;
+            font-size: 3.5vw;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+        }
+
+        /* النص الرئيسي */
+        .main-text-container {
+            position: absolute;
+            top: 10%;
+            right: 10%;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .main-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            color: #2D3748;
+        }
+
+        .main-text span {
+            font-size: 3em;
+            font-weight: bold;
+            color: #FF6B35;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        /* الرمز الرياضي */
+        .math-symbol {
+            position: absolute;
+            bottom: 15%;
+            left: 15%;
+            width: 120px;
+            height: 120px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 50%;
+            border: 3px solid #4299E1;
+            box-shadow: 0 8px 25px rgba(66, 153, 225, 0.3);
+        }
+
+        .math-symbol-inner {
+            font-size: 45px;
+            font-weight: bold;
+            color: #fce101;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* رسم الأشكال الهندسية */
+        .geometric-container {
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 150px;
+            height: 80px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.8);
+            border: 2px solid #4299E1;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .coordinate-system {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .axis {
+            position: absolute;
+            background: #4A5568;
+            transform-origin: center;
+        }
+
+        .x-axis {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            left: 0;
+        }
+
+        .y-axis {
+            width: 2px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
+
+        .plot-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: -3px;
+            margin-top: -3px;
+            background: #FF6B35;
+        }
+
+        /* الآلة الحاسبة */
+        .calculator {
+            position: absolute;
+            right: 10%;
+            bottom: 15%;
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border: 2px solid #4299E1;
+            border-radius: 15px;
+            z-index: 2;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .calculator-screen {
+            height: 30px;
+            background: rgba(255,255,255,0.9);
+            margin: 5px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            color: #2D3748;
+            font-family: 'Courier New', monospace;
+            padding-right: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+            padding: 5px;
+            flex: 1;
+        }
+
+        .calc-button {
+            background: rgba(255,255,255,0.8);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2D3748;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .calc-button-op {
+            background: rgba(66, 153, 225, 0.8);
+            color: white;
+        }
+
+        .calc-button-eq {
+            background: rgba(56, 161, 105, 0.8);
+            color: white;
+        }
+
+        /* ألعاب نارية بسيطة */
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .firework-burst {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            z-index: 1;
+            animation: simple-burst 2s infinite ease-out;
+        }
+
+        .firework-burst::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, 
+                rgba(255, 215, 0, 0.8) 0%,
+                rgba(255, 165, 0, 0.6) 30%,
+                rgba(255, 69, 0, 0.4) 60%,
+                transparent 100%
+            );
+        }
+
+        @keyframes simple-burst {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* أشكال بسيطة */
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: 40px solid transparent;
+            border-right: 40px solid transparent;
+            border-bottom: 70px solid rgba(255, 193, 7, 0.7);
+            position: absolute;
+            top: 30%;
+            right: 25%;
+            animation: rotate 8s infinite linear;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 3px solid rgba(66, 153, 225, 0.8);
+            background: rgba(66, 153, 225, 0.2);
+            position: absolute;
+            bottom: 40%;
+            left: 30%;
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        .pentagon {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            top: 15%;
+            left: 30%;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            background: rgba(236, 72, 153, 0.7);
+            animation: rotate 6s infinite linear reverse;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* موبايل */
+        @media (max-width: 768px) {
+            h1 { font-size: 8vw; }
+            h2 { font-size: 6vw; }
+            .main-text span { font-size: 2.2em; }
+            .math-symbol {
+                bottom: 20%;
+                left: 10%;
+                width: 90px;
+                height: 90px;
+            }
+            .math-symbol-inner { font-size: 35px; }
+            .geometric-container {
+                width: 130px;
+                height: 70px;
+            }
+            .calculator {
+                width: 70px;
+                height: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 10vw; }
+            h2 { font-size: 7vw; }
+            .main-text span { font-size: 1.8em; }
+            .main-text-container {
+                top: 5%;
+                right: 5%;
+            }
+            .math-symbol {
+                width: 70px;
+                height: 70px;
+            }
+            .math-symbol-inner { font-size: 30px; }
+            .geometric-container {
+                width: 100px;
+                height: 60px;
+                top: 10%;
+                left: 2%;
+            }
+            .calculator {
+                width: 60px;
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="fireworks"></canvas>
+
+    <div class="text-container">
+        <h1>العلامة الكاملة لأداء كامل</h1>
+        <h2>🌟!ما شاء الله، بداية تليق بالنجاح!🌟</h2>
+    </div>
+
+    <!-- النص الرئيسي -->
+    <div class="main-text-container">
+        <div class="main-text">
+            <span>موقع النصيحة التعليمي</span>
+        </div>
+    </div>
+
+    <!-- الرمز الرياضي -->
+    <div class="math-symbol">
+        <div class="math-symbol-inner">
+            200/200
+        </div>
+    </div>
+
+    <!-- المنحنى -->
+    <div class="geometric-container">
+        <div class="coordinate-system" id="coordinate-system">
+            <div class="axis x-axis"></div>
+            <div class="axis y-axis"></div>
+        </div>
+    </div>
+
+    <!-- الآلة الحاسبة -->
+    <div class="calculator">
+        <div class="calculator-screen" id="calculator-screen">123.45</div>
+        <div class="calculator-buttons">
+            <div class="calc-button">7</div>
+            <div class="calc-button">8</div>
+            <div class="calc-button">9</div>
+            <div class="calc-button calc-button-op">÷</div>
+            <div class="calc-button">4</div>
+            <div class="calc-button">5</div>
+            <div class="calc-button">6</div>
+            <div class="calc-button calc-button-op">×</div>
+            <div class="calc-button">1</div>
+            <div class="calc-button">2</div>
+            <div class="calc-button">3</div>
+            <div class="calc-button calc-button-op">-</div>
+            <div class="calc-button">0</div>
+            <div class="calc-button">.</div>
+            <div class="calc-button calc-button-eq">=</div>
+            <div class="calc-button calc-button-op">+</div>
+        </div>
+    </div>
+
+    <!-- ألعاب نارية بسيطة -->
+    <div class="fireworks-container">
+        <div class="firework-burst" style="top: 20%; left: 25%; animation-delay: 0s;"></div>
+        <div class="firework-burst" style="top: 35%; right: 30%; animation-delay: 0.7s;"></div>
+        <div class="firework-burst" style="bottom: 30%; left: 35%; animation-delay: 1.4s;"></div>
+        <div class="firework-burst" style="bottom: 45%; right: 25%; animation-delay: 0.5s;"></div>
+    </div>
+    
+    <!-- الأشكال الهندسية البسيطة -->
+    <div class="triangle"></div>
+    <div class="circle"></div>
+    <div class="pentagon"></div>
+
+    <script>
+        // دوال مساعدة
+        const PI2 = Math.PI * 2;
+        const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+        const timestamp = () => new Date().getTime();
+
+        // فئة الألعاب النارية البسيطة
+        class Fireworks {
+            constructor() {
+                this.resize();
+                this.fireworks = [];
+                this.counter = 0;
+            }
+
+            resize() {
+                this.width = canvas.width = window.innerWidth;
+                this.height = canvas.height = window.innerHeight;
+                let center = this.width / 2;
+                this.spawnA = center - center / 3;
+                this.spawnB = center + center / 3;
+                this.spawnC = this.height * 0.1;
+                this.spawnD = this.height * 0.5;
+            }
+
+            update(delta) {
+                ctx.globalCompositeOperation = "source-over";
+                ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+                ctx.fillRect(0, 0, this.width, this.height);
+
+                ctx.globalCompositeOperation = "lighter";
+                for (let firework of this.fireworks) firework.update(delta);
+
+                this.counter += delta * 2;
+                if (this.counter >= 1) {
+                    this.fireworks.push(new Firework(
+                        random(this.spawnA, this.spawnB),
+                        this.height,
+                        random(0, this.width),
+                        random(this.spawnC, this.spawnD),
+                        random(0, 360),
+                        random(20, 60)
+                    ));
+                    this.counter = 0;
+                }
+
+                this.fireworks = this.fireworks.filter(f => !f.dead);
+            }
+        }
+
+        class Firework {
+            constructor(x, y, targetX, targetY, shade, offsprings) {
+                this.dead = false;
+                this.offsprings = offsprings;
+                this.x = x;
+                this.y = y;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.shade = random(1, 4);
+                if (this.shade === 1) this.shade = 45;      // ذهبي
+                else if (this.shade === 2) this.shade = 200; // أزرق
+                else if (this.shade === 3) this.shade = 120; // أخضر
+                else this.shade = 15;                        // برتقالي
+                this.history = [];
+            }
+
+            update(delta) {
+                if (this.dead) return;
+
+                let xDiff = this.targetX - this.x;
+                let yDiff = this.targetY - this.y;
+
+                if (Math.abs(xDiff) > 3 || Math.abs(yDiff) > 3) {
+                    this.x += xDiff * 2 * delta;
+                    this.y += yDiff * 2 * delta;
+
+                    this.history.push({
+                        x: this.x,
+                        y: this.y
+                    });
+
+                    if (this.history.length > 8) this.history.shift();
+                } else {
+                    if (this.offsprings && !this.madeChilds) {
+                        let babies = this.offsprings / 2;
+                        for (let i = 0; i < babies; i++) {
+                            let targetX = this.x + this.offsprings * Math.cos(PI2 * i / babies);
+                            let targetY = this.y + this.offsprings * Math.sin(PI2 * i / babies);
+
+                            fireworks.fireworks.push(new Firework(
+                                this.x, this.y, targetX, targetY, this.shade, 0
+                            ));
+                        }
+                    }
+                    this.madeChilds = true;
+                    this.history.shift();
+                }
+
+                if (this.history.length === 0) this.dead = true;
+                else if (this.offsprings) {
+                    for (let i = 0; i < this.history.length; i++) {
+                        let point = this.history[i];
+                        ctx.beginPath();
+                        ctx.fillStyle = `hsl(${this.shade}, 60%, ${i * 6 + 40}%)`;
+                        ctx.arc(point.x, point.y, 2, 0, PI2, false);
+                        ctx.fill();
+                    }
+                } else {
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsl(${this.shade}, 60%, 50%)`;
+                    ctx.arc(this.x, this.y, 2, 0, PI2, false);
+                    ctx.fill();
+                }
+            }
+        }
+
+        let canvas = document.getElementById("fireworks");
+        let ctx = canvas.getContext("2d");
+
+        let then = timestamp();
+        let fireworks = new Fireworks();
+
+        window.onresize = () => fireworks.resize();
+
+        // إنشاء نقاط في الرسم البياني
+        const coordinateSystem = document.getElementById("coordinate-system");
+        for (let i = 0; i < 8; i++) {
+            let point = document.createElement("div");
+            point.classList.add("plot-point");
+            
+            let x = 15 + i * 15;
+            let y = 40 - 20 * Math.sin(i * 0.5);
+            
+            point.style.left = `${x}px`;
+            point.style.top = `${y}px`;
+            
+            coordinateSystem.appendChild(point);
+        }
+
+        // تحديث شاشة الآلة الحاسبة
+        const calculatorScreen = document.getElementById("calculator-screen");
+        const calculatorValues = ["200.00", "100%", "A+", "تفوق", "نجاح"];
+        
+        let calcIndex = 0;
+        setInterval(() => {
+            calcIndex = (calcIndex + 1) % calculatorValues.length;
+            calculatorScreen.textContent = calculatorValues[calcIndex];
+        }, 3000);
+
+        // حلقة التحديث
+        (function loop() {
+            requestAnimationFrame(loop);
+            let now = timestamp();
+            let delta = (now - then) / 1000;
+            then = now;
+            fireworks.update(delta);
+        })();
+
+        // إضافة ألعاب نارية تلقائية
+        setTimeout(() => {
+            for (let i = 0; i < 2; i++) {
+                fireworks.fireworks.push(new Firework(
+                    random(fireworks.spawnA, fireworks.spawnB),
+                    fireworks.height,
+                    random(0, fireworks.width),
+                    random(fireworks.spawnC, fireworks.spawnD),
+                    random(0, 360),
+                    random(20, 60)
+                ));
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
