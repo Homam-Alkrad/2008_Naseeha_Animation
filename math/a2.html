@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firewall Math Page</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); }
+            to { text-shadow: 0 0 20px rgba(6, 182, 212, 1); }
+        }
+        
+        .fire-text {
+            text-shadow: 
+                0 0 10px rgba(255, 68, 68, 0.8),
+                0 0 20px rgba(68, 68, 255, 0.6),
+                0 0 30px rgba(255, 102, 102, 0.4),
+                0 0 40px rgba(102, 102, 255, 0.3);
+            animation: fireTextGlow 2s ease-in-out infinite alternate;
+        }
+        .text-white{
+            color: white;
+        }
+        @keyframes fireTextGlow {
+            0% {
+                text-shadow: 
+                    0 0 10px rgba(255, 68, 68, 0.8),
+                    0 0 20px rgba(68, 68, 255, 0.6),
+                    0 0 30px rgba(255, 102, 102, 0.4),
+                    0 0 40px rgba(102, 102, 255, 0.3);
+            }
+            100% {
+                text-shadow: 
+                    0 0 20px rgba(255, 68, 68, 1),
+                    0 0 30px rgba(68, 68, 255, 0.8),
+                    0 0 40px rgba(255, 102, 102, 0.6),
+                    0 0 50px rgba(102, 102, 255, 0.5);
+            }
+        }
+        
+        /* Bubble animation styles */
+        .bubble {
+            background-color: rgba(255, 255, 255, 0.4);
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        /* Generate 30 bubble animations */
+        .bubble-1 {
+            opacity: 0.42;
+            left: 41vw;
+            top: 72vh;
+            animation: move-1 30.02s infinite;
+            transform: translate(0, 0) scale(1.59);
+        }
+        
+        .bubble-2 {
+            opacity: 0.16;
+            left: 69vw;
+            top: 42vh;
+            animation: move-2 30.04s infinite;
+            transform: translate(0, 0) scale(1.2);
+        }
+        
+        .bubble-3 {
+            opacity: 0.1;
+            left: 88vw;
+            top: 76vh;
+            animation: move-3 30.06s infinite;
+            transform: translate(0, 0) scale(0.47);
+        }
+        
+        .bubble-4 {
+            opacity: 0.56;
+            left: 34vw;
+            top: 35vh;
+            animation: move-4 30.08s infinite;
+            transform: translate(0, 0) scale(0.47);
+        }
+        
+        .bubble-5 {
+            opacity: 0.73;
+            left: 67vw;
+            top: 57vh;
+            animation: move-5 30.1s infinite;
+            transform: translate(0, 0) scale(1.29);
+        }
+        
+        .bubble-6 {
+            opacity: 0.3;
+            left: 6vw;
+            top: 94vh;
+            animation: move-6 30.12s infinite;
+            transform: translate(0, 0) scale(1.48);
+        }
+        
+        .bubble-7 {
+            opacity: 0.75;
+            left: 58vw;
+            top: 91vh;
+            animation: move-7 30.14s infinite;
+            transform: translate(0, 0) scale(0.81);
+        }
+        
+        .bubble-8 {
+            opacity: 0.95;
+            left: 45vw;
+            top: 50vh;
+            animation: move-8 30.16s infinite;
+            transform: translate(0, 0) scale(1.59);
+        }
+        
+        .bubble-9 {
+            opacity: 0.93;
+            left: 32vw;
+            top: 1vh;
+            animation: move-9 30.18s infinite;
+            transform: translate(0, 0) scale(0.36);
+        }
+        
+        .bubble-10 {
+            opacity: 0.18;
+            left: 100vw;
+            top: 42vh;
+            animation: move-10 30.2s infinite;
+            transform: translate(0, 0) scale(1.1);
+        }
+        
+        .bubble-11 {
+            opacity: 0.61;
+            left: 22vw;
+            top: 11vh;
+            animation: move-11 30.22s infinite;
+            transform: translate(0, 0) scale(0.75);
+        }
+        
+        .bubble-12 {
+            opacity: 0.86;
+            left: 53vw;
+            top: 32vh;
+            animation: move-12 30.24s infinite;
+            transform: translate(0, 0) scale(1.54);
+        }
+        
+        .bubble-13 {
+            opacity: 0.97;
+            left: 97vw;
+            top: 29vh;
+            animation: move-13 30.26s infinite;
+            transform: translate(0, 0) scale(1.56);
+        }
+        
+        .bubble-14 {
+            opacity: 0.79;
+            left: 5vw;
+            top: 41vh;
+            animation: move-14 30.28s infinite;
+            transform: translate(0, 0) scale(1.1);
+        }
+        
+        .bubble-15 {
+            opacity: 0.24;
+            left: 26vw;
+            top: 26vh;
+            animation: move-15 30.3s infinite;
+            transform: translate(0, 0) scale(1.93);
+        }
+        
+        .bubble-16 {
+            opacity: 0.36;
+            left: 45vw;
+            top: 22vh;
+            animation: move-16 30.32s infinite;
+            transform: translate(0, 0) scale(0.81);
+        }
+        
+        .bubble-17 {
+            opacity: 0.31;
+            left: 49vw;
+            top: 11vh;
+            animation: move-17 30.34s infinite;
+            transform: translate(0, 0) scale(1.88);
+        }
+        
+        .bubble-18 {
+            opacity: 0.37;
+            left: 15vw;
+            top: 5vh;
+            animation: move-18 30.36s infinite;
+            transform: translate(0, 0) scale(1.21);
+        }
+        
+        .bubble-19 {
+            opacity: 0.21;
+            left: 64vw;
+            top: 77vh;
+            animation: move-19 30.38s infinite;
+            transform: translate(0, 0) scale(1.59);
+        }
+        
+        .bubble-20 {
+            opacity: 0.28;
+            left: 7vw;
+            top: 25vh;
+            animation: move-20 30.4s infinite;
+            transform: translate(0, 0) scale(1.91);
+        }
+        
+        .bubble-21 {
+            opacity: 0.89;
+            left: 18vw;
+            top: 92vh;
+            animation: move-21 30.42s infinite;
+            transform: translate(0, 0) scale(1.39);
+        }
+        
+        .bubble-22 {
+            opacity: 0.44;
+            left: 100vw;
+            top: 18vh;
+            animation: move-22 30.44s infinite;
+            transform: translate(0, 0) scale(0.51);
+        }
+        
+        .bubble-23 {
+            opacity: 0.26;
+            left: 10vw;
+            top: 32vh;
+            animation: move-23 30.46s infinite;
+            transform: translate(0, 0) scale(1.13);
+        }
+        
+        .bubble-24 {
+            opacity: 0.5;
+            left: 95vw;
+            top: 5vh;
+            animation: move-24 30.48s infinite;
+            transform: translate(0, 0) scale(1.55);
+        }
+        
+        .bubble-25 {
+            opacity: 0.54;
+            left: 57vw;
+            top: 70vh;
+            animation: move-25 30.5s infinite;
+            transform: translate(0, 0) scale(1.85);
+        }
+        
+        .bubble-26 {
+            opacity: 0.12;
+            left: 78vw;
+            top: 100vh;
+            animation: move-26 30.52s infinite;
+            transform: translate(0, 0) scale(1.36);
+        }
+        
+        .bubble-27 {
+            opacity: 0.68;
+            left: 38vw;
+            top: 85vh;
+            animation: move-27 30.54s infinite;
+            transform: translate(0, 0) scale(1.1);
+        }
+        
+        .bubble-28 {
+            opacity: 0.84;
+            left: 11vw;
+            top: 66vh;
+            animation: move-28 30.56s infinite;
+            transform: translate(0, 0) scale(1.94);
+        }
+        
+        .bubble-29 {
+            opacity: 0.99;
+            left: 83vw;
+            top: 13vh;
+            animation: move-29 30.58s infinite;
+            transform: translate(0, 0) scale(1.9);
+        }
+        
+        .bubble-30 {
+            opacity: 0.65;
+            left: 29vw;
+            top: 55vh;
+            animation: move-30 30.6s infinite;
+            transform: translate(0, 0) scale(0.45);
+        }
+        
+        @keyframes move-1 {
+            46% {
+                transform: translate(-68vw, -42vh) scale(21.7);
+            }   
+        }
+        
+        @keyframes move-2 {
+            56% {
+                transform: translate(-31vw, -58vh) scale(22.6);
+            }   
+        }
+        
+        @keyframes move-3 {
+            54% {
+                transform: translate(-12vw, -24vh) scale(20.1);
+            }   
+        }
+        
+        @keyframes move-4 {
+            55% {
+                transform: translate(-66vw, -65vh) scale(21.5);
+            }   
+        }
+        
+        @keyframes move-5 {
+            51% {
+                transform: translate(-33vw, -43vh) scale(20.9);
+            }   
+        }
+        
+        @keyframes move-6 {
+            46% {
+                transform: translate(-94vw, -6vh) scale(21.7);
+            }   
+        }
+        
+        @keyframes move-7 {
+            43% {
+                transform: translate(-42vw, -9vh) scale(21.4);
+            }   
+        }
+        
+        @keyframes move-8 {
+            39% {
+                transform: translate(-55vw, -50vh) scale(20.9);
+            }   
+        }
+        
+        @keyframes move-9 {
+            47% {
+                transform: translate(-68vw, -99vh) scale(21.8);
+            }   
+        }
+        
+        @keyframes move-10 {
+            56% {
+                transform: translate(0vw, -58vh) scale(22.6);
+            }   
+        }
+        
+        @keyframes move-11 {
+            57% {
+                transform: translate(-78vw, -89vh) scale(22.7);
+            }   
+        }
+        
+        @keyframes move-12 {
+            47% {
+                transform: translate(-47vw, -68vh) scale(21.8);
+            }   
+        }
+        
+        @keyframes move-13 {
+            52% {
+                transform: translate(-3vw, -71vh) scale(21.2);
+            }   
+        }
+        
+        @keyframes move-14 {
+            49% {
+                transform: translate(-95vw, -59vh) scale(21.9);
+            }   
+        }
+        
+        @keyframes move-15 {
+            39% {
+                transform: translate(-74vw, -74vh) scale(20.9);
+            }   
+        }
+        
+        @keyframes move-16 {
+            57% {
+                transform: translate(-55vw, -78vh) scale(22.7);
+            }   
+        }
+        
+        @keyframes move-17 {
+            53% {
+                transform: translate(-51vw, -89vh) scale(21.3);
+            }   
+        }
+        
+        @keyframes move-18 {
+            44% {
+                transform: translate(-85vw, -95vh) scale(21.5);
+            }   
+        }
+        
+        @keyframes move-19 {
+            48% {
+                transform: translate(-36vw, -23vh) scale(21.9);
+            }   
+        }
+        
+        @keyframes move-20 {
+            52% {
+                transform: translate(-93vw, -75vh) scale(21.2);
+            }   
+        }
+        
+        @keyframes move-21 {
+            58% {
+                transform: translate(-82vw, -8vh) scale(22.8);
+            }   
+        }
+        
+        @keyframes move-22 {
+            49% {
+                transform: translate(0vw, -82vh) scale(21.9);
+            }   
+        }
+        
+        @keyframes move-23 {
+            43% {
+                transform: translate(-90vw, -68vh) scale(21.4);
+            }   
+        }
+        
+        @keyframes move-24 {
+            32% {
+                transform: translate(-5vw, -95vh) scale(19.2);
+            }   
+        }
+        
+        @keyframes move-25 {
+            59% {
+                transform: translate(-43vw, -30vh) scale(22.9);
+            }   
+        }
+        
+        @keyframes move-26 {
+            37% {
+                transform: translate(-22vw, 0vh) scale(20.7);
+            }   
+        }
+        
+        @keyframes move-27 {
+            57% {
+                transform: translate(-62vw, -15vh) scale(22.7);
+            }   
+        }
+        
+        @keyframes move-28 {
+            34% {
+                transform: translate(-89vw, -34vh) scale(20.4);
+            }   
+        }
+        
+        @keyframes move-29 {
+            30% {
+                transform: translate(-17vw, -87vh) scale(19);
+            }   
+        }
+        
+        @keyframes move-30 {
+            58% {
+                transform: translate(-71vw, -45vh) scale(22.8);
+            }   
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function FirewallMathPage() {
+            return (
+                <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+                    <div className="absolute inset-0 opacity-20">
+                        <div 
+                            className="w-full h-full" 
+                            style={{
+                                backgroundImage: `
+                                    linear-gradient(rgba(0,255,255,0.1) 1px, transparent 1px),
+                                    linear-gradient(90deg, rgba(0,255,255,0.1) 1px, transparent 1px)
+                                `,
+                                backgroundSize: '50px 50px',
+                                animation: 'gridMove 20s linear infinite'
+                            }}
+                        />
+                    </div>
+
+                    {/* Bubble container */}
+                    <div className="main">
+                        {Array.from({ length: 30 }, (_, i) => (
+                            <div key={i} className={`bubble bubble-${i+1}`}></div>
+                        ))}
+                    </div>
+
+                    <div className="absolute inset-0">
+                        {Array.from({ length: 3 }, (_, i) => (
+                            <div
+                                key={i}
+                                className="absolute inset-0 rounded-full opacity-10"
+                                style={{
+                                    background: `radial-gradient(circle at ${30 + i * 20}% ${40 + i * 15}%, rgba(139, 69, 255, 0.3) 0%, transparent 50%)`,
+                                    animation: `pulse ${4 + i}s ease-in-out infinite alternate`
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="absolute inset-0">
+                        {Array.from({ length: 8 }, (_, i) => (
+                            <div
+                                key={i}
+                                className="absolute bg-gradient-to-r from-transparent via-red-500 to-transparent h-0.5 w-full opacity-60"
+                                style={{
+                                    top: `${(i + 1) * 12}%`,
+                                    animation: `scan ${3 + i * 0.5}s linear infinite`,
+                                    boxShadow: '0 0 20px rgba(239, 68, 68, 0.6)'
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8">
+                        <div className="mb-8 p-8 pt-6 pb-12 rounded-xl bg-black/30 backdrop-blur-sm border border-cyan-500/30 relative">
+                            <h1 className="text-white text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-8 leading-tight fire-text">
+                               أبدعت وتألقت، فخور بك🤍
+                            </h1>
+                            
+                            <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 leading-tight fire-text">
+                                العلامة الكلامة
+                            </h2>
+                        </div>
+
+                        {/* Bottom Left Counter - Responsive */}
+                        <div className="absolute bottom-8 left-4 sm:left-8 z-20">
+                            <div className="bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 backdrop-blur-lg border-2 sm:border-3 border-emerald-400/60 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-2xl transform hover:scale-105 transition-transform">
+                                <div className="text-center">
+                                    <div className="text-2xl sm:text-3xl md:text-5xl font-bold text-emerald-300 mb-1 sm:mb-2 animate-pulse">200/200</div>
+                                    <div className="text-xs sm:text-sm md:text-lg text-cyan-200 opacity-90 font-semibold">PROGRESS</div>
+                                    <div className="w-16 sm:w-20 md:w-28 h-2 sm:h-2 md:h-3 bg-gray-700/50 rounded-full mt-2 sm:mt-3 overflow-hidden border border-gray-600 mx-auto">
+                                        <div className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full animate-pulse shadow-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="absolute top-4 left-4 w-16 h-16 border-l-4 border-t-4 border-cyan-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute top-4 right-4 w-16 h-16 border-r-4 border-t-4 border-purple-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute bottom-4 right-4 w-16 h-16 border-r-4 border-b-4 border-pink-400 opacity-80 animate-pulse"></div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<FirewallMathPage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
