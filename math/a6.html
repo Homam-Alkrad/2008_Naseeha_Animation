@@ -43,6 +43,54 @@
             66% { transform: rotate(-3deg) scale(0.98); }
         }
 
+        /* Gas Bubbles */
+        .bubbles-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .gas-bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Cairo', sans-serif;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            animation: bubbleRise linear infinite;
+        }
+
+        @keyframes bubbleRise {
+            0% {
+                bottom: -100px;
+                opacity: 0;
+                transform: translateX(0) scale(1);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+                transform: translateX(var(--drift)) scale(0.3);
+            }
+        }
+
         /* Floating Particles */
         .particles-container {
             position: fixed;
@@ -284,23 +332,6 @@
             z-index: 2;
         }
 
-        /* Celebration message */
-        .celebration-message {
-            text-align: center;
-            max-width: 700px;
-            margin: 30px 0;
-            font-size: 1.5rem;
-            line-height: 1.8;
-            color: #e6e6ff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-            animation: fadeIn 2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
         /* Achievement badge */
         .achievement-badge {
             width: 150px;
@@ -428,9 +459,18 @@
                 margin: 0 10px 35px;
             }
             
-            .celebration-message {
-                font-size: 1.3rem;
-                padding: 0 15px;
+            .achievement-badge {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .achievement-badge i {
+                font-size: 50px;
+            }
+            
+            .achievement-badge::after {
+                width: 140px;
+                height: 140px;
             }
         }
 
@@ -452,22 +492,18 @@
                 padding: 25px 30px;
             }
             
-            .celebration-message {
-                font-size: 1.1rem;
-            }
-            
             .achievement-badge {
-                width: 120px;
-                height: 120px;
+                width: 100px;
+                height: 100px;
             }
             
             .achievement-badge i {
-                font-size: 50px;
+                font-size: 40px;
             }
             
             .achievement-badge::after {
-                width: 140px;
-                height: 140px;
+                width: 120px;
+                height: 120px;
             }
         }
     </style>
@@ -478,6 +514,9 @@
 
     <!-- Stars Container -->
     <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Gas Bubbles Container -->
+    <div class="bubbles-container" id="bubblesContainer"></div>
 
     <!-- Floating Particles Container -->
     <div class="particles-container" id="particlesContainer"></div>
@@ -493,26 +532,58 @@
         <!-- Header -->
         <header class="header">
             <h1 class="main-title">ما شاء الله</h1>
+            <h2 class="subtitle">العلامة الكاملة - إنجاز استثنائي</h2>
         </header>
-        
+
         <!-- Full Mark Section -->
         <section class="full-mark-section">
             <div class="full-mark-text">FULL MARK</div>
-            <!-- Achievement Badge -->
-            <div class="achievement-badge">
-                <i class="fas fa-trophy"></i>
-            </div>
-        </section>        
-
+        </section>
     </div>
 
     <script>
+        // Gas symbols for bubbles
+        const gasSymbols = ['He', 'H₂', 'O₂', 'N₂', 'Ar'];
+        
         // Confetti colors
         const confettiColors = ['#ffd700', '#ffed4a', '#fff59d', '#4ecdc4', '#45b7d1', '#f093fb', '#667eea'];
         
         // Celebration icons
         const celebrationIcons = ['★', '✧', '✦', '✶', '✷', '✸', '✹', '❋', '❊', '✺', '✻', '✼', '✽', '✾', '✿', '❀'];
         
+        // Create gas bubbles
+        function createGasBubble() {
+            const bubblesContainer = document.getElementById('bubblesContainer');
+            const bubble = document.createElement('div');
+            
+            const gasSymbol = gasSymbols[Math.floor(Math.random() * gasSymbols.length)];
+            bubble.textContent = gasSymbol;
+            bubble.className = 'gas-bubble';
+            
+            const size = Math.random() * 40 + 40;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.fontSize = (size * 0.3) + 'px';
+            
+            bubble.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 7 + 8;
+            bubble.style.animationDuration = duration + 's';
+            
+            const drift = (Math.random() - 0.5) * 200;
+            bubble.style.setProperty('--drift', drift + 'px');
+            
+            bubble.style.animationDelay = Math.random() * 2 + 's';
+            
+            bubblesContainer.appendChild(bubble);
+            
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.remove();
+                }
+            }, (duration + 2) * 1000);
+        }
+
         // Create floating particles
         function createFloatingParticle() {
             const particlesContainer = document.getElementById('particlesContainer');
@@ -623,6 +694,9 @@
 
         // Start all animations
         function startAnimations() {
+            // Gas bubbles
+            setInterval(createGasBubble, 2000);
+            
             // Floating particles
             setInterval(createFloatingParticle, 800);
             
@@ -642,6 +716,7 @@
         // Initialize animations when page loads
         window.addEventListener('load', function() {
             // Create initial elements immediately
+            createGasBubble();
             createFloatingParticle();
             createConfetti();
             createStar();
