@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> العلامة الكاملة - إنجاز استثنائي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            33% { transform: rotate(120deg) scale(1.1); }
+            66% { transform: rotate(240deg) scale(0.9); }
+        }
+
+        /* Gas Bubbles */
+        .bubbles-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .gas-bubble {
+            position: absolute;
+            bottom: -100px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Arial', monospace;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(5px);
+            animation: bubbleRise linear infinite;
+        }
+
+        @keyframes bubbleRise {
+            0% {
+                bottom: -100px;
+                opacity: 0;
+                transform: translateX(0) scale(1);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 100vh;
+                opacity: 0;
+                transform: translateX(var(--drift)) scale(0.3);
+            }
+        }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 4;
+            overflow: hidden;
+        }
+
+        .floating-particle {
+            position: absolute;
+            background: rgba(255, 215, 0, 0.6);
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translate(0, 100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--drift-x), -100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Dynamic Confetti */
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            animation: confettiFall linear infinite;
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        /* Star Particles */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+
+        .star-particle {
+            position: absolute;
+            color: #ffd700;
+            font-size: 20px;
+            animation: starTwinkle ease-in-out infinite;
+        }
+
+        @keyframes starTwinkle {
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(0.8) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.2) rotate(180deg);
+            }
+        }
+
+        /* Floating Icons */
+        .floating-icons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 3;
+            overflow: hidden;
+        }
+
+        .floating-icon {
+            position: absolute;
+            font-size: 24px;
+            animation: iconFloat ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0.7;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                opacity: 1;
+            }
+        }
+
+        /* Main container */
+        .container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Header section */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 1.5s ease-out;
+        }
+
+        .main-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.6);
+            margin-bottom: 20px;
+            animation: glow 3s ease-in-out infinite alternate;
+            font-family: 'Amiri', serif;
+        }
+
+        .subtitle {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #ffd700;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            animation: sparkle 4s ease-in-out infinite;
+        }
+
+        /* Full Mark section */
+        .full-mark-section {
+            position: relative;
+            padding: 30px 40px;
+            background: linear-gradient(45deg, 
+                rgba(255, 215, 0, 0.2) 0%, 
+                rgba(255, 255, 255, 0.1) 50%, 
+                rgba(255, 215, 0, 0.2) 100%);
+            backdrop-filter: blur(20px);
+            border: 3px solid rgba(255, 215, 0, 0.4);
+            border-radius: 20px;
+            box-shadow: 
+                0 20px 40px rgba(255, 215, 0, 0.3),
+                inset 0 0 30px rgba(255, 255, 255, 0.1),
+                0 0 80px rgba(255, 215, 0, 0.2);
+            animation: floatAndGlow 6s ease-in-out infinite;
+            margin-bottom: 50px;
+        }
+
+        .full-mark-text {
+            font-size: 3.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ffd700, #ffed4a, #fff59d, #ffd700);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-align: center;
+            letter-spacing: 8px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            animation: gradientShift 4s ease-in-out infinite, textGlow 2s ease-in-out infinite alternate;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-80px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px rgba(255, 215, 0, 0.3);
+            }
+            to {
+                text-shadow: 0 0 40px rgba(255, 255, 255, 0.8), 0 0 80px rgba(255, 215, 0, 0.6);
+            }
+        }
+
+        @keyframes sparkle {
+            0%, 100% {
+                transform: scale(1);
+                color: #ffd700;
+            }
+            50% {
+                transform: scale(1.05);
+                color: #ffed4a;
+            }
+        }
+
+        @keyframes floatAndGlow {
+            0%, 100% {
+                transform: translateY(0) rotate(0deg);
+                box-shadow: 
+                    0 20px 40px rgba(255, 215, 0, 0.3),
+                    inset 0 0 30px rgba(255, 255, 255, 0.1),
+                    0 0 80px rgba(255, 215, 0, 0.2);
+            }
+            50% {
+                transform: translateY(-15px) rotate(1deg);
+                box-shadow: 
+                    0 25px 50px rgba(255, 215, 0, 0.4),
+                    inset 0 0 40px rgba(255, 255, 255, 0.2),
+                    0 0 100px rgba(255, 215, 0, 0.3);
+            }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        @keyframes textGlow {
+            from {
+                filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.5));
+            }
+            to {
+                filter: drop-shadow(0 0 16px rgba(255, 215, 0, 0.8));
+            }
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.8rem;
+            }
+            
+            .full-mark-text {
+                font-size: 2.5rem;
+                letter-spacing: 4px;
+            }
+            
+            .full-mark-section {
+                padding: 25px 30px;
+                margin: 0 10px 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-title {
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.5rem;
+            }
+            
+            .full-mark-text {
+                font-size: 2rem;
+                letter-spacing: 3px;
+            }
+            
+            .full-mark-section {
+                padding: 20px 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated background -->
+    <div class="bg-animation"></div>
+
+    <!-- Stars Container -->
+    <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Gas Bubbles Container -->
+    <div class="bubbles-container" id="bubblesContainer"></div>
+
+    <!-- Floating Particles Container -->
+    <div class="particles-container" id="particlesContainer"></div>
+
+    <!-- Confetti Container -->
+    <div class="confetti-container" id="confettiContainer"></div>
+
+    <!-- Floating Icons Container -->
+    <div class="floating-icons" id="floatingIcons"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="main-title">ما شاء الله </h1>
+            <h2 class="subtitle"> العلامة الكاملة - إنجاز استثنائي </h2>
+        </header>
+
+        <!-- Full Mark Section -->
+        <section class="full-mark-section">
+            <div class="full-mark-text">FULL MARK</div>
+        </section>
+
+        
+    </div>
+
+    <script>
+        // Gas symbols for bubbles
+        const gasSymbols = ['He', 'H₂', 'O₂', 'Ne', 'Ar', 'N₂', 'CO₂', 'CH₄', 'Kr', 'Xe'];
+        
+        // Confetti colors
+        const confettiColors = ['#ffd700', '#ffed4a', '#fff59d', '#4ecdc4', '#45b7d1', '#f093fb', '#667eea'];
+        
+        // Celebration icons
+        // Create gas bubbles
+        function createGasBubble() {
+            const bubblesContainer = document.getElementById('bubblesContainer');
+            const bubble = document.createElement('div');
+            
+            const gasSymbol = gasSymbols[Math.floor(Math.random() * gasSymbols.length)];
+            bubble.textContent = gasSymbol;
+            bubble.className = 'gas-bubble';
+            
+            const size = Math.random() * 40 + 40;
+            bubble.style.width = size + 'px';
+            bubble.style.height = size + 'px';
+            bubble.style.fontSize = (size * 0.3) + 'px';
+            
+            bubble.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 7 + 8;
+            bubble.style.animationDuration = duration + 's';
+            
+            const drift = (Math.random() - 0.5) * 200;
+            bubble.style.setProperty('--drift', drift + 'px');
+            
+            bubble.style.animationDelay = Math.random() * 2 + 's';
+            
+            bubblesContainer.appendChild(bubble);
+            
+            setTimeout(() => {
+                if (bubble.parentNode) {
+                    bubble.remove();
+                }
+            }, (duration + 2) * 1000);
+        }
+
+        // Create floating particles
+        function createFloatingParticle() {
+            const particlesContainer = document.getElementById('particlesContainer');
+            const particle = document.createElement('div');
+            
+            particle.className = 'floating-particle';
+            
+            const size = Math.random() * 8 + 4;
+            particle.style.width = size + 'px';
+            particle.style.height = size + 'px';
+            
+            particle.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 10 + 15;
+            particle.style.animationDuration = duration + 's';
+            
+            const drift = (Math.random() - 0.5) * 300;
+            particle.style.setProperty('--drift-x', drift + 'px');
+            
+            const colors = ['rgba(255, 215, 0, 0.8)', 'rgba(255, 255, 255, 0.6)', 'rgba(255, 119, 198, 0.7)'];
+            particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+            
+            particlesContainer.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.remove();
+                }
+            }, duration * 1000);
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const confettiContainer = document.getElementById('confettiContainer');
+            const confetti = document.createElement('div');
+            
+            confetti.className = 'confetti-piece';
+            confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+            
+            confetti.style.left = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 3 + 2;
+            confetti.style.animationDuration = duration + 's';
+            
+            confetti.style.animationDelay = Math.random() * 2 + 's';
+            
+            confettiContainer.appendChild(confetti);
+            
+            setTimeout(() => {
+                if (confetti.parentNode) {
+                    confetti.remove();
+                }
+            }, (duration + 2) * 1000);
+        }
+
+        // Create twinkling stars
+        function createStar() {
+            const starsContainer = document.getElementById('starsContainer');
+            const star = document.createElement('div');
+            
+            star.className = 'star-particle';
+            star.textContent = '';
+            
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 3 + 2;
+            star.style.animationDuration = duration + 's';
+            
+            starsContainer.appendChild(star);
+            
+            setTimeout(() => {
+                if (star.parentNode) {
+                    star.remove();
+                }
+            }, duration * 1000);
+        }
+
+        // Create floating celebration icons
+        function createFloatingIcon() {
+            const iconsContainer = document.getElementById('floatingIcons');
+            const icon = document.createElement('div');
+            
+            icon.className = 'floating-icon';
+            icon.textContent = celebrationIcons[Math.floor(Math.random() * celebrationIcons.length)];
+            
+            icon.style.left = Math.random() * 100 + '%';
+            icon.style.top = Math.random() * 100 + '%';
+            
+            const duration = Math.random() * 4 + 3;
+            icon.style.animationDuration = duration + 's';
+            
+            iconsContainer.appendChild(icon);
+            
+            setTimeout(() => {
+                if (icon.parentNode) {
+                    icon.remove();
+                }
+            }, duration * 1000);
+        }
+
+        // Auto-generate continuous confetti bursts
+        function createConfettiBurst() {
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => createConfetti(), i * 100);
+            }
+        }
+
+        // Start all animations
+        function startAnimations() {
+            // Gas bubbles
+            setInterval(createGasBubble, 2000);
+            
+            // Floating particles
+            setInterval(createFloatingParticle, 800);
+            
+            // Confetti bursts
+            setInterval(createConfettiBurst, 5000);
+            
+            // Individual confetti pieces
+            setInterval(createConfetti, 300);
+            
+            // Twinkling stars
+            setInterval(createStar, 1500);
+            
+            // Floating icons
+            setInterval(createFloatingIcon, 3000);
+        }
+
+        // Initialize animations when page loads
+        window.addEventListener('load', function() {
+            // Create initial elements immediately
+            createGasBubble();
+            createFloatingParticle();
+            createConfetti();
+            createStar();
+            createFloatingIcon();
+            
+            // Start continuous animations
+            setTimeout(startAnimations, 1000);
+        });
+
+        // Optional: Still keep click effects for interaction
+        document.addEventListener('click', function(e) {
+            // Create a small burst of confetti at click location
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const clickConfetti = document.createElement('div');
+                    clickConfetti.style.position = 'fixed';
+                    clickConfetti.style.left = e.clientX + 'px';
+                    clickConfetti.style.top = e.clientY + 'px';
+                    clickConfetti.style.width = '6px';
+                    clickConfetti.style.height = '6px';
+                    clickConfetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
+                    clickConfetti.style.borderRadius = '50%';
+                    clickConfetti.style.pointerEvents = 'none';
+                    clickConfetti.style.zIndex = '1000';
+                    
+                    const angle = Math.random() * Math.PI * 2;
+                    const velocity = Math.random() * 80 + 40;
+                    let vx = Math.cos(angle) * velocity * 0.01;
+                    let vy = Math.sin(angle) * velocity * 0.01;
+                    
+                    document.body.appendChild(clickConfetti);
+                    
+                    function animate() {
+                        vy += 0.4;
+                        clickConfetti.style.left = parseFloat(clickConfetti.style.left) + vx + 'px';
+                        clickConfetti.style.top = parseFloat(clickConfetti.style.top) + vy + 'px';
+                        clickConfetti.style.opacity = parseFloat(clickConfetti.style.opacity || 1) - 0.02;
+                        
+                        if (parseFloat(clickConfetti.style.opacity) > 0) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            clickConfetti.remove();
+                        }
+                    }
+                    
+                    animate();
+                }, i * 50);
+            }
+        });
+    </script>
+</body>
+</html>
