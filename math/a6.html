@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> العلامة الكاملة - إنجاز استثنائي</title>
+    <title>العلامة الكاملة - إنجاز استثنائي</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -14,10 +15,11 @@
 
         body {
             font-family: 'Cairo', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             min-height: 100vh;
             overflow-x: hidden;
             position: relative;
+            color: #fff;
         }
 
         /* Animated background */
@@ -29,64 +31,16 @@
             height: 100%;
             z-index: 1;
             background: 
-                radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.3) 0%, transparent 50%);
+                radial-gradient(circle at 20% 80%, rgba(86, 119, 252, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.15) 0%, transparent 50%);
             animation: bgMove 20s ease-in-out infinite;
         }
 
         @keyframes bgMove {
             0%, 100% { transform: rotate(0deg) scale(1); }
-            33% { transform: rotate(120deg) scale(1.1); }
-            66% { transform: rotate(240deg) scale(0.9); }
-        }
-
-        /* Gas Bubbles */
-        .bubbles-container {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 3;
-            overflow: hidden;
-        }
-
-        .gas-bubble {
-            position: absolute;
-            bottom: -100px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Arial', monospace;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(5px);
-            animation: bubbleRise linear infinite;
-        }
-
-        @keyframes bubbleRise {
-            0% {
-                bottom: -100px;
-                opacity: 0;
-                transform: translateX(0) scale(1);
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                bottom: 100vh;
-                opacity: 0;
-                transform: translateX(var(--drift)) scale(0.3);
-            }
+            33% { transform: rotate(3deg) scale(1.02); }
+            66% { transform: rotate(-3deg) scale(0.98); }
         }
 
         /* Floating Particles */
@@ -103,7 +57,7 @@
 
         .floating-particle {
             position: absolute;
-            background: rgba(255, 215, 0, 0.6);
+            background: rgba(255, 215, 0, 0.7);
             border-radius: 50%;
             animation: floatParticle linear infinite;
         }
@@ -139,8 +93,8 @@
 
         .confetti-piece {
             position: absolute;
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             animation: confettiFall linear infinite;
         }
 
@@ -200,6 +154,7 @@
         .floating-icon {
             position: absolute;
             font-size: 24px;
+            color: #ffd700;
             animation: iconFloat ease-in-out infinite;
         }
 
@@ -234,17 +189,35 @@
         }
 
         .main-title {
-            font-size: 4rem;
+            font-size: 5rem;
             font-weight: 900;
             color: #fff;
             text-shadow: 0 0 30px rgba(255, 255, 255, 0.8), 0 0 60px rgba(255, 215, 0, 0.6);
             margin-bottom: 20px;
             animation: glow 3s ease-in-out infinite alternate;
             font-family: 'Amiri', serif;
+            position: relative;
+            display: inline-block;
+        }
+
+        .main-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #ffd700, transparent);
+            animation: titleUnderline 3s ease-in-out infinite;
+        }
+
+        @keyframes titleUnderline {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
         }
 
         .subtitle {
-            font-size: 2.2rem;
+            font-size: 2.5rem;
             font-weight: 700;
             color: #ffd700;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
@@ -255,11 +228,11 @@
         /* Full Mark section */
         .full-mark-section {
             position: relative;
-            padding: 30px 40px;
+            padding: 40px 60px;
             background: linear-gradient(45deg, 
-                rgba(255, 215, 0, 0.2) 0%, 
+                rgba(255, 215, 0, 0.15) 0%, 
                 rgba(255, 255, 255, 0.1) 50%, 
-                rgba(255, 215, 0, 0.2) 100%);
+                rgba(255, 215, 0, 0.15) 100%);
             backdrop-filter: blur(20px);
             border: 3px solid rgba(255, 215, 0, 0.4);
             border-radius: 20px;
@@ -269,10 +242,33 @@
                 0 0 80px rgba(255, 215, 0, 0.2);
             animation: floatAndGlow 6s ease-in-out infinite;
             margin-bottom: 50px;
+            overflow: hidden;
+        }
+
+        .full-mark-section::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent, 
+                rgba(255, 215, 0, 0.1), 
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 6s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
         }
 
         .full-mark-text {
-            font-size: 3.5rem;
+            font-size: 4.5rem;
             font-weight: 900;
             background: linear-gradient(45deg, #ffd700, #ffed4a, #fff59d, #ffd700);
             background-size: 300% 300%;
@@ -284,6 +280,65 @@
             text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
             animation: gradientShift 4s ease-in-out infinite, textGlow 2s ease-in-out infinite alternate;
             font-family: 'Cairo', sans-serif;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Celebration message */
+        .celebration-message {
+            text-align: center;
+            max-width: 700px;
+            margin: 30px 0;
+            font-size: 1.5rem;
+            line-height: 1.8;
+            color: #e6e6ff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+            animation: fadeIn 2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Achievement badge */
+        .achievement-badge {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #ffd700, #ffed4a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px auto;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
+            animation: pulse 2s ease-in-out infinite;
+            position: relative;
+        }
+
+        .achievement-badge::after {
+            content: "";
+            position: absolute;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            animation: ripple 2s ease-out infinite;
+        }
+
+        .achievement-badge i {
+            font-size: 60px;
+            color: #0f3460;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes ripple {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.2); opacity: 0; }
         }
 
         /* Animations */
@@ -356,40 +411,63 @@
         /* Responsive design */
         @media (max-width: 768px) {
             .main-title {
-                font-size: 2.8rem;
+                font-size: 3.5rem;
             }
             
             .subtitle {
-                font-size: 1.8rem;
+                font-size: 2rem;
             }
             
             .full-mark-text {
-                font-size: 2.5rem;
+                font-size: 3rem;
                 letter-spacing: 4px;
             }
             
             .full-mark-section {
-                padding: 25px 30px;
+                padding: 30px 40px;
                 margin: 0 10px 35px;
+            }
+            
+            .celebration-message {
+                font-size: 1.3rem;
+                padding: 0 15px;
             }
         }
 
         @media (max-width: 480px) {
             .main-title {
-                font-size: 2.2rem;
+                font-size: 2.8rem;
             }
             
             .subtitle {
-                font-size: 1.5rem;
+                font-size: 1.6rem;
             }
             
             .full-mark-text {
-                font-size: 2rem;
+                font-size: 2.5rem;
                 letter-spacing: 3px;
             }
             
             .full-mark-section {
-                padding: 20px 25px;
+                padding: 25px 30px;
+            }
+            
+            .celebration-message {
+                font-size: 1.1rem;
+            }
+            
+            .achievement-badge {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .achievement-badge i {
+                font-size: 50px;
+            }
+            
+            .achievement-badge::after {
+                width: 140px;
+                height: 140px;
             }
         }
     </style>
@@ -400,9 +478,6 @@
 
     <!-- Stars Container -->
     <div class="stars-container" id="starsContainer"></div>
-
-    <!-- Gas Bubbles Container -->
-    <div class="bubbles-container" id="bubblesContainer"></div>
 
     <!-- Floating Particles Container -->
     <div class="particles-container" id="particlesContainer"></div>
@@ -417,59 +492,27 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1 class="main-title">ما شاء الله </h1>
-            <h2 class="subtitle"> العلامة الكاملة - إنجاز استثنائي </h2>
+            <h1 class="main-title">ما شاء الله</h1>
         </header>
-
+        
         <!-- Full Mark Section -->
         <section class="full-mark-section">
             <div class="full-mark-text">FULL MARK</div>
-        </section>
+            <!-- Achievement Badge -->
+            <div class="achievement-badge">
+                <i class="fas fa-trophy"></i>
+            </div>
+        </section>        
 
-        
     </div>
 
     <script>
-        // Gas symbols for bubbles
-        const gasSymbols = ['He', 'H₂', 'O₂', 'Ne', 'Ar', 'N₂', 'CO₂', 'CH₄', 'Kr', 'Xe'];
-        
         // Confetti colors
         const confettiColors = ['#ffd700', '#ffed4a', '#fff59d', '#4ecdc4', '#45b7d1', '#f093fb', '#667eea'];
         
         // Celebration icons
-        // Create gas bubbles
-        function createGasBubble() {
-            const bubblesContainer = document.getElementById('bubblesContainer');
-            const bubble = document.createElement('div');
-            
-            const gasSymbol = gasSymbols[Math.floor(Math.random() * gasSymbols.length)];
-            bubble.textContent = gasSymbol;
-            bubble.className = 'gas-bubble';
-            
-            const size = Math.random() * 40 + 40;
-            bubble.style.width = size + 'px';
-            bubble.style.height = size + 'px';
-            bubble.style.fontSize = (size * 0.3) + 'px';
-            
-            bubble.style.left = Math.random() * 100 + '%';
-            
-            const duration = Math.random() * 7 + 8;
-            bubble.style.animationDuration = duration + 's';
-            
-            const drift = (Math.random() - 0.5) * 200;
-            bubble.style.setProperty('--drift', drift + 'px');
-            
-            bubble.style.animationDelay = Math.random() * 2 + 's';
-            
-            bubblesContainer.appendChild(bubble);
-            
-            setTimeout(() => {
-                if (bubble.parentNode) {
-                    bubble.remove();
-                }
-            }, (duration + 2) * 1000);
-        }
-
+        const celebrationIcons = ['★', '✧', '✦', '✶', '✷', '✸', '✹', '❋', '❊', '✺', '✻', '✼', '✽', '✾', '✿', '❀'];
+        
         // Create floating particles
         function createFloatingParticle() {
             const particlesContainer = document.getElementById('particlesContainer');
@@ -531,7 +574,7 @@
             const star = document.createElement('div');
             
             star.className = 'star-particle';
-            star.textContent = '';
+            star.textContent = '★';
             
             star.style.left = Math.random() * 100 + '%';
             star.style.top = Math.random() * 100 + '%';
@@ -580,9 +623,6 @@
 
         // Start all animations
         function startAnimations() {
-            // Gas bubbles
-            setInterval(createGasBubble, 2000);
-            
             // Floating particles
             setInterval(createFloatingParticle, 800);
             
@@ -602,7 +642,6 @@
         // Initialize animations when page loads
         window.addEventListener('load', function() {
             // Create initial elements immediately
-            createGasBubble();
             createFloatingParticle();
             createConfetti();
             createStar();
