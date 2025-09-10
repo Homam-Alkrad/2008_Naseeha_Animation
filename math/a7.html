@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100% إنجاز</title>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="motivation-container" class="motivation-wrapper">
+    
+    <!-- Background 2008 Text -->
+    <div class="bg-year">2008</div>
+    
+    <!-- Animated Stars Background -->
+    <div class="stars-bg" id="starsBg"></div>
+    
+    <!-- Floating Particles -->
+    <div class="particles-system">
+        <div class="particle particle-1"></div>
+        <div class="particle particle-2"></div>
+        <div class="particle particle-3"></div>
+        <div class="particle particle-4"></div>
+        <div class="particle particle-5"></div>
+        <div class="particle particle-6"></div>
+        <div class="particle particle-7"></div>
+        <div class="particle particle-8"></div>
+    </div>
+    
+    <!-- Rotating Light Rays -->
+    <div class="light-rays-system">
+        <div class="light-ray ray-1"></div>
+        <div class="light-ray ray-2"></div>
+        <div class="light-ray ray-3"></div>
+        <div class="light-ray ray-4"></div>
+        <div class="light-ray ray-5"></div>
+        <div class="light-ray ray-6"></div>
+        <div class="light-ray ray-7"></div>
+        <div class="light-ray ray-8"></div>
+    </div>
+    
+    <!-- Geometric Shapes -->
+    <div class="geometric-shapes">
+        <div class="geo-shape shape-circle"></div>
+        <div class="geo-shape shape-triangle"></div>
+        <div class="geo-shape shape-square"></div>
+        <div class="geo-shape shape-hexagon"></div>
+    </div>
+    
+    <!-- Floating Symbols -->
+    <div class="floating-symbols">
+        <div class="float-symbol symbol-1">🏆</div>
+        <div class="float-symbol symbol-2">⭐</div>
+        <div class="float-symbol symbol-3">🌟</div>
+        <div class="float-symbol symbol-4">✨</div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content">
+        
+        <!-- Crown Icon -->
+        <div class="crown-container">
+            <div class="crown-icon">👑</div>
+        </div>
+        
+        <!-- Main Achievement Card -->
+        <div class="achievement-card">
+            <div class="score-display">100/100</div>
+            <div class="main-message">لأنك 100% إصرار و100% تفوق!</div>
+            
+            <!-- Pride Message Now Inside Card -->
+            <div class="pride-message-inside">فخورين فيك</div>
+        </div>
+        
+        <!-- Dynamic Sparkles -->
+        <div class="sparkles-container" id="sparklesContainer"></div>
+    </div>
+    
+</div>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Amiri', 'Cairo', serif;
+    overflow: hidden;
+    height: 100vh;
+    background: #000;
+}
+
+.motivation-wrapper {
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #764ba2 75%, #667eea 100%);
+    background-size: 400% 400%;
+    animation: gradientFlow 15s ease infinite;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    direction: rtl;
+}
+
+/* Background 2008 Text */
+.bg-year {
+    position: absolute;
+    font-size: 25vw;
+    font-weight: 900;
+    color: rgba(255, 255, 255, 0.03);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+    font-family: 'Cairo', sans-serif;
+    letter-spacing: 0.2em;
+    animation: yearPulse 8s ease-in-out infinite;
+}
+
+/* Stars Background */
+.stars-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle 3s infinite;
+}
+
+.star::before,
+.star::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 2px;
+    background: inherit;
+    border-radius: 1px;
+}
+
+.star::after {
+    transform: translate(-50%, -50%) rotate(90deg);
+}
+
+/* Particles System */
+.particles-system {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+    border-radius: 50%;
+    animation: particleFloat 12s infinite linear;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.particle-1 { width: 8px; height: 8px; left: 10%; animation-delay: 0s; }
+.particle-2 { width: 12px; height: 12px; left: 20%; animation-delay: 2s; }
+.particle-3 { width: 6px; height: 6px; left: 30%; animation-delay: 4s; }
+.particle-4 { width: 10px; height: 10px; left: 70%; animation-delay: 1s; }
+.particle-5 { width: 14px; height: 14px; left: 80%; animation-delay: 3s; }
+.particle-6 { width: 9px; height: 9px; left: 90%; animation-delay: 5s; }
+.particle-7 { width: 11px; height: 11px; left: 60%; animation-delay: 6s; }
+.particle-8 { width: 7px; height: 7px; left: 40%; animation-delay: 7s; }
+
+/* Light Rays System */
+.light-rays-system {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100vw;
+    height: 100vh;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.light-ray {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 40vh;
+    transform-origin: center bottom;
+    transform: translate(-50%, -100%);
+    animation: rotateRays 25s linear infinite;
+}
+
+.ray-1 { background: linear-gradient(to bottom, transparent, #ffd700, transparent); transform: translate(-50%, -100%) rotate(0deg); }
+.ray-2 { background: linear-gradient(to bottom, transparent, #ff6b6b, transparent); transform: translate(-50%, -100%) rotate(45deg); }
+.ray-3 { background: linear-gradient(to bottom, transparent, #4ecdc4, transparent); transform: translate(-50%, -100%) rotate(90deg); }
+.ray-4 { background: linear-gradient(to bottom, transparent, #ff9ff3, transparent); transform: translate(-50%, -100%) rotate(135deg); }
+.ray-5 { background: linear-gradient(to bottom, transparent, #54a0ff, transparent); transform: translate(-50%, -100%) rotate(180deg); }
+.ray-6 { background: linear-gradient(to bottom, transparent, #5f27cd, transparent); transform: translate(-50%, -100%) rotate(225deg); }
+.ray-7 { background: linear-gradient(to bottom, transparent, #00d2d3, transparent); transform: translate(-50%, -100%) rotate(270deg); }
+.ray-8 { background: linear-gradient(to bottom, transparent, #ff9f43, transparent); transform: translate(-50%, -100%) rotate(315deg); }
+
+/* Geometric Shapes */
+.geometric-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+}
+
+.geo-shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: shapeFloat 30s infinite linear;
+}
+
+.shape-circle {
+    width: 120px;
+    height: 120px;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.shape-triangle {
+    width: 0;
+    height: 0;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 70px solid #fff;
+    top: 70%;
+    left: 85%;
+    animation-delay: 7s;
+}
+
+.shape-square {
+    width: 80px;
+    height: 80px;
+    border: 3px solid #fff;
+    top: 80%;
+    left: 15%;
+    animation-delay: 14s;
+}
+
+.shape-hexagon {
+    width: 60px;
+    height: 34.64px;
+    background: #fff;
+    position: relative;
+    top: 15%;
+    left: 90%;
+    animation-delay: 21s;
+}
+
+.shape-hexagon:before,
+.shape-hexagon:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    border-left: 30px solid transparent;
+    border-right: 30px solid transparent;
+}
+
+.shape-hexagon:before {
+    bottom: 100%;
+    border-bottom: 17.32px solid #fff;
+}
+
+.shape-hexagon:after {
+    top: 100%;
+    border-top: 17.32px solid #fff;
+}
+
+/* Main Content */
+.main-content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 90vw;
+}
+
+/* Crown */
+.crown-container {
+    margin-bottom: 30px;
+    animation: crownEntrance 2s ease-out;
+}
+
+.crown-icon {
+    font-size: 120px;
+    display: inline-block;
+    animation: crownSpin 6s ease-in-out infinite;
+    filter: drop-shadow(0 0 30px #ffd700);
+}
+
+/* Achievement Card */
+.achievement-card {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 60px 40px;
+    box-shadow: 
+        0 30px 80px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+    animation: cardEntrance 1.5s ease-out 0.5s both;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s ease-in-out infinite;
+}
+
+.score-display {
+    font-size: 80px;
+    font-weight: 900;
+    font-family: 'Cairo', sans-serif;
+    background: linear-gradient(45deg, #ffd700, #ff6b6b, #4ecdc4, #ff9ff3, #54a0ff, #ffd700);
+    background-size: 300% 300%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: scoreGlow 3s ease-in-out infinite, gradientShift 4s ease-in-out infinite;
+    margin-bottom: 20px;
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+}
+
+.main-message {
+    font-size: 42px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 30px 0;
+    line-height: 1.4;
+    animation: messageGlow 2.5s ease-in-out infinite alternate;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+    font-family: 'Amiri', serif;
+}
+
+/* Pride Message Inside Card with Colorful Animation */
+.pride-message-inside {
+    font-size: 36px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    margin-top: 25px;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(45deg, 
+        #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, 
+        #feca57, #ff9ff3, #54a0ff, #5f27cd, 
+        #00d2d3, #ff9f43, #ffd700, #ff6b6b);
+    background-size: 400% 400%;
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbowFlow 4s ease-in-out infinite, prideScale 3s ease-in-out infinite;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+}
+
+.pride-message-inside::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -10px;
+    right: -10px;
+    bottom: -5px;
+    background: linear-gradient(45deg, 
+        rgba(255, 107, 107, 0.2), rgba(78, 205, 196, 0.2), 
+        rgba(69, 183, 209, 0.2), rgba(150, 206, 180, 0.2),
+        rgba(254, 202, 87, 0.2), rgba(255, 159, 243, 0.2));
+    background-size: 300% 300%;
+    border-radius: 15px;
+    z-index: -1;
+    animation: backgroundGlow 5s ease-in-out infinite;
+    filter: blur(8px);
+}
+
+.pride-message-inside::after {
+    content: '✨';
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    font-size: 24px;
+    animation: sparkleRotate 2s linear infinite;
+    filter: drop-shadow(0 0 10px #ffd700);
+}
+
+/* Floating Symbols */
+.floating-symbols {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.float-symbol {
+    position: absolute;
+    font-size: 50px;
+    animation: symbolOrbit 20s infinite linear;
+    filter: drop-shadow(0 0 10px currentColor);
+}
+
+.symbol-1 { 
+    top: 15%; 
+    left: 15%; 
+    animation-delay: 0s; 
+    animation-duration: 18s;
+}
+.symbol-2 { 
+    top: 20%; 
+    right: 15%; 
+    animation-delay: 5s; 
+    animation-duration: 22s;
+}
+.symbol-3 { 
+    bottom: 20%; 
+    left: 10%; 
+    animation-delay: 10s; 
+    animation-duration: 25s;
+}
+.symbol-4 { 
+    bottom: 15%; 
+    right: 10%; 
+    animation-delay: 15s; 
+    animation-duration: 20s;
+}
+
+/* Sparkles Container */
+.sparkles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    pointer-events: none;
+}
+
+.sparkle {
+    position: absolute;
+    color: #ffd700;
+    font-size: 24px;
+    animation: sparkleLife 2.5s infinite;
+}
+
+/* Animations */
+@keyframes gradientFlow {
+    0%, 100% { background-position: 0% 50%; }
+    25% { background-position: 100% 50%; }
+    50% { background-position: 50% 100%; }
+    75% { background-position: 0% 100%; }
+}
+
+@keyframes yearPulse {
+    0%, 100% { opacity: 0.03; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.08; transform: translate(-50%, -50%) scale(1.02); }
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes particleFloat {
+    0% { bottom: -20px; opacity: 0; transform: translateX(0) rotate(0deg); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { bottom: 120vh; opacity: 0; transform: translateX(100px) rotate(360deg); }
+}
+
+@keyframes rotateRays {
+    0% { transform: translate(-50%, -100%) rotate(0deg); }
+    100% { transform: translate(-50%, -100%) rotate(360deg); }
+}
+
+@keyframes shapeFloat {
+    0% { transform: rotate(0deg) translateX(50px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(50px) rotate(-360deg); }
+}
+
+@keyframes crownEntrance {
+    0% { opacity: 0; transform: translateY(-100px) scale(0.5) rotate(-180deg); }
+    100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+}
+
+@keyframes crownSpin {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(-15deg) scale(1.1); }
+    75% { transform: rotate(15deg) scale(1.1); }
+}
+
+@keyframes cardEntrance {
+    0% { opacity: 0; transform: translateY(100px) scale(0.8); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes shimmer {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+@keyframes scoreGlow {
+    0%, 100% { 
+        transform: scale(1);
+        text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+    }
+    50% { 
+        transform: scale(1.05);
+        text-shadow: 0 0 60px rgba(255, 215, 0, 0.8), 0 0 90px rgba(255, 215, 0, 0.4);
+    }
+}
+
+@keyframes gradientShift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes messageGlow {
+    0% { 
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.6);
+        transform: scale(1);
+    }
+    100% { 
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(255, 215, 0, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+/* New Rainbow Flow Animation for Pride Message */
+@keyframes rainbowFlow {
+    0%, 100% { 
+        background-position: 0% 50%;
+    }
+    25% { 
+        background-position: 100% 50%;
+    }
+    50% { 
+        background-position: 200% 50%;
+    }
+    75% { 
+        background-position: 300% 50%;
+    }
+}
+
+@keyframes prideScale {
+    0%, 100% { 
+        transform: scale(1);
+    }
+    50% { 
+        transform: scale(1.05);
+    }
+}
+
+@keyframes backgroundGlow {
+    0%, 100% { 
+        background-position: 0% 50%;
+        opacity: 0.3;
+    }
+    50% { 
+        background-position: 100% 50%;
+        opacity: 0.6;
+    }
+}
+
+@keyframes sparkleRotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    100% { transform: rotate(360deg) scale(1); }
+}
+
+@keyframes symbolOrbit {
+    0% { 
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        opacity: 0.7;
+    }
+    25% { 
+        transform: translate(100px, -50px) rotate(90deg) scale(1.3);
+        opacity: 1;
+    }
+    50% { 
+        transform: translate(50px, -100px) rotate(180deg) scale(0.8);
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translate(-50px, -50px) rotate(270deg) scale(1.2);
+        opacity: 1;
+    }
+    100% { 
+        transform: translate(0, 0) rotate(360deg) scale(1);
+        opacity: 0.7;
+    }
+}
+
+@keyframes sparkleLife {
+    0% { 
+        transform: translate(0, 0) scale(0) rotate(0deg);
+        opacity: 0;
+    }
+    20% { 
+        opacity: 1;
+        transform: translate(0, 0) scale(1) rotate(180deg);
+    }
+    80% { 
+        opacity: 1;
+        transform: translate(var(--random-x, 60px), var(--random-y, -60px)) scale(1) rotate(360deg);
+    }
+    100% { 
+        opacity: 0;
+        transform: translate(var(--random-x, 60px), var(--random-y, -60px)) scale(0) rotate(540deg);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .bg-year {
+        font-size: 30vw;
+    }
+    
+    .crown-icon {
+        font-size: 80px;
+    }
+    
+    .achievement-card {
+        padding: 40px 25px;
+        margin: 0 15px;
+    }
+    
+    .score-display {
+        font-size: 60px;
+    }
+    
+    .main-message {
+        font-size: 28px;
+        line-height: 1.3;
+    }
+    
+    .pride-message-inside {
+        font-size: 28px;
+    }
+    
+    .float-symbol {
+        font-size: 40px;
+    }
+    
+    .light-ray {
+        height: 30vh;
+    }
+}
+
+@media (max-width: 480px) {
+    .bg-year {
+        font-size: 35vw;
+    }
+    
+    .crown-icon {
+        font-size: 60px;
+    }
+    
+    .achievement-card {
+        padding: 30px 20px;
+        margin: 0 10px;
+    }
+    
+    .score-display {
+        font-size: 48px;
+    }
+    
+    .main-message {
+        font-size: 22px;
+    }
+    
+    .pride-message-inside {
+        font-size: 22px;
+    }
+    
+    .float-symbol {
+        font-size: 35px;
+    }
+    
+    .sparkle {
+        font-size: 20px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const starsBg = document.getElementById('starsBg');
+    const sparklesContainer = document.getElementById('sparklesContainer');
+    
+    // Create stars
+    function createStar() {
+        if (!starsBg) return;
+        
+        const star = document.createElement('div');
+        star.className = 'star';
+        const size = Math.random() * 4 + 2;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        
+        starsBg.appendChild(star);
+        
+        setTimeout(() => {
+            if (star.parentNode) {
+                star.remove();
+            }
+        }, 6000);
+    }
+    
+    // Create sparkles
+    function createSparkle() {
+        if (!sparklesContainer) return;
+        
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.textContent = ['✨', '⭐', '🌟'][Math.floor(Math.random() * 3)];
+        
+        const randomX = (Math.random() - 0.5) * 200;
+        const randomY = (Math.random() - 0.5) * 200;
+        
+        sparkle.style.setProperty('--random-x', randomX + 'px');
+        sparkle.style.setProperty('--random-y', randomY + 'px');
+        sparkle.style.left = Math.random() * 90 + 5 + '%';
+        sparkle.style.top = Math.random() * 90 + 5 + '%';
+        
+        sparklesContainer.appendChild(sparkle);
+        
+        setTimeout(() => {
+            if (sparkle.parentNode) {
+                sparkle.remove();
+            }
+        }, 2500);
+    }
+    
+    // Initialize stars
+    for (let i = 0; i < 40; i++) {
+        setTimeout(createStar, i * 100);
+    }
+    
+    // Start continuous animation loops
+    const starsInterval = setInterval(createStar, 600);
+    const sparklesInterval = setInterval(createSparkle, 800);
+    
+    // Interactive effects for floating symbols
+    const symbols = document.querySelectorAll('.float-symbol');
+    symbols.forEach(symbol => {
+        symbol.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.8)';
+            this.style.filter = 'brightness(1.5) drop-shadow(0 0 20px currentColor)';
+        });
+        
+        symbol.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.filter = '';
+        });
+    });
+    
+    // Dynamic particle interaction
+    const particles = document.querySelectorAll('.particle');
+    particles.forEach(particle => {
+        particle.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(3)';
+            this.style.boxShadow = '0 0 40px rgba(255,255,255,0.8)';
+        });
+        
+        particle.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
+        });
+    });
+    
+    // Enhanced crown effect
+    const crown = document.querySelector('.crown-icon');
+    let crownGlow = 0;
+    let glowDirection = 1;
+    
+    setInterval(() => {
+        crownGlow += glowDirection * 0.1;
+        if (crownGlow >= 1) glowDirection = -1;
+        if (crownGlow <= 0) glowDirection = 1;
+        
+        const glowIntensity = 30 + (crownGlow * 30);
+        crown.style.filter = `drop-shadow(0 0 ${glowIntensity}px #ffd700) brightness(${1 + crownGlow * 0.3})`;
+    }, 100);
+    
+    // Cleanup intervals on page unload
+    window.addEventListener('beforeunload', () => {
+        clearInterval(starsInterval);
+        clearInterval(sparklesInterval);
+    });
+});
+</script>
+
+</body>
+</html>
