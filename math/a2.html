@@ -32,9 +32,11 @@
                 0 0 40px rgba(102, 102, 255, 0.3);
             animation: fireTextGlow 2s ease-in-out infinite alternate;
         }
+        
         .text-white{
             color: white;
         }
+        
         @keyframes fireTextGlow {
             0% {
                 text-shadow: 
@@ -52,7 +54,67 @@
             }
         }
         
-        /* Bubble animation styles */
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes fireworks {
+            0% { transform: scale(0); opacity: 1; }
+            50% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear infinite;
+        }
+        
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: fireworks 1s ease-out infinite;
+        }
+        
+        .celebration-text {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab, #ffd700, #ff6b6b);
+            background-size: 400% 400%;
+            animation: rainbow 2s ease infinite;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        .bounce-text {
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        .dynamic-statement {
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+        
         .bubble {
             background-color: rgba(255, 255, 255, 0.4);
             display: inline-block;
@@ -62,7 +124,6 @@
             position: absolute;
         }
         
-        /* Generate 30 bubble animations */
         .bubble-1 {
             opacity: 0.42;
             left: 41vw;
@@ -491,8 +552,98 @@
         const { useState, useEffect } = React;
 
         function FirewallMathPage() {
+            const [confetti, setConfetti] = useState([]);
+            const [fireworks, setFireworks] = useState([]);
+            const [currentStatement, setCurrentStatement] = useState(0);
+            
+            const statements = [
+                "ما شاء الله، أبدعت وتألّقت",
+                "إجابتك ممتازة وتفتح النفس!",
+                "مبدع كالعادة، رفعت الرأس!",
+                "أداء رائع يدل على تعبك وجهدك.",
+                "تميّزت وأثبت قدراتك بجدارة.",
+                "ما شاء الله، حلّك متقن ومبدع.",
+                "تستحق كل التقدير، إجابتك نموذجية.",
+                "أبهرتني بترتيبك وفهمك العميق.",
+                "لامع ومميز بين أقرانك.",
+                "خطوة عظيمة نحو التفوق!"
+            ];
+            
+            useEffect(() => {
+                const generateConfetti = () => {
+                    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+                    const newConfetti = Array.from({ length: 50 }, (_, i) => ({
+                        id: Math.random(),
+                        left: Math.random() * 100,
+                        backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+                        animationDelay: Math.random() * 3 + 's',
+                        animationDuration: (Math.random() * 2 + 2) + 's'
+                    }));
+                    setConfetti(newConfetti);
+                };
+                
+                generateConfetti();
+                const confettiInterval = setInterval(generateConfetti, 6000);
+                
+                return () => clearInterval(confettiInterval);
+            }, []);
+            
+            useEffect(() => {
+                const generateFireworks = () => {
+                    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+                    const newFireworks = Array.from({ length: 20 }, (_, i) => ({
+                        id: Math.random(),
+                        left: Math.random() * 100,
+                        top: Math.random() * 100,
+                        backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+                        animationDelay: Math.random() * 1 + 's'
+                    }));
+                    setFireworks(newFireworks);
+                };
+                
+                generateFireworks();
+                const fireworksInterval = setInterval(generateFireworks, 3000);
+                
+                return () => clearInterval(fireworksInterval);
+            }, []);
+            
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setCurrentStatement(prev => (prev + 1) % statements.length);
+                }, 4000);
+                
+                return () => clearInterval(interval);
+            }, [statements.length]);
+
             return (
                 <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900">
+                    {confetti.map(piece => (
+                        <div
+                            key={piece.id}
+                            className="confetti-piece"
+                            style={{
+                                left: `${piece.left}%`,
+                                backgroundColor: piece.backgroundColor,
+                                animationDelay: piece.animationDelay,
+                                animationDuration: piece.animationDuration
+                            }}
+                        />
+                    ))}
+                    
+                    {fireworks.map(firework => (
+                        <div
+                            key={firework.id}
+                            className="firework"
+                            style={{
+                                left: `${firework.left}%`,
+                                top: `${firework.top}%`,
+                                backgroundColor: firework.backgroundColor,
+                                animationDelay: firework.animationDelay,
+                                boxShadow: `0 0 20px ${firework.backgroundColor}`
+                            }}
+                        />
+                    ))}
+                    
                     <div className="absolute inset-0 opacity-20">
                         <div 
                             className="w-full h-full" 
@@ -507,7 +658,6 @@
                         />
                     </div>
 
-                    {/* Bubble container */}
                     <div className="main">
                         {Array.from({ length: 30 }, (_, i) => (
                             <div key={i} className={`bubble bubble-${i+1}`}></div>
@@ -541,24 +691,32 @@
                         ))}
                     </div>
 
-                    <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-8">
-                        <div className="mb-8 p-8 pt-6 pb-12 rounded-xl bg-black/30 backdrop-blur-sm border border-cyan-500/30 relative">
-                            <h1 className="text-white text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-8 leading-tight fire-text">
-                               ما شاء الله  ، أبدعت وتألقت
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-8">
+                        <div className="mb-4 sm:mb-8 p-4 sm:p-8 pt-4 sm:pt-6 pb-8 sm:pb-12 rounded-xl bg-black/30 backdrop-blur-sm border border-cyan-500/30 relative shadow-2xl">
+                            <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 mb-4 sm:mb-8 leading-tight fire-text">
+                               ما شاء الله، أبدعت وتألقت
                             </h1>
                             
-                            <h2 className="text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 leading-tight fire-text">
-                                العلامة الكلامة
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 leading-tight fire-text">
+                                العلامة الكاملة
                             </h2>
                         </div>
+                        
+                        <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-green-500/20 via-blue-500/20 to-purple-500/20 backdrop-blur-lg border-2 border-white/30 shadow-2xl">
+                            <p 
+                                key={currentStatement}
+                                className="dynamic-statement text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed celebration-text"
+                            >
+                                {statements[currentStatement]}
+                            </p>
+                        </div>
 
-                        {/* Bottom Left Counter - Responsive */}
-                        <div className="absolute bottom-8 left-4 sm:left-8 z-20">
-                            <div className="bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 backdrop-blur-lg border-2 sm:border-3 border-emerald-400/60 rounded-xl sm:rounded-2xl p-3 sm:p-6 shadow-2xl transform hover:scale-105 transition-transform">
+                        <div className="absolute bottom-4 sm:bottom-8 left-2 sm:left-4 lg:left-8 z-20">
+                            <div className="bg-gradient-to-br from-emerald-500/30 to-cyan-500/30 backdrop-blur-lg border-2 sm:border-3 border-emerald-400/60 rounded-lg sm:rounded-xl lg:rounded-2xl p-2 sm:p-4 lg:p-6 shadow-2xl transform hover:scale-105 transition-transform">
                                 <div className="text-center">
-                                    <div className="text-2xl sm:text-3xl md:text-5xl font-bold text-emerald-300 mb-1 sm:mb-2 animate-pulse">200/200</div>
-                                    <div className="text-xs sm:text-sm md:text-lg text-cyan-200 opacity-90 font-semibold">PROGRESS</div>
-                                    <div className="w-16 sm:w-20 md:w-28 h-2 sm:h-2 md:h-3 bg-gray-700/50 rounded-full mt-2 sm:mt-3 overflow-hidden border border-gray-600 mx-auto">
+                                    <div className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-emerald-300 mb-1 sm:mb-2 animate-pulse">200/200</div>
+                                    <div className="text-xs sm:text-sm md:text-base lg:text-lg text-cyan-200 opacity-90 font-semibold">PROGRESS</div>
+                                    <div className="w-12 sm:w-16 md:w-20 lg:w-28 h-1.5 sm:h-2 lg:h-3 bg-gray-700/50 rounded-full mt-1 sm:mt-2 lg:mt-3 overflow-hidden border border-gray-600 mx-auto">
                                         <div className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full animate-pulse shadow-lg"></div>
                                     </div>
                                 </div>
@@ -566,9 +724,9 @@
                         </div>
                     </div>
 
-                    <div className="absolute top-4 left-4 w-16 h-16 border-l-4 border-t-4 border-cyan-400 opacity-80 animate-pulse"></div>
-                    <div className="absolute top-4 right-4 w-16 h-16 border-r-4 border-t-4 border-purple-400 opacity-80 animate-pulse"></div>
-                    <div className="absolute bottom-4 right-4 w-16 h-16 border-r-4 border-b-4 border-pink-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-l-4 border-t-4 border-cyan-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-t-4 border-purple-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-b-4 border-pink-400 opacity-80 animate-pulse"></div>
                 </div>
             );
         }
@@ -576,6 +734,4 @@
         ReactDOM.render(<FirewallMathPage />, document.getElementById('root'));
     </script>
 </body>
-
 </html>
-
