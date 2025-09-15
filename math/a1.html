@@ -19,38 +19,55 @@
             100% { transform: translateX(100%); }
         }
         
-        @keyframes glow {
-            from { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5); }
-            to { text-shadow: 0 0 20px rgba(6, 182, 212, 1); }
-        }
-        
-        .fire-text {
-            text-shadow: 
-                0 0 10px rgba(255, 68, 68, 0.8),
-                0 0 20px rgba(68, 68, 255, 0.6),
-                0 0 30px rgba(255, 102, 102, 0.4),
-                0 0 40px rgba(102, 102, 255, 0.3);
-            animation: fireTextGlow 2s ease-in-out infinite alternate;
-        }
-        
-        .text-white{
-            color: white;
-        }
-        
-        @keyframes fireTextGlow {
-            0% {
-                text-shadow: 
-                    0 0 10px rgba(255, 68, 68, 0.8),
-                    0 0 20px rgba(68, 68, 255, 0.6),
-                    0 0 30px rgba(255, 102, 102, 0.4),
-                    0 0 40px rgba(102, 102, 255, 0.3);
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                opacity: 0.8;
             }
-            100% {
-                text-shadow: 
-                    0 0 20px rgba(255, 68, 68, 1),
-                    0 0 30px rgba(68, 68, 255, 0.8),
-                    0 0 40px rgba(255, 102, 102, 0.6),
-                    0 0 50px rgba(102, 102, 255, 0.5);
+            50% { 
+                text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 165, 0, 0.8);
+                opacity: 1;
+            }
+            100% { 
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes textBlur {
+            0% { filter: blur(0px); opacity: 1; }
+            25% { filter: blur(2px); opacity: 0.7; }
+            50% { filter: blur(0px); opacity: 1; }
+            75% { filter: blur(1px); opacity: 0.9; }
+            100% { filter: blur(0px); opacity: 1; }
+        }
+        
+        @keyframes colorShift {
+            0% { color: rgba(255, 215, 0, 1); }
+            25% { color: rgba(255, 165, 0, 1); }
+            50% { color: rgba(255, 105, 180, 1); }
+            75% { color: rgba(138, 43, 226, 1); }
+            100% { color: rgba(255, 215, 0, 1); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        @keyframes scaleGlow {
+            0% { 
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+            50% { 
+                transform: scale(1.05);
+                text-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 165, 0, 0.8);
+            }
+            100% { 
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
             }
         }
         
@@ -86,13 +103,16 @@
             animation: fireworks 1s ease-out infinite;
         }
         
-        .celebration-text {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab, #ffd700, #ff6b6b);
-            background-size: 400% 400%;
-            animation: rainbow 2s ease infinite;
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .main-title {
+            animation: textGlow 3s ease-in-out infinite, scaleGlow 4s ease-in-out infinite;
+        }
+        
+        .subtitle {
+            animation: colorShift 5s ease-in-out infinite, textBlur 6s ease-in-out infinite;
+        }
+        
+        .dynamic-statement {
+            animation: fadeInOut 4s ease-in-out infinite;
         }
         
         @keyframes bounce {
@@ -101,8 +121,10 @@
             60% { transform: translateY(-10px); }
         }
         
-        .bounce-text {
-            animation: bounce 2s infinite;
+        @keyframes symbolGlow {
+            0% { opacity: 0.3; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
+            50% { opacity: 0.8; text-shadow: 0 0 15px rgba(255, 215, 0, 1); }
+            100% { opacity: 0.3; text-shadow: 0 0 5px rgba(255, 215, 0, 0.5); }
         }
     </style>
 </head>
@@ -117,22 +139,33 @@
             const [confetti, setConfetti] = useState([]);
             const [fireworks, setFireworks] = useState([]);
             const [currentStatement, setCurrentStatement] = useState(0);
+            const [isMobile, setIsMobile] = useState(false);
             const [mathSymbols] = useState(['∑', '∫', '∆', 'π', '∞', '√', 'α', 'β', 'γ', 'θ', '∂', '∇']);
             
             const statements = [
-                "🌟 ما شاء الله، أبدعت وتألّقت 👏",
-                "💯 إجابتك ممتازة وتفتح النفس!",
-                "🌹 مبدع كالعادة، رفعت الرأس!",
-                "🚀 أداء رائع يدل على تعبك وجهدك.",
-                "🎉 تميّزت وأثبت قدراتك بجدارة.",
-                "🌟 ما شاء الله، حلّك متقن ومبدع.",
-                "🏆 تستحق كل التقدير، إجابتك نموذجية.",
-                "✨ أبهرتني بترتيبك وفهمك العميق.",
-                "💎 لامع ومميز بين أقرانك.",
-                "🌟 خطوة عظيمة نحو التفوق!"
+                "ما شاء الله، أبدعت وتألّقت",
+                "إجابتك ممتازة وتفتح النفس!",
+                "مبدع كالعادة، رفعت الرأس!",
+                "أداء رائع يدل على تعبك وجهدك.",
+                "تميّزت وأثبت قدراتك بجدارة.",
+                "ما شاء الله، حلّك متقن ومبدع.",
+                "تستحق كل التقدير، إجابتك نموذجية.",
+                "أبهرتني بترتيبك وفهمك العميق.",
+                "لامع ومميز بين أقرانك.",
+                "خطوة عظيمة نحو التفوق!"
             ];
             
-            // Generate confetti
+            useEffect(() => {
+                const checkMobile = () => {
+                    setIsMobile(window.innerWidth <= 768);
+                };
+                
+                checkMobile();
+                window.addEventListener('resize', checkMobile);
+                
+                return () => window.removeEventListener('resize', checkMobile);
+            }, []);
+            
             useEffect(() => {
                 const generateConfetti = () => {
                     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
@@ -152,7 +185,6 @@
                 return () => clearInterval(confettiInterval);
             }, []);
             
-            // Generate fireworks
             useEffect(() => {
                 const generateFireworks = () => {
                     const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
@@ -172,7 +204,6 @@
                 return () => clearInterval(fireworksInterval);
             }, []);
             
-            // Cycle through statements every 4 seconds
             useEffect(() => {
                 const interval = setInterval(() => {
                     setCurrentStatement(prev => (prev + 1) % statements.length);
@@ -182,15 +213,17 @@
             }, [statements.length]);
             
             useEffect(() => {
-                const initialParticles = Array.from({ length: 50 }, (_, i) => ({
+                const particleCount = isMobile ? 15 : 50;
+                
+                const initialParticles = Array.from({ length: particleCount }, (_, i) => ({
                     id: i,
                     x: Math.random() * window.innerWidth,
                     y: Math.random() * window.innerHeight,
-                    dx: (Math.random() - 0.5) * 2,
-                    dy: (Math.random() - 0.5) * 2,
+                    dx: (Math.random() - 0.5) * (isMobile ? 1 : 2),
+                    dy: (Math.random() - 0.5) * (isMobile ? 1 : 2),
                     symbol: mathSymbols[Math.floor(Math.random() * mathSymbols.length)],
                     opacity: Math.random() * 0.7 + 0.3,
-                    size: Math.random() * 20 + 10
+                    size: Math.random() * (isMobile ? 15 : 20) + (isMobile ? 8 : 10)
                 }));
                 
                 setParticles(initialParticles);
@@ -216,11 +249,10 @@
                 }, 15);
                 
                 return () => clearInterval(interval);
-            }, [mathSymbols]);
+            }, [mathSymbols, isMobile]);
 
             return (
                 <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-purple-900 to-pink-900">
-                    {/* Confetti */}
                     {confetti.map(piece => (
                         <div
                             key={piece.id}
@@ -234,7 +266,6 @@
                         />
                     ))}
                     
-                    {/* Fireworks */}
                     {fireworks.map(firework => (
                         <div
                             key={firework.id}
@@ -272,8 +303,7 @@
                                 top: `${particle.y}px`,
                                 opacity: particle.opacity,
                                 fontSize: `${particle.size}px`,
-                                textShadow: '0 0 15px rgba(255, 215, 0, 0.8)',
-                                animation: 'glow 2s ease-in-out infinite alternate'
+                                animation: 'symbolGlow 3s ease-in-out infinite'
                             }}
                         >
                             {particle.symbol}
@@ -309,26 +339,24 @@
 
                     <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-8">
                         <div className="mb-4 sm:mb-8 p-4 sm:p-8 pt-4 sm:pt-6 pb-8 sm:pb-12 rounded-xl bg-black/40 backdrop-blur-sm border-2 border-yellow-500/50 relative shadow-2xl">
-                            <h1 className="text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-400 to-red-400 mb-4 sm:mb-8 leading-tight fire-text bounce-text">
+                            <h1 className="main-title text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold mb-4 sm:mb-8 leading-tight">
                                 بداية مبشرة بإذن الله
                             </h1>
                             
-                            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 leading-tight fire-text">
-                                العلامة الكلامة
+                            <h2 className="subtitle text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold leading-tight">
+                                العلامة الكاملة
                             </h2>
                         </div>
                         
-                        {/* Dynamic Statement */}
                         <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-green-500/20 via-blue-500/20 to-purple-500/20 backdrop-blur-lg border-2 border-white/30 shadow-2xl">
                             <p 
                                 key={currentStatement}
-                                className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold dynamic-text leading-relaxed text-yellow-400"
+                                className="dynamic-statement text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-yellow-400"
                             >
                                 {statements[currentStatement]}
                             </p>
                         </div>
 
-                        {/* Bottom Left Counter - Enhanced Responsive */}
                         <div className="absolute bottom-4 sm:bottom-8 left-2 sm:left-4 lg:left-8 z-20">
                             <div className="bg-gradient-to-br from-emerald-500/40 to-cyan-500/40 backdrop-blur-lg border-2 sm:border-3 border-emerald-400/80 rounded-lg sm:rounded-xl lg:rounded-2xl p-2 sm:p-4 lg:p-6 shadow-2xl transform hover:scale-105 transition-transform">
                                 <div className="text-center">
@@ -342,7 +370,6 @@
                         </div>
                     </div>
 
-                    {/* Enhanced Corner Decorations */}
                     <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-l-4 border-t-4 border-yellow-400 opacity-80 animate-pulse"></div>
                     <div className="absolute top-2 sm:top-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-t-4 border-pink-400 opacity-80 animate-pulse"></div>
                     <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-b-4 border-purple-400 opacity-80 animate-pulse"></div>
