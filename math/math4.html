@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع النصيحة 🌟</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, 
+                #667eea 0%,
+                #764ba2 25%,
+                #f093fb 50%,
+                #f5576c 75%,
+                #4facfe 100%
+            );
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            font-family: 'Tajawal', sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
+        }
+
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .year-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 25vw;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.4);
+            z-index: 1;
+            pointer-events: none;
+            user-select: none;
+            font-family: Arial, sans-serif;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            animation: yearGlow 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes yearGlow {
+            0% { 
+                color: rgba(255, 255, 255, 0.3);
+                text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+            }
+            100% { 
+                color: rgba(255, 255, 255, 0.6);
+                text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+            }
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .main-content {
+            text-align: center;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2D3748;
+            font-weight: 900;
+            font-size: 4vw;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
+            animation: textGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
+                transform: scale(1);
+            }
+            25% {
+                text-shadow: 2px 2px 6px rgba(255,255,255,0.9), 0 0 15px rgba(255,255,255,0.7);
+                transform: scale(1.02);
+            }
+            50% {
+                text-shadow: 2px 2px 8px rgba(255,255,255,1), 0 0 20px rgba(255,255,255,0.8);
+                transform: scale(1.05);
+            }
+            75% {
+                text-shadow: 2px 2px 6px rgba(255,255,255,0.9), 0 0 15px rgba(255,255,255,0.7);
+                transform: scale(1.02);
+            }
+            100% { 
+                text-shadow: 2px 2px 4px rgba(255,255,255,0.8), 0 0 10px rgba(255,255,255,0.5);
+                transform: scale(1);
+            }
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        h2 {
+            color: #fff;
+            font-weight: 700;
+            font-size: 2.5vw;
+            margin-bottom: 30px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .brand-text {
+            position: absolute;
+            top: 10%;
+            right: 5%;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.3);
+            z-index: 10;
+        }
+
+        .brand-text span {
+            color: #FFD700;
+            font-size: 2vw;
+            font-weight: bold;
+        }
+
+        .score-circle {
+            position: absolute;
+            bottom: 15%;
+            left: 10%;
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 10;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .chart-container {
+            position: absolute;
+            top: 15%;
+            left: 5%;
+            width: 150px;
+            height: 100px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 10px;
+            padding: 10px;
+            z-index: 10;
+        }
+
+        .chart {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: #333;
+        }
+
+        .chart-line.vertical {
+            width: 2px;
+            height: 100%;
+            left: 0;
+            bottom: 0;
+        }
+
+        .chart-point {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #FF6B35;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+        }
+
+        .calculator {
+            position: absolute;
+            right: 10%;
+            bottom: 15%;
+            width: 80px;
+            height: 120px;
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border-radius: 10px;
+            padding: 8px;
+            z-index: 10;
+        }
+
+        .calc-screen {
+            background: rgba(255,255,255,0.9);
+            height: 25px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .calc-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2px;
+            height: calc(100% - 30px);
+        }
+
+        .calc-btn {
+            background: rgba(255,255,255,0.8);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: bold;
+        }
+
+        .shapes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .triangle {
+            position: absolute;
+            top: 30%;
+            right: 25%;
+            width: 0;
+            height: 0;
+            border-left: 30px solid transparent;
+            border-right: 30px solid transparent;
+            border-bottom: 50px solid rgba(255, 193, 7, 0.7);
+            animation: rotate 8s linear infinite;
+        }
+
+        .circle {
+            position: absolute;
+            bottom: 40%;
+            left: 30%;
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(66, 153, 225, 0.8);
+            border-radius: 50%;
+            animation: pulse 3s infinite;
+        }
+
+        .pentagon {
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 40px;
+            height: 40px;
+            background: rgba(236, 72, 153, 0.7);
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            animation: rotate 6s linear infinite reverse;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 4;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            color: #FFD700;
+            font-size: 20px;
+            animation: twinkle 2s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .celebration-burst {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confettiFall 3s linear infinite;
+        }
+
+        .confetti:nth-child(odd) {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border-radius: 50%;
+        }
+
+        .confetti:nth-child(even) {
+            background: linear-gradient(45deg, #FF1493, #9932CC);
+            transform: rotate(45deg);
+        }
+
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .celebration-ring {
+            position: absolute;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            animation: ripple 2s ease-out infinite;
+        }
+
+        @keyframes ripple {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+                border-color: rgba(255, 215, 0, 0.8);
+            }
+            100% {
+                width: 300px;
+                height: 300px;
+                opacity: 0;
+                border-color: rgba(255, 215, 0, 0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            h1 { font-size: 5vw; }
+            h2 { font-size: 3.5vw; }
+            .brand-text span { font-size: 3vw; }
+            .score-circle {
+                width: 100px;
+                height: 100px;
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .year-background { font-size: 35vw; }
+            h1 { font-size: 7vw; }
+            h2 { 
+                font-size: 4.5vw;
+                padding: 10px 15px;
+            }
+            .brand-text {
+                position: static;
+                margin: 20px auto;
+                display: inline-block;
+            }
+            .brand-text span { font-size: 4vw; }
+            .score-circle {
+                width: 80px;
+                height: 80px;
+                font-size: 16px;
+                bottom: 10%;
+                left: 5%;
+            }
+            .calculator {
+                width: 60px;
+                height: 90px;
+                right: 5%;
+                bottom: 10%;
+            }
+            .chart-container {
+                width: 120px;
+                height: 80px;
+                top: 10%;
+                left: 2%;
+            }
+            .container {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .year-background { font-size: 45vw; }
+            h1 { font-size: 8vw; }
+            h2 { font-size: 5vw; }
+            .brand-text span { font-size: 5vw; }
+            .score-circle {
+                width: 60px;
+                height: 60px;
+                font-size: 12px;
+            }
+            .calculator {
+                width: 50px;
+                height: 70px;
+            }
+            .calc-screen {
+                height: 15px;
+                font-size: 8px;
+            }
+            .calc-btn {
+                font-size: 6px;
+            }
+            .triangle {
+                border-left-width: 20px;
+                border-right-width: 20px;
+                border-bottom-width: 35px;
+            }
+            .circle {
+                width: 35px;
+                height: 35px;
+            }
+            .pentagon {
+                width: 30px;
+                height: 30px;
+            }
+            .star {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 320px) {
+            h1 { font-size: 10vw; }
+            h2 { font-size: 6vw; }
+            .brand-text span { font-size: 6vw; }
+        }
+    </style>
+</head>
+<body>
+    <div class="celebration-burst" id="celebration"></div>
+    <div class="year-background">2008</div>
+    <canvas id="fireworks"></canvas>
+    
+    <div class="stars">
+        <div class="star" style="top: 10%; left: 15%;">⭐</div>
+        <div class="star" style="top: 20%; right: 10%;">✨</div>
+        <div class="star" style="bottom: 30%; left: 20%;">🌟</div>
+        <div class="star" style="bottom: 15%; right: 30%;">💫</div>
+        <div class="star" style="top: 60%; right: 15%;">⭐</div>
+    </div>
+
+    <div class="shapes">
+        <div class="triangle"></div>
+        <div class="circle"></div>
+        <div class="pentagon"></div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <h1>أثبتّ أن التميّز لا يأتي إلا لمن يستحقه، وأنت أهله</h1>
+            <h2>العلامة الكاملة لأداء كامل</h2>
+        </div>
+    </div>
+
+    <div class="brand-text">
+        <span>موقع النصيحة التعليمي</span>
+    </div>
+
+    <div class="score-circle">
+        <div id="score-display">200/200</div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart">
+            <div class="chart-line"></div>
+            <div class="chart-line vertical"></div>
+            <div class="chart-point" style="left: 20%; bottom: 30%;"></div>
+            <div class="chart-point" style="left: 40%; bottom: 50%;"></div>
+            <div class="chart-point" style="left: 60%; bottom: 70%;"></div>
+            <div class="chart-point" style="left: 80%; bottom: 85%;"></div>
+        </div>
+    </div>
+
+    <div class="calculator">
+        <div class="calc-screen" id="calc-screen">A+</div>
+        <div class="calc-buttons">
+            <div class="calc-btn">7</div>
+            <div class="calc-btn">8</div>
+            <div class="calc-btn">9</div>
+            <div class="calc-btn">÷</div>
+            <div class="calc-btn">4</div>
+            <div class="calc-btn">5</div>
+            <div class="calc-btn">6</div>
+            <div class="calc-btn">×</div>
+            <div class="calc-btn">1</div>
+            <div class="calc-btn">2</div>
+            <div class="calc-btn">3</div>
+            <div class="calc-btn">-</div>
+            <div class="calc-btn">0</div>
+            <div class="calc-btn">.</div>
+            <div class="calc-btn">=</div>
+            <div class="calc-btn">+</div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('fireworks');
+        const ctx = canvas.getContext('2d');
+        
+        let fireworks = [];
+        let particles = [];
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
+        class Firework {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height;
+                this.targetY = Math.random() * canvas.height * 0.5;
+                this.speed = Math.random() * 3 + 2;
+                this.colors = ['#FFD700', '#FF6B35', '#FF1493', '#00BFFF', '#32CD32'];
+                this.color = this.colors[Math.floor(Math.random() * this.colors.length)];
+                this.exploded = false;
+            }
+            
+            update() {
+                if (!this.exploded) {
+                    this.y -= this.speed;
+                    if (this.y <= this.targetY) {
+                        this.explode();
+                        this.exploded = true;
+                    }
+                }
+            }
+            
+            draw() {
+                if (!this.exploded) {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 3, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.fill();
+                }
+            }
+            
+            explode() {
+                for (let i = 0; i < 15; i++) {
+                    particles.push(new Particle(this.x, this.y, this.color));
+                }
+            }
+        }
+        
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * 8;
+                this.vy = (Math.random() - 0.5) * 8;
+                this.color = color;
+                this.life = 1;
+                this.decay = Math.random() * 0.015 + 0.01;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.1;
+                this.life -= this.decay;
+            }
+            
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.life;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, 2, 0, Math.PI * 2);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+        
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (Math.random() < 0.02) {
+                fireworks.push(new Firework());
+            }
+            
+            fireworks.forEach((firework, index) => {
+                firework.update();
+                firework.draw();
+                if (firework.exploded) {
+                    fireworks.splice(index, 1);
+                }
+            });
+            
+            particles.forEach((particle, index) => {
+                particle.update();
+                particle.draw();
+                if (particle.life <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        function createConfetti() {
+            const celebration = document.getElementById('celebration');
+            
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + '%';
+                    confetti.style.animationDelay = Math.random() * 2 + 's';
+                    confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                    celebration.appendChild(confetti);
+                    
+                    setTimeout(() => {
+                        if (confetti.parentNode) {
+                            confetti.parentNode.removeChild(confetti);
+                        }
+                    }, 5000);
+                }, i * 100);
+            }
+            
+            setTimeout(() => {
+                for (let i = 0; i < 5; i++) {
+                    setTimeout(() => {
+                        const ring = document.createElement('div');
+                        ring.className = 'celebration-ring';
+                        ring.style.left = '50%';
+                        ring.style.top = '50%';
+                        ring.style.marginLeft = '-150px';
+                        ring.style.marginTop = '-150px';
+                        ring.style.animationDelay = i * 0.3 + 's';
+                        celebration.appendChild(ring);
+                        
+                        setTimeout(() => {
+                            if (ring.parentNode) {
+                                ring.parentNode.removeChild(ring);
+                            }
+                        }, 2000);
+                    }, i * 300);
+                }
+            }, 1000);
+        }
+        
+        createConfetti();
+        setInterval(createConfetti, 8000);
+        
+        const calcScreen = document.getElementById('calc-screen');
+        const scoreDisplay = document.getElementById('score-display');
+        const calcValues = ['A+', '100%', 'ممتاز', 'تفوق', '200'];
+        const scoreValues = ['200/200', '100%', 'A+', '⭐⭐⭐'];
+        
+        let calcIndex = 0;
+        let scoreIndex = 0;
+        
+        setInterval(() => {
+            calcIndex = (calcIndex + 1) % calcValues.length;
+            calcScreen.textContent = calcValues[calcIndex];
+        }, 2000);
+        
+        setInterval(() => {
+            scoreIndex = (scoreIndex + 1) % scoreValues.length;
+            scoreDisplay.textContent = scoreValues[scoreIndex];
+        }, 3000);
+        
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            star.style.animationDelay = `${index * 0.5}s`;
+        });
+    </script>
+</body>
+</html>
