@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع النصيحة 🌟</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, 
+                #667eea 0%,
+                #764ba2 25%,
+                #f093fb 50%,
+                #f5576c 75%,
+                #4facfe 100%
+            );
+            background-size: 400% 400%;
+            animation: gradientShift 8s ease infinite;
+            cursor: default;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            position: relative;
+            font-family: 'Tajawal', sans-serif;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
+        }
+
+        .year-background {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: clamp(15rem, 35vw, 40rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, 
+                rgba(255,255,255,0.1), 
+                rgba(255,255,255,0.3), 
+                rgba(255,255,255,0.1)
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            z-index: 1;
+            pointer-events: none;
+            text-shadow: 0 0 50px rgba(255,255,255,0.2);
+            user-select: none;
+            font-family: 'Arial Black', 'Arial', sans-serif;
+            animation: floatRotate 12s ease-in-out infinite;
+        }
+
+        @keyframes floatRotate {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-15deg) scale(1); }
+            50% { transform: translate(-50%, -50%) rotate(15deg) scale(1.05); }
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse 300px 100px at 20% 30%, rgba(255,255,255,0.4) 30%, transparent 70%),
+                radial-gradient(ellipse 250px 80px at 80% 20%, rgba(255,255,255,0.3) 30%, transparent 70%),
+                radial-gradient(ellipse 200px 60px at 50% 80%, rgba(255,255,255,0.25) 30%, transparent 70%);
+            z-index: 0;
+            animation: cloudsMove 15s linear infinite;
+        }
+
+        @keyframes cloudsMove {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
+
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .text-container {
+            position: relative;
+            z-index: 5;
+            text-align: center;
+            width: 90%;
+            max-width: 800px;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+            100% { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 40px rgba(255,215,0,0.6); }
+        }
+
+        h1 {
+            margin: 20px 0;
+            background: linear-gradient(135deg, #FFD700, #FF6B35, #FF1493, #9932CC);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 900;
+            font-size: clamp(2rem, 6vw, 4rem);
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            animation: rainbow 4s linear infinite;
+        }
+
+        @keyframes rainbow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        h2 {
+            margin: 15px 0;
+            color: #fff;
+            font-weight: 700;
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            text-align: center;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 15px 25px;
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+
+        .main-text-container {
+            position: absolute;
+            top: clamp(5%, 8vw, 10%);
+            right: clamp(5%, 8vw, 10%);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 4;
+            animation: slideInRight 2s ease-out;
+        }
+
+        @keyframes slideInRight {
+            0% { transform: translateX(100px); opacity: 0; }
+            100% { transform: translateX(0); opacity: 1; }
+        }
+
+        .main-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            color: #fff;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(15px);
+            padding: 20px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .main-text span {
+            font-size: clamp(1.5rem, 4vw, 3rem);
+            font-weight: bold;
+            background: linear-gradient(45deg, #FFD700, #FF6B35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .math-symbol {
+            position: absolute;
+            bottom: clamp(10%, 15vw, 20%);
+            left: clamp(10%, 15vw, 20%);
+            width: clamp(80px, 15vw, 150px);
+            height: clamp(80px, 15vw, 150px);
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667EEA, #764BA2, #f093fb);
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: mathBounce 3s ease-in-out infinite;
+        }
+
+        @keyframes mathBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-10px) rotate(5deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-5px) rotate(-5deg); }
+        }
+
+        .math-symbol-inner {
+            font-size: clamp(20px, 4vw, 45px);
+            font-weight: 900;
+            color: white;
+            text-shadow: 
+                2px 2px 4px rgba(0,0,0,0.5),
+                0 0 10px rgba(255,255,255,0.3);
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(2px 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .geometric-container {
+            position: absolute;
+            top: clamp(10%, 15vw, 20%);
+            left: clamp(2%, 5vw, 8%);
+            width: clamp(120px, 20vw, 180px);
+            height: clamp(80px, 12vw, 120px);
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.9);
+            border: 3px solid #4299E1;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(66, 153, 225, 0.4);
+            animation: geometricFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes geometricFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+
+        .coordinate-system {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .axis {
+            position: absolute;
+            background: #4A5568;
+            transform-origin: center;
+        }
+
+        .x-axis {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            left: 0;
+        }
+
+        .y-axis {
+            width: 2px;
+            height: 100%;
+            top: 0;
+            left: 50%;
+        }
+
+        .plot-point {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-left: -4px;
+            margin-top: -4px;
+            background: linear-gradient(45deg, #FF6B35, #f093fb);
+            box-shadow: 0 0 10px rgba(255, 107, 53, 0.6);
+            animation: pointPulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pointPulse {
+            0% { transform: scale(1); box-shadow: 0 0 5px rgba(255, 107, 53, 0.6); }
+            100% { transform: scale(1.3); box-shadow: 0 0 15px rgba(255, 107, 53, 0.9); }
+        }
+
+        .calculator {
+            position: absolute;
+            right: clamp(5%, 10vw, 15%);
+            bottom: clamp(10%, 15vw, 20%);
+            width: clamp(70px, 12vw, 100px);
+            height: clamp(100px, 18vw, 140px);
+            background: linear-gradient(135deg, #667EEA, #764BA2);
+            border: 3px solid #fff;
+            border-radius: 20px;
+            z-index: 4;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: calcShake 4s ease-in-out infinite;
+        }
+
+        @keyframes calcShake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(1deg); }
+            75% { transform: rotate(-1deg); }
+        }
+
+        .calculator-screen {
+            height: 25%;
+            background: rgba(255,255,255,0.95);
+            margin: 8px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2D3748;
+            font-family: 'Courier New', monospace;
+            font-size: clamp(10px, 2vw, 16px);
+            font-weight: bold;
+            overflow: hidden;
+            animation: screenGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes screenGlow {
+            0% { box-shadow: inset 0 0 10px rgba(66, 153, 225, 0.3); }
+            100% { box-shadow: inset 0 0 20px rgba(66, 153, 225, 0.6); }
+        }
+
+        .calculator-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3px;
+            padding: 8px;
+            flex: 1;
+        }
+
+        .calc-button {
+            background: rgba(255,255,255,0.9);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #2D3748;
+            font-size: clamp(8px, 1.5vw, 12px);
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .calc-button:hover {
+            background: rgba(255,255,255,1);
+            transform: scale(1.1);
+        }
+
+        .calc-button-op {
+            background: rgba(66, 153, 225, 0.9);
+            color: white;
+        }
+
+        .calc-button-eq {
+            background: rgba(56, 161, 105, 0.9);
+            color: white;
+        }
+
+        .fireworks-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .firework-burst {
+            position: absolute;
+            width: clamp(40px, 8vw, 80px);
+            height: clamp(40px, 8vw, 80px);
+            z-index: 1;
+            animation: complexBurst 3s infinite ease-out;
+        }
+
+        .firework-burst::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, 
+                rgba(255, 215, 0, 0.9) 0%,
+                rgba(255, 165, 0, 0.8) 20%,
+                rgba(255, 69, 0, 0.6) 40%,
+                rgba(255, 20, 147, 0.4) 60%,
+                transparent 100%
+            );
+            box-shadow: 
+                0 0 30px rgba(255, 215, 0, 0.8),
+                0 0 60px rgba(255, 165, 0, 0.6),
+                0 0 90px rgba(255, 69, 0, 0.4);
+        }
+
+        @keyframes complexBurst {
+            0% {
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            30% {
+                transform: scale(1) rotate(120deg);
+                opacity: 0.9;
+            }
+            70% {
+                transform: scale(1.5) rotate(240deg);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(2) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .triangle {
+            width: 0;
+            height: 0;
+            border-left: clamp(25px, 5vw, 50px) solid transparent;
+            border-right: clamp(25px, 5vw, 50px) solid transparent;
+            border-bottom: clamp(40px, 8vw, 80px) solid rgba(255, 193, 7, 0.8);
+            position: absolute;
+            top: 25%;
+            right: 20%;
+            animation: triangleRotate 8s infinite linear;
+        }
+
+        @keyframes triangleRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .circle {
+            width: clamp(40px, 8vw, 80px);
+            height: clamp(40px, 8vw, 80px);
+            border-radius: 50%;
+            border: 4px solid rgba(66, 153, 225, 0.9);
+            background: rgba(66, 153, 225, 0.3);
+            position: absolute;
+            bottom: 35%;
+            left: 25%;
+            animation: circlePulse 4s infinite ease-in-out;
+        }
+
+        @keyframes circlePulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 0 20px rgba(66, 153, 225, 0.5);
+            }
+            50% { 
+                transform: scale(1.3); 
+                box-shadow: 0 0 40px rgba(66, 153, 225, 0.8);
+            }
+        }
+
+        .pentagon {
+            width: clamp(35px, 7vw, 70px);
+            height: clamp(35px, 7vw, 70px);
+            position: absolute;
+            top: 12%;
+            left: 25%;
+            clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+            background: linear-gradient(45deg, rgba(236, 72, 153, 0.8), rgba(167, 243, 208, 0.8));
+            animation: pentagonRotate 6s infinite linear reverse;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.5);
+        }
+
+        @keyframes pentagonRotate {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .floating-stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 3;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            color: #FFD700;
+            font-size: clamp(15px, 3vw, 30px);
+            animation: starFloat 8s infinite ease-in-out;
+        }
+
+        @keyframes starFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+            50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .main-text-container {
+                top: 3%;
+                right: 3%;
+            }
+            
+            .math-symbol {
+                bottom: 8%;
+                left: 8%;
+            }
+            
+            .calculator {
+                right: 8%;
+                bottom: 8%;
+            }
+            
+            .geometric-container {
+                top: 8%;
+                left: 3%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .text-container {
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: clamp(1.8rem, 8vw, 3rem);
+            }
+            
+            h2 {
+                font-size: clamp(1rem, 5vw, 2rem);
+                padding: 10px 15px;
+            }
+            
+            .main-text-container {
+                position: relative;
+                top: auto;
+                right: auto;
+                margin: 20px 0;
+                justify-content: center;
+            }
+            
+            .main-text span {
+                font-size: clamp(1.2rem, 5vw, 2rem);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .triangle,
+            .circle,
+            .pentagon {
+                opacity: 0.7;
+            }
+            
+            .math-symbol,
+            .calculator,
+            .geometric-container {
+                opacity: 0.9;
+            }
+            
+            .firework-burst {
+                width: 50px;
+                height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="year-background">2008</div>
+
+    <canvas id="fireworks"></canvas>
+
+    <div class="floating-stars">
+        <div class="star" style="top: 10%; left: 15%; animation-delay: 0s;">⭐</div>
+        <div class="star" style="top: 20%; right: 10%; animation-delay: 1s;">✨</div>
+        <div class="star" style="bottom: 30%; left: 20%; animation-delay: 2s;">🌟</div>
+        <div class="star" style="bottom: 15%; right: 30%; animation-delay: 0.5s;">💫</div>
+        <div class="star" style="top: 40%; left: 80%; animation-delay: 1.5s;">⭐</div>
+    </div>
+
+    <div class="text-container">
+        <h1>🌟 لمست القمة بإبداعك وتميّزك 🌟</h1>
+        <h2>العلامة الكاملة لأداء كامل</h2>
+    </div>
+
+    <div class="main-text-container">
+        <div class="main-text">
+            <span>موقع النصيحة التعليمي</span>
+        </div>
+    </div>
+
+    <div class="math-symbol">
+        <div class="math-symbol-inner">
+            200/200
+        </div>
+    </div>
+
+    <div class="geometric-container">
+        <div class="coordinate-system" id="coordinate-system">
+            <div class="axis x-axis"></div>
+            <div class="axis y-axis"></div>
+        </div>
+    </div>
+
+    <div class="calculator">
+        <div class="calculator-screen" id="calculator-screen">A+</div>
+        <div class="calculator-buttons">
+            <div class="calc-button">7</div>
+            <div class="calc-button">8</div>
+            <div class="calc-button">9</div>
+            <div class="calc-button calc-button-op">÷</div>
+            <div class="calc-button">4</div>
+            <div class="calc-button">5</div>
+            <div class="calc-button">6</div>
+            <div class="calc-button calc-button-op">×</div>
+            <div class="calc-button">1</div>
+            <div class="calc-button">2</div>
+            <div class="calc-button">3</div>
+            <div class="calc-button calc-button-op">-</div>
+            <div class="calc-button">0</div>
+            <div class="calc-button">.</div>
+            <div class="calc-button calc-button-eq">=</div>
+            <div class="calc-button calc-button-op">+</div>
+        </div>
+    </div>
+
+    <div class="fireworks-container">
+        <div class="firework-burst" style="top: 15%; left: 20%; animation-delay: 0s;"></div>
+        <div class="firework-burst" style="top: 30%; right: 25%; animation-delay: 1s;"></div>
+        <div class="firework-burst" style="bottom: 25%; left: 30%; animation-delay: 2s;"></div>
+        <div class="firework-burst" style="bottom: 40%; right: 20%; animation-delay: 0.7s;"></div>
+        <div class="firework-burst" style="top: 50%; left: 10%; animation-delay: 1.5s;"></div>
+        <div class="firework-burst" style="top: 60%; right: 40%; animation-delay: 2.2s;"></div>
+    </div>
+    
+    <div class="triangle"></div>
+    <div class="circle"></div>
+    <div class="pentagon"></div>
+
+    <script>
+        const PI2 = Math.PI * 2;
+        const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min);
+        const timestamp = () => new Date().getTime();
+
+        class Fireworks {
+            constructor() {
+                this.resize();
+                this.fireworks = [];
+                this.counter = 0;
+            }
+
+            resize() {
+                this.width = canvas.width = window.innerWidth;
+                this.height = canvas.height = window.innerHeight;
+                let center = this.width / 2;
+                this.spawnA = center - center / 3;
+                this.spawnB = center + center / 3;
+                this.spawnC = this.height * 0.1;
+                this.spawnD = this.height * 0.5;
+            }
+
+            update(delta) {
+                ctx.globalCompositeOperation = "source-over";
+                ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
+                ctx.fillRect(0, 0, this.width, this.height);
+
+                ctx.globalCompositeOperation = "lighter";
+                for (let firework of this.fireworks) firework.update(delta);
+
+                this.counter += delta * 3;
+                if (this.counter >= 1) {
+                    this.fireworks.push(new Firework(
+                        random(this.spawnA, this.spawnB),
+                        this.height,
+                        random(0, this.width),
+                        random(this.spawnC, this.spawnD),
+                        random(0, 360),
+                        random(30, 80)
+                    ));
+                    this.counter = 0;
+                }
+
+                this.fireworks = this.fireworks.filter(f => !f.dead);
+            }
+        }
+
+        class Firework {
+            constructor(x, y, targetX, targetY, shade, offsprings) {
+                this.dead = false;
+                this.offsprings = offsprings;
+                this.x = x;
+                this.y = y;
+                this.targetX = targetX;
+                this.targetY = targetY;
+                this.shade = random(1, 6);
+                if (this.shade === 1) this.shade = 45;
+                else if (this.shade === 2) this.shade = 200;
+                else if (this.shade === 3) this.shade = 120;
+                else if (this.shade === 4) this.shade = 300;
+                else if (this.shade === 5) this.shade = 15;
+                else this.shade = 280;
+                this.history = [];
+            }
+
+            update(delta) {
+                if (this.dead) return;
+
+                let xDiff = this.targetX - this.x;
+                let yDiff = this.targetY - this.y;
+
+                if (Math.abs(xDiff) > 3 || Math.abs(yDiff) > 3) {
+                    this.x += xDiff * 2.5 * delta;
+                    this.y += yDiff * 2.5 * delta;
+
+                    this.history.push({
+                        x: this.x,
+                        y: this.y
+                    });
+
+                    if (this.history.length > 15) this.history.shift();
+                } else {
+                    if (this.offsprings && !this.madeChilds) {
+                        let babies = this.offsprings / 2;
+                        for (let i = 0; i < babies; i++) {
+                            let targetX = this.x + this.offsprings * Math.cos(PI2 * i / babies) * Math.random();
+                            let targetY = this.y + this.offsprings * Math.sin(PI2 * i / babies) * Math.random();
+
+                            fireworks.fireworks.push(new Firework(
+                                this.x, this.y, targetX, targetY, this.shade + random(-30, 30), 0
+                            ));
+                        }
+                    }
+                    this.madeChilds = true;
+                    this.history.shift();
+                }
+
+                if (this.history.length === 0) this.dead = true;
+                else if (this.offsprings) {
+                    for (let i = 0; i < this.history.length; i++) {
+                        let point = this.history[i];
+                        ctx.beginPath();
+                        ctx.fillStyle = `hsla(${this.shade}, 90%, ${i * 5 + 50}%, ${(this.history.length - i) / this.history.length})`;
+                        ctx.arc(point.x, point.y, 5, 0, PI2, false);
+                        ctx.fill();
+                        
+                        ctx.beginPath();
+                        ctx.fillStyle = `hsla(${this.shade}, 80%, 80%, ${((this.history.length - i) / this.history.length) * 0.4})`;
+                        ctx.arc(point.x, point.y, 10, 0, PI2, false);
+                        ctx.fill();
+                    }
+                } else {
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsla(${this.shade}, 90%, 70%, 0.9)`;
+                    ctx.arc(this.x, this.y, 6, 0, PI2, false);
+                    ctx.fill();
+                    
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsla(${this.shade}, 70%, 85%, 0.5)`;
+                    ctx.arc(this.x, this.y, 12, 0, PI2, false);
+                    ctx.fill();
+                }
+            }
+        }
+
+        let canvas = document.getElementById("fireworks");
+        let ctx = canvas.getContext("2d");
+
+        let then = timestamp();
+        let fireworks = new Fireworks();
+
+        window.onresize = () => fireworks.resize();
+
+        const coordinateSystem = document.getElementById("coordinate-system");
+        for (let i = 0; i < 10; i++) {
+            let point = document.createElement("div");
+            point.classList.add("plot-point");
+            
+            let x = 10 + i * 12;
+            let y = 50 - 30 * Math.sin(i * 0.6) * Math.random();
+            
+            point.style.left = `${x}%`;
+            point.style.top = `${y}%`;
+            point.style.animationDelay = `${i * 0.2}s`;
+            
+            coordinateSystem.appendChild(point);
+        }
+
+        const calculatorScreen = document.getElementById("calculator-screen");
+        const calculatorValues = ["200/200", "100%", "A+", "ممتاز", "نجاح", "تفوق", "⭐⭐⭐"];
+        
+        let calcIndex = 0;
+        setInterval(() => {
+            calcIndex = (calcIndex + 1) % calculatorValues.length;
+            calculatorScreen.textContent = calculatorValues[calcIndex];
+        }, 2500);
+
+        (function loop() {
+            requestAnimationFrame(loop);
+            let now = timestamp();
+            let delta = Math.min((now - then) / 1000, 0.016);
+            then = now;
+            fireworks.update(delta);
+        })();
+
+        setTimeout(() => {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    fireworks.fireworks.push(new Firework(
+                        random(fireworks.spawnA, fireworks.spawnB),
+                        fireworks.height,
+                        random(0, fireworks.width),
+                        random(fireworks.spawnC, fireworks.spawnD),
+                        random(0, 360),
+                        random(40, 80)
+                    ));
+                }, i * 500);
+            }
+        }, 1000);
+
+        let particleSystem = {
+            particles: [],
+            create: function() {
+                for(let i = 0; i < 50; i++) {
+                    this.particles.push({
+                        x: Math.random() * window.innerWidth,
+                        y: Math.random() * window.innerHeight,
+                        vx: (Math.random() - 0.5) * 0.5,
+                        vy: (Math.random() - 0.5) * 0.5,
+                        life: Math.random() * 100 + 50,
+                        maxLife: 150,
+                        hue: Math.random() * 360
+                    });
+                }
+            },
+            update: function() {
+                ctx.globalCompositeOperation = "lighter";
+                for(let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.life--;
+                    
+                    if(p.life <= 0 || p.x < 0 || p.x > window.innerWidth || p.y < 0 || p.y > window.innerHeight) {
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    
+                    let alpha = p.life / p.maxLife;
+                    ctx.beginPath();
+                    ctx.fillStyle = `hsla(${p.hue}, 80%, 60%, ${alpha * 0.3})`;
+                    ctx.arc(p.x, p.y, 2, 0, PI2);
+                    ctx.fill();
+                }
+                
+                if(this.particles.length < 30) {
+                    for(let i = 0; i < 5; i++) {
+                        this.particles.push({
+                            x: Math.random() * window.innerWidth,
+                            y: window.innerHeight + 10,
+                            vx: (Math.random() - 0.5) * 0.3,
+                            vy: -Math.random() * 0.8 - 0.2,
+                            life: Math.random() * 100 + 100,
+                            maxLife: 200,
+                            hue: Math.random() * 360
+                        });
+                    }
+                }
+            }
+        };
+        
+        particleSystem.create();
+        
+        let originalLoop = loop;
+        loop = function() {
+            requestAnimationFrame(loop);
+            let now = timestamp();
+            let delta = Math.min((now - then) / 1000, 0.016);
+            then = now;
+            fireworks.update(delta);
+            particleSystem.update();
+        };
+        loop();
+    </script>
+</body>
+</html>
