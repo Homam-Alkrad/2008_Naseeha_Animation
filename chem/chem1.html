@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chemistry Achievement Page</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        @keyframes textGlow {
+            0% { 
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                opacity: 0.8;
+            }
+            50% { 
+                text-shadow: 0 0 30px rgba(255, 215, 0, 1), 0 0 50px rgba(255, 165, 0, 0.8);
+                opacity: 1;
+            }
+            100% { 
+                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+                opacity: 0.8;
+            }
+        }
+        
+        @keyframes textBlur {
+            0% { filter: blur(0px); opacity: 1; }
+            25% { filter: blur(2px); opacity: 0.7; }
+            50% { filter: blur(0px); opacity: 1; }
+            75% { filter: blur(1px); opacity: 0.9; }
+            100% { filter: blur(0px); opacity: 1; }
+        }
+        
+        @keyframes colorShift {
+            0% { color: rgba(255, 215, 0, 1); }
+            25% { color: rgba(255, 165, 0, 1); }
+            50% { color: rgba(255, 105, 180, 1); }
+            75% { color: rgba(138, 43, 226, 1); }
+            100% { color: rgba(255, 215, 0, 1); }
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        
+        @keyframes scaleGlow {
+            0% { 
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+            50% { 
+                transform: scale(1.05);
+                text-shadow: 0 0 40px rgba(255, 215, 0, 1), 0 0 60px rgba(255, 165, 0, 0.8);
+            }
+            100% { 
+                transform: scale(1);
+                text-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            }
+        }
+        
+        @keyframes confetti {
+            0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        @keyframes fireworks {
+            0% { transform: scale(0); opacity: 1; }
+            50% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+        
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        @keyframes moleculeFloat {
+            0% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(120deg); }
+            66% { transform: translateY(10px) rotate(240deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+        
+        @keyframes bondPulse {
+            0% { opacity: 0.4; transform: scaleX(1); }
+            50% { opacity: 1; transform: scaleX(1.2); }
+            100% { opacity: 0.4; transform: scaleX(1); }
+        }
+        
+        @keyframes chemicalReaction {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            25% { transform: scale(1.3) rotate(90deg); opacity: 1; }
+            50% { transform: scale(0.8) rotate(180deg); opacity: 0.6; }
+            75% { transform: scale(1.1) rotate(270deg); opacity: 0.9; }
+            100% { transform: scale(1) rotate(360deg); opacity: 0.8; }
+        }
+        
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            animation: confetti 3s linear infinite;
+        }
+        
+        .firework {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            animation: fireworks 1s ease-out infinite;
+        }
+        
+        .main-title {
+            animation: textGlow 3s ease-in-out infinite, scaleGlow 4s ease-in-out infinite;
+        }
+        
+        .subtitle {
+            animation: colorShift 5s ease-in-out infinite, textBlur 6s ease-in-out infinite;
+        }
+        
+        .dynamic-statement {
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+        
+        @keyframes symbolGlow {
+            0% { opacity: 0.3; text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+            50% { opacity: 0.8; text-shadow: 0 0 15px rgba(0, 255, 255, 1); }
+            100% { opacity: 0.3; text-shadow: 0 0 5px rgba(0, 255, 255, 0.5); }
+        }
+        
+        .molecule {
+            animation: moleculeFloat 6s ease-in-out infinite;
+        }
+        
+        .bond {
+            animation: bondPulse 2s ease-in-out infinite;
+        }
+        
+        .reaction-effect {
+            animation: chemicalReaction 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        function ChemistryAchievementPage() {
+            const [particles, setParticles] = useState([]);
+            const [confetti, setConfetti] = useState([]);
+            const [fireworks, setFireworks] = useState([]);
+            const [currentStatement, setCurrentStatement] = useState(0);
+            const [isMobile, setIsMobile] = useState(false);
+            const [chemicalSymbols] = useState(['H₂O', 'CO₂', 'NaCl', 'C₆H₁₂O₆', 'NH₃', 'CH₄', 'H₂SO₄', 'CaCO₃', 'O₂', 'N₂', 'HCl', 'KOH']);
+            
+            const statements = [
+                "ما شاء الله، أبدعت وتألّقت",
+                "إجابتك ممتازة وتفتح النفس!",
+                "مبدع كالعادة، رفعت الرأس!",
+                "أداء رائع يدل على تعبك وجهدك.",
+                "تميّزت وأثبت قدراتك بجدارة.",
+                "ما شاء الله، حلّك متقن ومبدع.",
+                "تستحق كل التقدير، إجابتك نموذجية.",
+                "أبهرتني بترتيبك وفهمك العميق.",
+                "لامع ومميز بين أقرانك.",
+                "خطوة عظيمة نحو التفوق!"
+            ];
+            
+            useEffect(() => {
+                const checkMobile = () => {
+                    setIsMobile(window.innerWidth <= 768);
+                };
+                
+                checkMobile();
+                window.addEventListener('resize', checkMobile);
+                
+                return () => window.removeEventListener('resize', checkMobile);
+            }, []);
+            
+            useEffect(() => {
+                const generateConfetti = () => {
+                    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+                    const newConfetti = Array.from({ length: 50 }, (_, i) => ({
+                        id: Math.random(),
+                        left: Math.random() * 100,
+                        backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+                        animationDelay: Math.random() * 3 + 's',
+                        animationDuration: (Math.random() * 2 + 2) + 's'
+                    }));
+                    setConfetti(newConfetti);
+                };
+                
+                generateConfetti();
+                const confettiInterval = setInterval(generateConfetti, 6000);
+                
+                return () => clearInterval(confettiInterval);
+            }, []);
+            
+            useEffect(() => {
+                const generateFireworks = () => {
+                    const colors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3'];
+                    const newFireworks = Array.from({ length: 20 }, (_, i) => ({
+                        id: Math.random(),
+                        left: Math.random() * 100,
+                        top: Math.random() * 100,
+                        backgroundColor: colors[Math.floor(Math.random() * colors.length)],
+                        animationDelay: Math.random() * 1 + 's'
+                    }));
+                    setFireworks(newFireworks);
+                };
+                
+                generateFireworks();
+                const fireworksInterval = setInterval(generateFireworks, 3000);
+                
+                return () => clearInterval(fireworksInterval);
+            }, []);
+            
+            useEffect(() => {
+                const interval = setInterval(() => {
+                    setCurrentStatement(prev => (prev + 1) % statements.length);
+                }, 4000);
+                
+                return () => clearInterval(interval);
+            }, [statements.length]);
+            
+            useEffect(() => {
+                const particleCount = isMobile ? 15 : 50;
+                
+                const initialParticles = Array.from({ length: particleCount }, (_, i) => ({
+                    id: i,
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    dx: (Math.random() - 0.5) * (isMobile ? 1 : 2),
+                    dy: (Math.random() - 0.5) * (isMobile ? 1 : 2),
+                    symbol: chemicalSymbols[Math.floor(Math.random() * chemicalSymbols.length)],
+                    opacity: Math.random() * 0.7 + 0.3,
+                    size: Math.random() * (isMobile ? 10 : 15) + (isMobile ? 6 : 8)
+                }));
+                
+                setParticles(initialParticles);
+                
+                const interval = setInterval(() => {
+                    setParticles(prev => prev.map(particle => {
+                        let newX = particle.x + particle.dx;
+                        let newY = particle.y + particle.dy;
+                        let newDx = particle.dx;
+                        let newDy = particle.dy;
+                        
+                        if (newX <= 0 || newX >= window.innerWidth - 60) newDx = -particle.dx;
+                        if (newY <= 0 || newY >= window.innerHeight - 30) newDy = -particle.dy;
+                        
+                        return {
+                            ...particle,
+                            x: Math.max(0, Math.min(window.innerWidth - 60, newX)),
+                            y: Math.max(0, Math.min(window.innerHeight - 30, newY)),
+                            dx: newDx,
+                            dy: newDy
+                        };
+                    }));
+                }, 15);
+                
+                return () => clearInterval(interval);
+            }, [chemicalSymbols, isMobile]);
+
+            return (
+                <div className="relative w-screen h-screen overflow-hidden bg-gradient-to-br from-slate-900 via-green-900 to-blue-900">
+                    {confetti.map(piece => (
+                        <div
+                            key={piece.id}
+                            className="confetti-piece"
+                            style={{
+                                left: `${piece.left}%`,
+                                backgroundColor: piece.backgroundColor,
+                                animationDelay: piece.animationDelay,
+                                animationDuration: piece.animationDuration
+                            }}
+                        />
+                    ))}
+                    
+                    {fireworks.map(firework => (
+                        <div
+                            key={firework.id}
+                            className="firework"
+                            style={{
+                                left: `${firework.left}%`,
+                                top: `${firework.top}%`,
+                                backgroundColor: firework.backgroundColor,
+                                animationDelay: firework.animationDelay,
+                                boxShadow: `0 0 20px ${firework.backgroundColor}`
+                            }}
+                        />
+                    ))}
+                    
+                    <div className="absolute inset-0 opacity-20">
+                        <div 
+                            className="w-full h-full" 
+                            style={{
+                                backgroundImage: `
+                                    linear-gradient(rgba(0,255,255,0.2) 1px, transparent 1px),
+                                    linear-gradient(90deg, rgba(0,255,255,0.2) 1px, transparent 1px)
+                                `,
+                                backgroundSize: '50px 50px',
+                                animation: 'gridMove 20s linear infinite'
+                            }}
+                        />
+                    </div>
+
+                    {particles.map(particle => (
+                        <div
+                            key={particle.id}
+                            className="absolute text-cyan-300 font-bold pointer-events-none select-none molecule"
+                            style={{
+                                left: `${particle.x}px`,
+                                top: `${particle.y}px`,
+                                opacity: particle.opacity,
+                                fontSize: `${particle.size}px`,
+                                animation: 'symbolGlow 3s ease-in-out infinite, moleculeFloat 6s ease-in-out infinite'
+                            }}
+                        >
+                            {particle.symbol}
+                        </div>
+                    ))}
+
+                    <div className="absolute inset-0">
+                        {Array.from({ length: 3 }, (_, i) => (
+                            <div
+                                key={i}
+                                className="absolute inset-0 rounded-full opacity-20"
+                                style={{
+                                    background: `radial-gradient(circle at ${30 + i * 20}% ${40 + i * 15}%, rgba(0, 255, 255, 0.4) 0%, transparent 50%)`,
+                                    animation: `pulse ${4 + i}s ease-in-out infinite alternate`
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="absolute inset-0">
+                        {Array.from({ length: 6 }, (_, i) => (
+                            <div
+                                key={i}
+                                className="absolute bg-gradient-to-r from-transparent via-cyan-400 to-transparent h-1 w-full opacity-60 bond"
+                                style={{
+                                    top: `${(i + 1) * 15}%`,
+                                    animation: `scan ${3 + i * 0.5}s linear infinite, bondPulse 2s ease-in-out infinite`,
+                                    boxShadow: '0 0 30px rgba(0, 255, 255, 0.8)'
+                                }}
+                            />
+                        ))}
+                    </div>
+
+                    <div className="relative z-10 flex flex-col items-center justify-center h-full text-center px-4 sm:px-8">
+                        <div className="mb-4 sm:mb-8 p-4 sm:p-8 pt-4 sm:pt-6 pb-8 sm:pb-12 rounded-xl bg-black/40 backdrop-blur-sm border-2 border-cyan-500/50 relative shadow-2xl">
+                            <h1 className="main-title text-white text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-bold mb-4 sm:mb-8 leading-tight">
+                                ما شاء الله… أبدعت، أتقنت، وأنجزت بكل فخر.
+                            </h1>
+                            
+                            <h2 className="subtitle text-2xl sm:text-3xl md:text-4xl lg:text-6xl font-bold leading-tight">
+                                العلامة الكاملة
+                            </h2>
+                        </div>
+                        
+                        <div className="mb-6 sm:mb-8 p-4 sm:p-6 rounded-2xl bg-gradient-to-r from-green-500/20 via-blue-500/20 to-cyan-500/20 backdrop-blur-lg border-2 border-white/30 shadow-2xl">
+                            <p 
+                                key={currentStatement}
+                                className="dynamic-statement text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed text-cyan-400"
+                            >
+                                {statements[currentStatement]}
+                            </p>
+                        </div>
+
+                        <div className="absolute bottom-4 sm:bottom-8 left-2 sm:left-4 lg:left-8 z-20">
+                            <div className="bg-gradient-to-br from-emerald-500/40 to-cyan-500/40 backdrop-blur-lg border-2 sm:border-3 border-emerald-400/80 rounded-lg sm:rounded-xl lg:rounded-2xl p-2 sm:p-4 lg:p-6 shadow-2xl transform hover:scale-105 transition-transform">
+                                <div className="text-center">
+                                    <div className="text-xl sm:text-2xl md:text-3xl lg:text-5xl font-bold text-emerald-300 mb-1 sm:mb-2 animate-pulse">200/200</div>
+                                    <div className="text-xs sm:text-sm md:text-base lg:text-lg text-cyan-200 opacity-90 font-semibold">PROGRESS</div>
+                                    <div className="w-12 sm:w-16 md:w-20 lg:w-28 h-1.5 sm:h-2 lg:h-3 bg-gray-700/50 rounded-full mt-1 sm:mt-2 lg:mt-3 overflow-hidden border border-gray-600 mx-auto">
+                                        <div className="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-full animate-pulse shadow-lg"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="absolute top-2 sm:top-4 left-2 sm:left-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-l-4 border-t-4 border-cyan-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute top-2 sm:top-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-t-4 border-green-400 opacity-80 animate-pulse"></div>
+                    <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 w-8 sm:w-12 lg:w-16 h-8 sm:h-12 lg:h-16 border-r-4 border-b-4 border-blue-400 opacity-80 animate-pulse"></div>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<ChemistryAchievementPage />, document.getElementById('root'));
+    </script>
+</body>
+</html>
