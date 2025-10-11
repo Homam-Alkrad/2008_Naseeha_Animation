@@ -1,9 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Starfield</title>
+    <title>Meteor Stars Animation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&family=Tajawal:wght@500;700;900&family=Amiri:wght@700&family=Almarai:wght@700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,86 +18,10 @@
             height: 100%;
             width: 100%;
             overflow: hidden;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
-
-        .content {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            z-index: 10;
-            width: 90%;
-            max-width: 1200px;
-            padding: 20px;
-        }
-
-        .main-text {
             font-family: 'Cairo', sans-serif;
-            font-size: clamp(3rem, 8vw, 8rem);
-            font-weight: 900;
-            color: #ffffff;
-            text-shadow: 
-                0 0 10px rgba(255, 255, 255, 0.8),
-                0 0 20px rgba(255, 255, 255, 0.6),
-                0 0 30px rgba(100, 200, 255, 0.6),
-                0 0 40px rgba(100, 200, 255, 0.4),
-                0 0 70px rgba(100, 200, 255, 0.3),
-                0 0 100px rgba(100, 200, 255, 0.2);
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-            animation: glow 2s ease-in-out infinite alternate;
         }
 
-        .sub-text {
-            font-family: 'Cairo', sans-serif;
-            font-size: clamp(1.2rem, 3vw, 2.5rem);
-            font-weight: 700;
-            color: #e0e0e0;
-            text-shadow: 
-                0 0 5px rgba(255, 255, 255, 0.5),
-                0 0 10px rgba(255, 255, 255, 0.3),
-                0 0 15px rgba(200, 150, 255, 0.4),
-                0 0 20px rgba(200, 150, 255, 0.3);
-            line-height: 1.6;
-            margin-top: 10px;
-            animation: fadeIn 1.5s ease-in;
-        }
-
-        @keyframes glow {
-            from {
-                text-shadow: 
-                    0 0 10px rgba(255, 255, 255, 0.8),
-                    0 0 20px rgba(255, 255, 255, 0.6),
-                    0 0 30px rgba(100, 200, 255, 0.6),
-                    0 0 40px rgba(100, 200, 255, 0.4),
-                    0 0 70px rgba(100, 200, 255, 0.3),
-                    0 0 100px rgba(100, 200, 255, 0.2);
-            }
-            to {
-                text-shadow: 
-                    0 0 20px rgba(255, 255, 255, 1),
-                    0 0 30px rgba(255, 255, 255, 0.8),
-                    0 0 40px rgba(100, 200, 255, 0.8),
-                    0 0 50px rgba(100, 200, 255, 0.6),
-                    0 0 80px rgba(100, 200, 255, 0.5),
-                    0 0 120px rgba(100, 200, 255, 0.4);
-            }
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
+        /* Background Image */
         .bg {
             background: url(https://i.ibb.co/87GbbFP/2799006.jpg) no-repeat center center;
             background-size: cover;
@@ -110,275 +37,540 @@
             content: "";
             width: 100%;
             height: 100%;
-            background: #000;
+            background: linear-gradient(135deg, rgba(0, 0, 20, 0.5), rgba(10, 0, 30, 0.6));
             position: fixed;
             z-index: -1;
             top: 0;
             left: 0;
-            opacity: 0.3;
         }
 
-        @keyframes sf-fly-by-1 {
-            from {
-                transform: translateZ(-600px);
-                opacity: 0.5;
-            }
-            to {
-                transform: translateZ(0);
-                opacity: 0.5;
-            }
+        .container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
         }
 
-        @keyframes sf-fly-by-2 {
-            from {
-                transform: translateZ(-1200px);
-                opacity: 0.5;
-            }
-            to {
-                transform: translateZ(-600px);
-                opacity: 0.5;
-            }
-        }
-
-        @keyframes sf-fly-by-3 {
-            from {
-                transform: translateZ(-1800px);
-                opacity: 0.5;
-            }
-            to {
-                transform: translateZ(-1200px);
-                opacity: 0.5;
-            }
-        }
-
-        .star-field {
+        /* Stars Background */
+        .stars {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            perspective: 600px;
-            -webkit-perspective: 600px;
-            z-index: -1;
-            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
         }
 
-        .star-field .layer {
-            box-shadow: -411px -476px #cccccc, 777px -407px #d4d4d4, -387px -477px #fcfcfc, -91px -235px #d4d4d4, 491px -460px #f7f7f7, 892px -128px #f7f7f7, 758px -277px #ededed, 596px 378px #cccccc, 647px 423px whitesmoke, 183px 389px #c7c7c7,
-                524px -237px #f0f0f0, 679px -535px #e3e3e3, 158px 399px #ededed, 157px 249px #ededed, 81px -450px #ebebeb, 719px -360px #c2c2c2, -499px 473px #e8e8e8, -158px -349px #d4d4d4, 870px -134px #cfcfcf, 446px 404px #c2c2c2,
-                440px 490px #d4d4d4, 414px 507px #e6e6e6, -12px 246px #fcfcfc, -384px 369px #e3e3e3, 641px -413px #fcfcfc, 822px 516px #dbdbdb, 449px 132px #c2c2c2, 727px 146px #f7f7f7, -315px -488px #e6e6e6, 952px -70px #e3e3e3,
-                -869px -29px #dbdbdb, 502px 80px #dedede, 764px 342px #e0e0e0, -150px -380px #dbdbdb, 654px -426px #e3e3e3, -325px -263px #c2c2c2, 755px -447px #c7c7c7, 729px -177px #c2c2c2, -682px -391px #e6e6e6, 554px -176px #ededed,
-                -85px -428px #d9d9d9, 714px 55px #e8e8e8, 359px -285px #cfcfcf, -362px -508px #dedede, 468px -265px #fcfcfc, 74px -500px #c7c7c7, -514px 383px #dbdbdb, 730px -92px #cfcfcf, -112px 287px #c9c9c9, -853px 79px #d6d6d6,
-                828px 475px #d6d6d6, -681px 13px #fafafa, -176px 209px #f0f0f0, 758px 457px #fafafa, -383px -454px #ededed, 813px 179px #d1d1d1, 608px 98px whitesmoke, -860px -65px #c4c4c4, -572px 272px #f7f7f7, 459px 533px #fcfcfc,
-                624px -481px #e6e6e6, 790px 477px #dedede, 731px -403px #ededed, 70px -534px #cccccc, -23px 510px #cfcfcf, -652px -237px whitesmoke, -690px 367px #d1d1d1, 810px 536px #d1d1d1, 774px 293px #c9c9c9, -362px 97px #c2c2c2,
-                563px 47px #dedede, 313px 475px #e0e0e0, 839px -491px #e3e3e3, -217px 377px #d4d4d4, -581px 239px #c2c2c2, -857px 72px #cccccc, -23px 340px #dedede, -837px 246px white, 170px -502px #cfcfcf, 822px -443px #e0e0e0, 795px 497px #e0e0e0,
-                -814px -337px #cfcfcf, 206px -339px #f2f2f2, -779px 108px #e6e6e6, 808px 2px #d4d4d4, 665px 41px #d4d4d4, -564px 64px #cccccc, -380px 74px #cfcfcf, -369px -60px #f7f7f7, 47px -495px #e3e3e3, -383px 368px #f7f7f7, 419px 288px #d1d1d1,
-                -598px -50px #c2c2c2, -833px 187px #c4c4c4, 378px 325px whitesmoke, -703px 375px #d6d6d6, 392px 520px #d9d9d9, -492px -60px #c4c4c4, 759px 288px #ebebeb, 98px -412px #c4c4c4, -911px -277px #c9c9c9;
-            transform-style: preserve-3d;
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
+
+        /* Shooting Stars/Meteors */
+        .meteor {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #ffffff, #e8f4ff);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 20px rgba(255, 255, 255, 1),
+                0 0 30px rgba(135, 206, 250, 0.9),
+                0 0 45px rgba(135, 206, 250, 0.7),
+                0 0 60px rgba(100, 149, 237, 0.5);
+            animation: meteor 2.5s ease-out infinite;
+            z-index: 2;
+        }
+
+        @keyframes meteor {
+            0% {
+                transform: rotate(220deg) translateX(0) scale(1);
+                opacity: 1;
+            }
+            10% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 0.7;
+                transform: rotate(220deg) translateX(-600px) scale(0.8);
+            }
+            100% {
+                transform: rotate(220deg) translateX(-1000px) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        .meteor::before {
+            content: '';
             position: absolute;
             top: 50%;
-            left: 50%;
-            height: 4px;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 220px;
+            height: 5px;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.95),
+                rgba(135, 206, 250, 0.7) 30%,
+                rgba(100, 149, 237, 0.4) 60%,
+                transparent);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(135, 206, 250, 0.7);
+        }
+
+        .meteor::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            width: 150px;
+            height: 2.5px;
+            background: linear-gradient(90deg, 
+                rgba(255, 255, 255, 0.6),
+                rgba(255, 255, 255, 0.3) 40%,
+                transparent);
+            border-radius: 50%;
+        }
+
+        /* Floating particles */
+        .particle {
+            position: absolute;
             width: 4px;
-            border-radius: 2px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(100, 200, 255, 0.6), transparent);
+            border-radius: 50%;
+            animation: float 6s infinite ease-in-out;
+            z-index: 3;
         }
 
-        .star-field .layer:nth-child(1) {
-            animation: sf-fly-by-1 5s linear infinite;
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-20px) translateX(10px); opacity: 0.8; }
         }
 
-        .star-field .layer:nth-child(2) {
-            animation: sf-fly-by-2 5s linear infinite;
+        /* Content */
+        .content {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 90%;
+            max-width: 900px;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .star-field .layer:nth-child(3) {
-            animation: sf-fly-by-3 5s linear infinite;
+        .top-text {
+            font-family: 'Almarai', sans-serif;
+            font-size: clamp(1.5rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ffed4e, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+            margin-bottom: 20px;
+            animation: fadeInDown 1s ease-out, shimmer 3s infinite;
+            position: relative;
         }
 
-        /* Responsive adjustments for tablets */
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        .main-text {
+            font-family: 'Tajawal', sans-serif;
+            font-size: clamp(1.8rem, 4.5vw, 3.5rem);
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 2px 15px rgba(100, 200, 255, 0.4);
+            margin-bottom: 18px;
+            letter-spacing: 0.5px;
+            animation: glow 2.5s ease-in-out infinite alternate, fadeInUp 1s ease-out;
+        }
+
+        .sub-text {
+            font-family: 'Cairo', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.8rem);
+            font-weight: 700;
+            color: #e8e8e8;
+            text-shadow: 0 1px 8px rgba(200, 150, 255, 0.25);
+            line-height: 1.7;
+            margin-bottom: 18px;
+            animation: fadeIn 1.5s ease-in 0.5s both;
+        }
+
+        .footer-text {
+            font-family: 'Cairo', sans-serif;
+            font-size: clamp(0.9rem, 2vw, 1.4rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, #a0d8ff, #6eb6ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-top: 18px;
+            animation: fadeIn 2s ease-in 1s both;
+            position: relative;
+        }
+
+        .footer-text::before {
+            content: '✨';
+            position: absolute;
+            right: -30px;
+            animation: sparkle 2s infinite;
+        }
+
+        .footer-text::after {
+            content: '✨';
+            position: absolute;
+            left: -30px;
+            animation: sparkle 2s infinite 1s;
+        }
+
+        @keyframes sparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 2px 15px rgba(100, 200, 255, 0.3);
+            }
+            to {
+                text-shadow: 0 2px 20px rgba(100, 200, 255, 0.6),
+                             0 4px 30px rgba(100, 200, 255, 0.4);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Decorative elements */
+        .corner-accent {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .corner-accent.top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 8px 0 0 0;
+        }
+
+        .corner-accent.top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 8px 0 0;
+        }
+
+        .corner-accent.bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 8px;
+        }
+
+        .corner-accent.bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 8px 0;
+        }
+
+        /* Responsive Design */
         @media (max-width: 1024px) {
             .content {
-                width: 85%;
+                width: 88%;
+                padding: 25px 18px;
+            }
+
+            .meteor::before {
+                width: 180px;
+                height: 4px;
+            }
+            
+            .meteor::after {
+                width: 120px;
+                height: 2px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                width: 92%;
+                padding: 20px 15px;
+                border-radius: 15px;
+            }
+
+            .top-text {
+                margin-bottom: 15px;
             }
 
             .main-text {
                 margin-bottom: 15px;
+                letter-spacing: 0.3px;
             }
 
-            .star-field {
-                perspective: 500px;
-                -webkit-perspective: 500px;
+            .sub-text {
+                line-height: 1.6;
+                margin-bottom: 15px;
             }
 
-            @keyframes sf-fly-by-1 {
-                from {
-                    transform: translateZ(-500px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(0);
-                    opacity: 0.5;
-                }
+            .footer-text::before,
+            .footer-text::after {
+                right: -25px;
+                left: -25px;
             }
 
-            @keyframes sf-fly-by-2 {
-                from {
-                    transform: translateZ(-1000px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-500px);
-                    opacity: 0.5;
-                }
+            .meteor::before {
+                width: 140px;
+                height: 3.5px;
+            }
+            
+            .meteor::after {
+                width: 95px;
+                height: 1.8px;
             }
 
-            @keyframes sf-fly-by-3 {
-                from {
-                    transform: translateZ(-1500px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-1000px);
-                    opacity: 0.5;
-                }
+            .corner-accent {
+                width: 30px;
+                height: 30px;
             }
         }
 
-        /* Responsive adjustments for mobile devices */
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             .content {
                 width: 95%;
-                padding: 15px;
+                padding: 18px 12px;
+                border-radius: 12px;
+            }
+
+            .top-text {
+                margin-bottom: 12px;
             }
 
             .main-text {
                 margin-bottom: 12px;
-                letter-spacing: 1px;
             }
 
             .sub-text {
-                margin-top: 8px;
+                line-height: 1.5;
+                margin-bottom: 12px;
             }
 
-            .star-field {
-                perspective: 400px;
-                -webkit-perspective: 400px;
+            .footer-text {
+                margin-top: 12px;
             }
 
-            .star-field .layer {
+            .footer-text::before,
+            .footer-text::after {
+                font-size: 0.8rem;
+                right: -20px;
+                left: -20px;
+            }
+
+            .meteor::before {
+                width: 110px;
                 height: 3px;
+            }
+            
+            .meteor::after {
+                width: 75px;
+                height: 1.5px;
+            }
+
+            .corner-accent {
+                width: 25px;
+                height: 25px;
+                border-width: 1.5px;
+            }
+
+            .particle {
                 width: 3px;
-                border-radius: 1.5px;
-            }
-
-            @keyframes sf-fly-by-1 {
-                from {
-                    transform: translateZ(-400px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(0);
-                    opacity: 0.5;
-                }
-            }
-
-            @keyframes sf-fly-by-2 {
-                from {
-                    transform: translateZ(-800px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-400px);
-                    opacity: 0.5;
-                }
-            }
-
-            @keyframes sf-fly-by-3 {
-                from {
-                    transform: translateZ(-1200px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-800px);
-                    opacity: 0.5;
-                }
+                height: 3px;
             }
         }
 
-        /* Responsive adjustments for small mobile devices */
-        @media (max-width: 480px) {
+        @media (max-width: 360px) {
             .content {
-                width: 95%;
-                padding: 10px;
+                padding: 15px 10px;
             }
 
-            .main-text {
-                margin-bottom: 10px;
-                letter-spacing: 0.5px;
-            }
-
-            .sub-text {
-                margin-top: 5px;
-                line-height: 1.4;
-            }
-
-            .star-field {
-                perspective: 300px;
-                -webkit-perspective: 300px;
-            }
-
-            .star-field .layer {
-                height: 2px;
-                width: 2px;
-                border-radius: 1px;
-            }
-
-            @keyframes sf-fly-by-1 {
-                from {
-                    transform: translateZ(-300px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(0);
-                    opacity: 0.5;
-                }
-            }
-
-            @keyframes sf-fly-by-2 {
-                from {
-                    transform: translateZ(-600px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-300px);
-                    opacity: 0.5;
-                }
-            }
-
-            @keyframes sf-fly-by-3 {
-                from {
-                    transform: translateZ(-900px);
-                    opacity: 0.5;
-                }
-                to {
-                    transform: translateZ(-600px);
-                    opacity: 0.5;
-                }
+            .corner-accent {
+                width: 20px;
+                height: 20px;
             }
         }
     </style>
 </head>
 <body>
     <div class="bg"></div>
-    <div class="star-field">
-        <div class="layer"></div>
-        <div class="layer"></div>
-        <div class="layer"></div>
-    </div>
     
-    <div class="content">
-        <h1 class="main-text">أنجزت ببراعة</h1>
-        <p class="sub-text">العلامة الكاملة راحت لمين؟ لأهلها طبعًا</p>
+    <div class="container">
+        <div class="stars" id="stars"></div>
+        
+        <div class="content">
+            <div class="corner-accent top-left"></div>
+            <div class="corner-accent top-right"></div>
+            <div class="corner-accent bottom-left"></div>
+            <div class="corner-accent bottom-right"></div>
+            
+            <h1 class="top-text">أبدعت حقًا</h1>
+            <h2 class="main-text">التوجيهي صعب ؟ مو عليك! 😎</h2>
+            <p class="sub-text">علامة كاملة تُكتب بفخر!<br>مثال يُحتذى في الإصرار والذكاء.</p>
+            <p class="footer-text">موقع النصيحة التعليمي</p>
+        </div>
     </div>
+
+    <script>
+        // Create stars with different sizes
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 150;
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random size
+                const size = Math.random();
+                if (size < 0.6) {
+                    star.classList.add('small');
+                } else if (size < 0.9) {
+                    star.classList.add('medium');
+                } else {
+                    star.classList.add('large');
+                }
+                
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Create floating particles
+        function createParticles() {
+            const numberOfParticles = 15;
+            
+            for (let i = 0; i < numberOfParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                document.body.appendChild(particle);
+            }
+        }
+
+        // Create meteors with variation
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.className = 'meteor';
+            
+            // Random side - 50% chance for left or right
+            const fromLeft = Math.random() > 0.5;
+            
+            if (fromLeft) {
+                // From left side (top-left to bottom-right)
+                meteor.style.top = (Math.random() * 30) + '%';
+                meteor.style.left = (Math.random() * 30) + '%';
+                meteor.style.transform = 'rotate(-40deg)';
+            } else {
+                // From right side (top-right to bottom-left)
+                meteor.style.top = (Math.random() * 30) + '%';
+                meteor.style.left = (Math.random() * 30 + 70) + '%';
+            }
+            
+            // Random animation duration for variety
+            const duration = (Math.random() * 1.5 + 2) + 's';
+            meteor.style.animationDuration = duration;
+            
+            // Random delay for more natural appearance
+            meteor.style.animationDelay = (Math.random() * 0.5) + 's';
+            
+            document.body.appendChild(meteor);
+
+            setTimeout(() => {
+                meteor.remove();
+            }, 4000);
+        }
+
+        // Initialize
+        createStars();
+        createParticles();
+
+        // Create meteors periodically
+        setInterval(createMeteor, 1200);
+
+        // Create initial meteors
+        for (let i = 0; i < 5; i++) {
+            setTimeout(createMeteor, i * 600);
+        }
+    </script>
 </body>
 </html>

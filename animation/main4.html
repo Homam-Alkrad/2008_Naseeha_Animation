@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تهانينا - Celebration</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background-color: #000;
+      background-image: radial-gradient(circle at top left, #000, #3c4858);
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    .parallax {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .confetti-piece {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd700;
+      top: -10%;
+      animation: confetti-fall linear infinite;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        top: -10%;
+        transform: translateX(0) rotateZ(0deg);
+      }
+      100% {
+        top: 110%;
+        transform: translateX(100px) rotateZ(360deg);
+      }
+    }
+
+    #party-info {
+      position: fixed;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      padding: 40px 30px;
+      min-height: 200px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      width: 90%;
+      max-width: 500px;
+      z-index: 2;
+      border-radius: 20px;
+      animation: fadeInScale 1s ease-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      #party-info {
+        width: 85%;
+        padding: 30px 20px;
+        max-width: 400px;
+      }
+
+      #party-info h1 {
+        font-size: 1.6em;
+        margin-bottom: 12px;
+      }
+
+      #party-info p {
+        font-size: 1.05em;
+        line-height: 1.6;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #party-info {
+        width: 88%;
+        padding: 25px 18px;
+        max-width: 340px;
+      }
+
+      #party-info h1 {
+        font-size: 1.2em;
+        margin-bottom: 10px;
+      }
+
+      #party-info p {
+        font-size: 0.85em;
+        line-height: 1.5;
+        margin-bottom: 8px;
+      }
+
+      #party-info .emoji {
+        font-size: 1.4em;
+        margin: 8px 0;
+      }
+
+      #party-info .signature {
+        font-size: 0.75em;
+        margin-top: 15px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      #party-info {
+        width: 90%;
+        padding: 20px 15px;
+      }
+
+      #party-info h1 {
+        font-size: 1.1em;
+      }
+
+      #party-info p {
+        font-size: 0.8em;
+      }
+
+      #party-info .emoji {
+        font-size: 1.2em;
+      }
+
+      #party-info .signature {
+        font-size: 0.7em;
+      }
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    #party-info h1 {
+      color: #ff6b6b;
+      font-size: 2em;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+
+    #party-info p {
+      color: #555;
+      font-size: 1.2em;
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    #party-info .emoji {
+      font-size: 2em;
+      margin: 10px 0;
+    }
+
+    #party-info .signature {
+      color: #888;
+      font-size: 0.9em;
+      margin-top: 20px;
+      font-style: italic;
+    }
+
+    .sparkle {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      animation: sparkle 2s ease-in-out infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% {
+        opacity: 0;
+        transform: scale(0);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="parallax" id="confetti"></div>
+    
+    <div id="party-info">
+      <h1>🎉 أنجزت ببراعة🎉</h1>
+      <p><strong>التوجيهي صعب؟ مو عليك! 🚀</strong></p>
+      <p>علامة كاملة تُكتب بفخر! أنت فخرنا كلنا<br>👏👏👏👏</p>
+      <p class="signature">موقع النصيحة التعليمي</p>
+    </div>
+  </div>
+
+  <script>
+    const confettiContainer = document.getElementById('confetti');
+    const colors = ['#ff6b6b', '#ffd700', '#4ecdc4', '#45b7d1', '#f7dc6f', '#bb8fce', '#85c1e2', '#f8b500'];
+    const confettiCount = 150;
+
+    function createConfetti() {
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        
+        const size = Math.random() * 10 + 5;
+        confetti.style.width = size + 'px';
+        confetti.style.height = size + 'px';
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confetti.style.animationDelay = Math.random() * 5 + 's';
+        confetti.style.opacity = Math.random() * 0.7 + 0.3;
+        
+        const shapes = ['square', 'circle', 'rectangle'];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        
+        if (shape === 'circle') {
+          confetti.style.borderRadius = '50%';
+        } else if (shape === 'rectangle') {
+          confetti.style.width = size * 1.5 + 'px';
+        }
+        
+        confettiContainer.appendChild(confetti);
+      }
+    }
+
+    function createSparkles() {
+      const partyInfo = document.getElementById('party-info');
+      for (let i = 0; i < 20; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = Math.random() * 100 + '%';
+        sparkle.style.top = Math.random() * 100 + '%';
+        sparkle.style.animationDelay = Math.random() * 2 + 's';
+        partyInfo.appendChild(sparkle);
+      }
+    }
+
+    createConfetti();
+    createSparkles();
+  </script>
+</body>
+</html>

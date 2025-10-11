@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Party Confetti</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
+      overflow: hidden;
+      font-family: 'Cairo', Arial, sans-serif;
+    }
+
+    #confetti {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+
+    #party-info {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      z-index: 10;
+      width: 90%;
+      max-width: 900px;
+      padding: 30px 20px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      color: #333;
+      direction: rtl;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .corner-accent {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .corner-accent.top-left {
+      top: 10px;
+      left: 10px;
+      border-right: none;
+      border-bottom: none;
+      border-radius: 20px 0 0 0;
+    }
+
+    .corner-accent.top-right {
+      top: 10px;
+      right: 10px;
+      border-left: none;
+      border-bottom: none;
+      border-radius: 0 20px 0 0;
+    }
+
+    .corner-accent.bottom-left {
+      bottom: 10px;
+      left: 10px;
+      border-right: none;
+      border-top: none;
+      border-radius: 0 0 0 20px;
+    }
+
+    .corner-accent.bottom-right {
+      bottom: 10px;
+      right: 10px;
+      border-left: none;
+      border-top: none;
+      border-radius: 0 0 20px 0;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    #party-info h2 {
+      margin-top: 10px;
+      font-size: 2.2em;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.4;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    #party-info p {
+      line-height: 1.8;
+      font-size: 1.2em;
+      margin: 15px 0;
+      color: rgba(255, 255, 255, 0.95);
+      font-weight: 700;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+
+    #website-name {
+      font-weight: 900;
+      font-size: 1.5em;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 3px solid rgba(255, 255, 255, 0.3);
+      background: linear-gradient(90deg, #f7c32e 0%, #066ac9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s ease-in-out infinite;
+      text-shadow: none;
+    }
+
+    @keyframes shimmer {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti"></canvas>
+  <div id="party-info">
+    <div class="corner-accent top-left"></div>
+    <div class="corner-accent top-right"></div>
+    <div class="corner-accent bottom-left"></div>
+    <div class="corner-accent bottom-right"></div>
+    
+    <h2>المستحيل؟ كلمة ما بتعرفها ✨</h2>
+    <p>ذكاؤك واجتهادك يجعل كل تحدٍّ فرصة جديدة 💡</p>
+    <p>ثابر دائماً ولا تخف من مواجهة الصعاب</p>
+    <div id="website-name">موقع النصيحة التعليمي</div>
+  </div>
+
+  <script>
+    function Confetti() {
+      // canvas init
+      var canvas = document.getElementById("confetti");
+      var ctx = canvas.getContext("2d");
+
+      // canvas dimensions
+      var W = window.innerWidth;
+      var H = window.innerHeight;
+      canvas.width = W;
+      canvas.height = H;
+
+      // particles
+      var mp = 250; // max particles
+      var types = ['circle', 'circle', 'triangle', 'triangle', 'line', 'circle'];
+      var colors = [
+        [238, 96, 169],
+        [68, 213, 217],
+        [245, 187, 152],
+        [144, 148, 188],
+        [235, 234, 77],
+        [255, 107, 107],
+        [78, 205, 196],
+        [255, 195, 113]
+      ];
+      var angles = [
+        [4, 0, 4, 4],
+        [2, 2, 0, 4],
+        [0, 4, 2, 2],
+        [0, 4, 4, 4]
+      ];
+      var particles = [];
+      
+      for (var i = 0; i < mp; i++) {
+        particles.push({
+          x: Math.random() * W, // x-coordinate
+          y: Math.random() * H, // y-coordinate
+          r: Math.random() * 4 + 1, // radius
+          d: Math.random() * mp, // density
+          l: Math.floor(Math.random() * 65 - 30), // line angle
+          a: angles[Math.floor(Math.random() * angles.length)], // triangle rotation
+          c: colors[Math.floor(Math.random() * colors.length)], // color
+          t: types[Math.floor(Math.random() * types.length)] // shape
+        });
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+
+        for (var i = 0; i < mp; i++) {
+          var p = particles[i];
+          var op = (p.r <= 3) ? 0.4 : 0.8;
+
+          if (p.t == 'circle') {
+            ctx.fillStyle = "rgba(" + p.c + ", " + op + ")";
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, true);
+            ctx.fill();
+          } else if (p.t == 'triangle') {
+            ctx.fillStyle = "rgba(" + p.c + ", " + op + ")";
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + (p.r * p.a[0]), p.y + (p.r * p.a[1]));
+            ctx.lineTo(p.x + (p.r * p.a[2]), p.y + (p.r * p.a[3]));
+            ctx.closePath();
+            ctx.fill();
+          } else if (p.t == 'line') {
+            ctx.strokeStyle = "rgba(" + p.c + "," + op + ")";
+            ctx.beginPath();
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(p.x + p.l, p.y + (p.r * 5));
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+        }
+        update();
+      }
+
+      function update() {
+        for (var i = 0; i < mp; i++) {
+          var p = particles[i];
+          p.y += Math.cos(p.d) + 1 + p.r / 2;
+          p.x += Math.sin(0) * 2;
+
+          if (p.x > W + 5 || p.x < -5 || p.y > H) {
+            particles[i] = {
+              x: Math.random() * W,
+              y: -10,
+              r: p.r,
+              d: p.d,
+              l: p.l,
+              a: p.a,
+              c: p.c,
+              t: p.t
+            };
+          }
+        }
+      }
+
+      // animation loop
+      setInterval(draw, 23);
+    }
+
+    // Initialize confetti when page loads
+    window.onload = function() {
+      Confetti();
+    };
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+      Confetti();
+    });
+  </script>
+</body>
+</html>
