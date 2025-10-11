@@ -1,30 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Party Confetti</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@700;900&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     html, body {
       width: 100%;
       height: 100%;
-      margin: 0;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
       overflow: hidden;
-      font-family: 'Cairo', Arial, sans-serif;
+      font-family: 'Tajawal', Arial, sans-serif;
+    }
+
+    #fireworks-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
     }
 
     #confetti {
       position: absolute;
       top: 0;
       left: 0;
-      z-index: 1;
+      z-index: 2;
     }
 
     #party-info {
-      position: absolute;
+      position: fixed;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -83,8 +97,8 @@
     }
 
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
+      0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+      50% { transform: translate(-50%, -50%) translateY(-10px); }
     }
 
     #party-info h2 {
@@ -117,48 +131,266 @@
       margin-top: 25px;
       padding-top: 20px;
       border-top: 3px solid rgba(255, 255, 255, 0.3);
-      background: linear-gradient(90deg, #f7c32e 0%, #066ac9 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: #f7c32e;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
       animation: shimmer 3s ease-in-out infinite;
-      text-shadow: none;
     }
 
     @keyframes shimmer {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.8; }
     }
+
+    @media (max-width: 768px) {
+      #party-info {
+        width: 85%;
+        padding: 25px 18px;
+      }
+
+      #party-info h2 {
+        font-size: 1.6em;
+      }
+
+      #party-info p {
+        font-size: 1em;
+      }
+
+      #website-name {
+        font-size: 1.2em;
+      }
+    }
+
+    @media (max-width: 480px) {
+      #party-info h2 {
+        font-size: 1.3em;
+      }
+
+      #party-info p {
+        font-size: 0.9em;
+      }
+
+      #website-name {
+        font-size: 1em;
+      }
+    }
   </style>
 </head>
 <body>
+  <canvas id="fireworks-canvas"></canvas>
   <canvas id="confetti"></canvas>
+  
   <div id="party-info">
     <div class="corner-accent top-left"></div>
     <div class="corner-accent top-right"></div>
     <div class="corner-accent bottom-left"></div>
     <div class="corner-accent bottom-right"></div>
     
-    <h2>المستحيل؟ كلمة ما بتعرفها ✨</h2>
+    <h2><span style="color: #ff3838;">المستحيل؟</span> كلمة ما بتعرفها 🔥💪✨</h2>
     <p>ذكاؤك واجتهادك يجعل كل تحدٍّ فرصة جديدة 💡</p>
     <p>ثابر دائماً ولا تخف من مواجهة الصعاب</p>
     <div id="website-name">موقع النصيحة التعليمي</div>
   </div>
 
   <script>
+    const PI2 = Math.PI * 2;
+    const random = (min, max) => Math.random() * (max - min) + min;
+    const randomInt = (min, max) => (Math.random() * (max - min + 1) + min) | 0;
+    const timestamp = () => new Date().getTime();
+
+    class Birthday {
+      constructor() {
+        this.canvas = document.getElementById("fireworks-canvas");
+        this.ctx = this.canvas.getContext("2d");
+        this.resize();
+        this.fireworks = [];
+        this.particles = [];
+        this.counter = 0;
+      }
+
+      resize() {
+        this.width = this.canvas.width = window.innerWidth;
+        this.height = this.canvas.height = window.innerHeight;
+        let center = this.width / 2;
+        this.spawnA = center - center / 3;
+        this.spawnB = center + center / 3;
+        this.spawnC = this.height * 0.15;
+        this.spawnD = this.height * 0.45;
+      }
+
+      update(delta) {
+        this.ctx.globalCompositeOperation = "source-over";
+        this.ctx.fillStyle = 'rgba(102, 126, 234, 0.05)';
+        this.ctx.fillRect(0, 0, this.width, this.height);
+
+        this.ctx.globalCompositeOperation = "lighter";
+        
+        for (let firework of this.fireworks) firework.update(delta, this.ctx);
+        for (let particle of this.particles) particle.update(delta, this.ctx);
+
+        this.counter += delta * 2;
+        if (this.counter >= 1) {
+          this.fireworks.push(new Firework(
+            random(this.spawnA, this.spawnB),
+            this.height,
+            random(this.width * 0.2, this.width * 0.8),
+            random(this.spawnC, this.spawnD),
+            randomInt(330, 50),
+            this
+          ));
+          this.counter = 0;
+        }
+
+        this.fireworks = this.fireworks.filter(f => !f.dead);
+        this.particles = this.particles.filter(p => !p.dead);
+      }
+    }
+
+    class Firework {
+      constructor(x, y, targetX, targetY, shade, birthday) {
+        this.dead = false;
+        this.x = x;
+        this.y = y;
+        this.targetX = targetX;
+        this.targetY = targetY;
+        this.shade = shade;
+        this.birthday = birthday;
+        this.history = [];
+        this.velocity = 0;
+        this.acceleration = 1.05;
+        this.exploded = false;
+      }
+
+      update(delta, ctx) {
+        if (this.dead) return;
+
+        let xDiff = this.targetX - this.x;
+        let yDiff = this.targetY - this.y;
+        let distance = Math.sqrt(xDiff * xDiff + yDiff * yDiff);
+
+        if (distance > 5) {
+          this.velocity += this.acceleration * delta * 60;
+          let angle = Math.atan2(yDiff, xDiff);
+          this.x += Math.cos(angle) * this.velocity * delta * 60;
+          this.y += Math.sin(angle) * this.velocity * delta * 60;
+
+          this.history.push({ x: this.x, y: this.y });
+          if (this.history.length > 8) this.history.shift();
+        } else {
+          if (!this.exploded) {
+            this.explode();
+            this.exploded = true;
+          }
+          this.history.shift();
+        }
+
+        if (this.history.length === 0) this.dead = true;
+        
+        for (let i = 0; i < this.history.length; i++) {
+          let point = this.history[i];
+          let alpha = i / this.history.length;
+          
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${this.shade}, 100%, 70%, ${alpha})`;
+          ctx.arc(point.x, point.y, 3, 0, PI2, false);
+          ctx.fill();
+        }
+      }
+
+      explode() {
+        let particleCount = randomInt(60, 100);
+        let explosionTypes = ['burst', 'ring', 'willow'];
+        let type = explosionTypes[randomInt(0, explosionTypes.length - 1)];
+        
+        for (let i = 0; i < particleCount; i++) {
+          let angle, speed, life;
+          
+          if (type === 'burst') {
+            angle = random(0, PI2);
+            speed = random(2, 7);
+            life = random(0.8, 1.5);
+          } else if (type === 'ring') {
+            angle = (PI2 / particleCount) * i;
+            speed = random(4, 6);
+            life = random(1, 1.8);
+          } else if (type === 'willow') {
+            angle = random(0, PI2);
+            speed = random(1, 5);
+            life = random(1.5, 2.5);
+          }
+          
+          this.birthday.particles.push(new Particle(
+            this.x,
+            this.y,
+            angle,
+            speed,
+            this.shade,
+            life,
+            type
+          ));
+        }
+      }
+    }
+
+    class Particle {
+      constructor(x, y, angle, speed, shade, life, type) {
+        this.x = x;
+        this.y = y;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.shade = shade + randomInt(-15, 15);
+        this.life = life;
+        this.maxLife = life;
+        this.dead = false;
+        this.gravity = type === 'willow' ? 0.15 : 0.08;
+        this.friction = type === 'ring' ? 0.98 : 0.96;
+        this.alpha = 1;
+        this.size = random(2, 4);
+      }
+
+      update(delta, ctx) {
+        if (this.dead) return;
+
+        this.life -= delta;
+        if (this.life <= 0) {
+          this.dead = true;
+          return;
+        }
+
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        this.vy += this.gravity;
+
+        this.x += this.vx;
+        this.y += this.vy;
+
+        this.alpha = this.life / this.maxLife;
+
+        let brightness = 60 + (this.alpha * 30);
+        
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${this.shade}, 100%, ${brightness}%, ${this.alpha})`;
+        ctx.arc(this.x, this.y, this.size * this.alpha, 0, PI2, false);
+        ctx.fill();
+
+        if (this.alpha > 0.5) {
+          ctx.beginPath();
+          ctx.fillStyle = `hsla(${this.shade}, 100%, ${brightness + 20}%, ${this.alpha * 0.3})`;
+          ctx.arc(this.x, this.y, this.size * this.alpha * 2, 0, PI2, false);
+          ctx.fill();
+        }
+      }
+    }
+
     function Confetti() {
-      // canvas init
       var canvas = document.getElementById("confetti");
       var ctx = canvas.getContext("2d");
 
-      // canvas dimensions
       var W = window.innerWidth;
       var H = window.innerHeight;
       canvas.width = W;
       canvas.height = H;
 
-      // particles
-      var mp = 250; // max particles
+      var mp = 200;
       var types = ['circle', 'circle', 'triangle', 'triangle', 'line', 'circle'];
       var colors = [
         [238, 96, 169],
@@ -180,14 +412,14 @@
       
       for (var i = 0; i < mp; i++) {
         particles.push({
-          x: Math.random() * W, // x-coordinate
-          y: Math.random() * H, // y-coordinate
-          r: Math.random() * 4 + 1, // radius
-          d: Math.random() * mp, // density
-          l: Math.floor(Math.random() * 65 - 30), // line angle
-          a: angles[Math.floor(Math.random() * angles.length)], // triangle rotation
-          c: colors[Math.floor(Math.random() * colors.length)], // color
-          t: types[Math.floor(Math.random() * types.length)] // shape
+          x: Math.random() * W,
+          y: Math.random() * H,
+          r: Math.random() * 4 + 1,
+          d: Math.random() * mp,
+          l: Math.floor(Math.random() * 65 - 30),
+          a: angles[Math.floor(Math.random() * angles.length)],
+          c: colors[Math.floor(Math.random() * colors.length)],
+          t: types[Math.floor(Math.random() * types.length)]
         });
       }
 
@@ -245,19 +477,28 @@
         }
       }
 
-      // animation loop
       setInterval(draw, 23);
     }
 
-    // Initialize confetti when page loads
-    window.onload = function() {
+    let then = timestamp();
+    let birthday = new Birthday();
+
+    window.onresize = () => {
+      birthday.resize();
       Confetti();
     };
 
-    // Handle window resize
-    window.addEventListener('resize', function() {
+    (function loop() {
+      requestAnimationFrame(loop);
+      let now = timestamp();
+      let delta = Math.min((now - then) / 1000, 0.1);
+      then = now;
+      birthday.update(delta);
+    })();
+
+    window.onload = function() {
       Confetti();
-    });
+    };
   </script>
 </body>
 </html>
