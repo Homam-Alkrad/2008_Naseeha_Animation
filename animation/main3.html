@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>أبدعت حقًا - موقع النصيحة التعليمي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .gradient-bg {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(
+                circle at center,
+                rgba(255, 240, 220, 1),
+                rgba(255, 230, 200, 0.9),
+                rgba(240, 220, 190, 0.8)
+            );
+            z-index: 0;
+        }
+
+        .formula-overlay {
+            position: absolute;
+            font-size: 24px;
+            color: rgba(139, 69, 19, 0.12);
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .formula-1 { top: 8%; left: 5%; font-size: 28px; }
+        .formula-2 { top: 12%; right: 8%; font-size: 32px; }
+        .formula-3 { top: 25%; left: 10%; font-size: 26px; }
+        .formula-4 { top: 35%; right: 12%; font-size: 30px; }
+        .formula-5 { top: 48%; left: 8%; font-size: 28px; }
+        .formula-6 { top: 58%; right: 10%; font-size: 32px; }
+        .formula-7 { top: 70%; left: 15%; font-size: 26px; }
+        .formula-8 { top: 80%; right: 15%; font-size: 30px; }
+        .formula-9 { top: 18%; right: 20%; font-size: 28px; }
+        .formula-10 { top: 65%; left: 5%; font-size: 32px; }
+        .formula-11 { top: 40%; left: 85%; font-size: 26px; }
+        .formula-12 { top: 88%; left: 40%; font-size: 28px; }
+        .formula-13 { top: 5%; left: 45%; font-size: 30px; }
+        .formula-14 { top: 92%; right: 35%; font-size: 26px; }
+        .formula-15 { top: 28%; left: 3%; font-size: 28px; }
+
+        canvas {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 20;
+            text-align: center;
+            padding: 2rem 1rem;
+            max-width: 90rem;
+            width: 100%;
+        }
+
+        h1 {
+            font-size: 8rem;
+            font-weight: 900;
+            color: #c41e3a;
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin-bottom: 2.5rem;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            animation: float 3s ease-in-out infinite, glow 2s ease-in-out infinite;
+        }
+
+        .subtitle1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #8b4513;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.3;
+            margin-bottom: 2rem;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            animation: slideIn 0.8s ease-out forwards;
+            animation-delay: 0.3s;
+            opacity: 0;
+        }
+
+        .subtitle2 {
+            font-size: 3rem;
+            font-weight: 600;
+            color: #d2691e;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.4;
+            margin-bottom: 2.5rem;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            animation: slideIn 0.8s ease-out forwards;
+            animation-delay: 0.6s;
+            opacity: 0;
+        }
+
+        .footer {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #8b4513;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            line-height: 1.6;
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            animation: slideIn 0.8s ease-out forwards;
+            animation-delay: 0.9s;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,100,255,0.3); }
+            50% { text-shadow: 0 0 30px rgba(255,255,255,0.8), 0 0 60px rgba(255,100,255,0.5); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            h1 { font-size: 6.5rem; }
+            .subtitle1 { font-size: 3.5rem; }
+            .subtitle2 { font-size: 2.5rem; }
+            .footer { font-size: 2rem; }
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 4.5rem; }
+            .subtitle1 { font-size: 2.75rem; }
+            .subtitle2 { font-size: 2rem; }
+            .footer { font-size: 1.5rem; }
+            .formula-overlay { font-size: 18px !important; }
+        }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 3rem; }
+            .subtitle1 { font-size: 2rem; }
+            .subtitle2 { font-size: 1.5rem; }
+            .footer { font-size: 1.25rem; }
+            .content-wrapper { padding: 1rem; }
+            .formula-overlay { font-size: 14px !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="gradient-bg">
+        <div class="formula-overlay formula-1">E = mc²</div>
+        <div class="formula-overlay formula-2">H₂O</div>
+        <div class="formula-overlay formula-3">π = 3.14159...</div>
+        <div class="formula-overlay formula-4">CO₂</div>
+        <div class="formula-overlay formula-5">a² + b² = c²</div>
+        <div class="formula-overlay formula-6">NaCl</div>
+        <div class="formula-overlay formula-7">∫ f(x)dx</div>
+        <div class="formula-overlay formula-8">C₆H₁₂O₆</div>
+        <div class="formula-overlay formula-9">√(x² + y²)</div>
+        <div class="formula-overlay formula-10">CH₄</div>
+        <div class="formula-overlay formula-11">Fe₂O₃</div>
+        <div class="formula-overlay formula-12">∑ xⁿ</div>
+        <div class="formula-overlay formula-13">CaCO₃</div>
+        <div class="formula-overlay formula-14">lim x→∞</div>
+        <div class="formula-overlay formula-15">NH₃</div>
+    </div>
+
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="content-wrapper">
+        <h1>أبدعت حقًا</h1>
+        <p class="subtitle1">العلامة الكاملة راحت لمين؟ لأهلها طبعًا 😉</p>
+        <p class="subtitle2">إنجاز رائع يُظهر أنك لا تعرف المستحيل، فخورون بك جدًا.</p>
+        <p class="footer">موقع النصيحة التعليمي</p>
+    </div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.159.0/build/three.module.js"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        const worldRadius = 5;
+        const confettiSize = 0.07;
+        const confettiNum = 3000;
+        const rotateRange_x = Math.PI / 30;
+        const rotateRange_y = Math.PI / 50;
+        const speed_y = 0.01;
+        const speed_x = 0.003;
+        const speed_z = 0.005;
+
+        let camera, scene, renderer;
+        let confettiMesh;
+        const dummy = new THREE.Object3D();
+        const matrix = new THREE.Matrix4();
+        const color = new THREE.Color();
+        let autoRotateAngle = 0;
+
+        function getRandomColor() {
+            const saturation = 100;
+            const lightness = 50;
+            const colors = [
+                `hsl(0, ${saturation}%, ${lightness}%)`,
+                `hsl(30, ${saturation}%, ${lightness}%)`,
+                `hsl(60, ${saturation}%, ${lightness}%)`,
+                `hsl(90, ${saturation}%, ${lightness}%)`,
+                `hsl(120, ${saturation}%, ${lightness}%)`,
+                `hsl(150, ${saturation}%, ${lightness}%)`,
+                `hsl(180, ${saturation}%, ${lightness}%)`,
+                `hsl(210, ${saturation}%, ${lightness}%)`,
+                `hsl(240, ${saturation}%, ${lightness}%)`,
+                `hsl(270, ${saturation}%, ${lightness}%)`,
+                `hsl(300, ${saturation}%, ${lightness}%)`,
+                `hsl(330, ${saturation}%, ${lightness}%)`
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function init() {
+            const canvas = document.getElementById('confetti-canvas');
+            
+            camera = new THREE.PerspectiveCamera(
+                35,
+                window.innerWidth / window.innerHeight,
+                1,
+                worldRadius * 3
+            );
+            camera.position.z = worldRadius * Math.sqrt(2);
+
+            scene = new THREE.Scene();
+
+            const confettiGeometry = new THREE.PlaneGeometry(
+                confettiSize / 2,
+                confettiSize
+            );
+            const confettiMaterial = new THREE.MeshBasicMaterial({
+                color: 0xffffff,
+                side: THREE.DoubleSide
+            });
+            confettiMesh = new THREE.InstancedMesh(
+                confettiGeometry,
+                confettiMaterial,
+                confettiNum
+            );
+
+            for (let i = 0; i < confettiNum; i++) {
+                matrix.makeRotationFromEuler(
+                    new THREE.Euler(
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI,
+                        Math.random() * Math.PI
+                    )
+                );
+                matrix.setPosition(
+                    THREE.MathUtils.randFloat(-worldRadius, worldRadius),
+                    THREE.MathUtils.randFloat(-worldRadius, worldRadius),
+                    THREE.MathUtils.randFloat(-worldRadius, worldRadius)
+                );
+                confettiMesh.setMatrixAt(i, matrix);
+                confettiMesh.setColorAt(i, color.set(getRandomColor()));
+            }
+            scene.add(confettiMesh);
+
+            renderer = new THREE.WebGLRenderer({
+                canvas: canvas,
+                antialias: true,
+                alpha: true
+            });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            window.addEventListener('resize', onWindowResize);
+            animate();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            autoRotateAngle += 0.002;
+            camera.position.x = Math.sin(autoRotateAngle) * worldRadius * Math.sqrt(2);
+            camera.position.z = Math.cos(autoRotateAngle) * worldRadius * Math.sqrt(2);
+            camera.lookAt(0, 0, 0);
+
+            if (confettiMesh) {
+                for (let i = 0; i < confettiNum; i++) {
+                    confettiMesh.getMatrixAt(i, matrix);
+                    matrix.decompose(dummy.position, dummy.quaternion, dummy.scale);
+
+                    dummy.position.y -= speed_y * ((i % 4) + 1);
+
+                    if (dummy.position.y < -worldRadius) {
+                        dummy.position.y = worldRadius;
+                        dummy.position.x = THREE.MathUtils.randFloat(-worldRadius, worldRadius);
+                        dummy.position.z = THREE.MathUtils.randFloat(-worldRadius, worldRadius);
+                    } else {
+                        if (i % 4 === 1) {
+                            dummy.position.x += speed_x;
+                            dummy.position.z += speed_z;
+                        } else if (i % 4 === 2) {
+                            dummy.position.x += speed_x;
+                            dummy.position.z -= speed_z;
+                        } else if (i % 4 === 3) {
+                            dummy.position.x -= speed_x;
+                            dummy.position.z += speed_z;
+                        } else {
+                            dummy.position.x -= speed_x;
+                            dummy.position.z -= speed_z;
+                        }
+                    }
+
+                    dummy.rotation.x += THREE.MathUtils.randFloat(0, rotateRange_x);
+                    dummy.rotation.z += THREE.MathUtils.randFloat(0, rotateRange_y);
+
+                    dummy.updateMatrix();
+                    confettiMesh.setMatrixAt(i, dummy.matrix);
+                }
+                confettiMesh.instanceMatrix.needsUpdate = true;
+            }
+            renderer.render(scene, camera);
+        }
+
+        init();
+    </script>
+</body>
+</html>
