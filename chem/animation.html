@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تأثير الضغط على الاتزان الكيميائي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-dark: #0a0a0f;
+            --accent-cyan: #00f5ff;
+            --accent-orange: #ff6b35;
+            --text-primary: #ffffff;
+            --text-secondary: #8a8a9a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--bg-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background-image: 
+                radial-gradient(ellipse at 20% 20%, rgba(0, 245, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(255, 107, 53, 0.08) 0%, transparent 50%);
+        }
+        .container { max-width: 1000px; width: 100%; }
+        .title { text-align: center; margin-bottom: 30px; }
+        .title h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .equation-display {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            padding: 20px;
+            background: var(--glass);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            margin-bottom: 30px;
+        }
+        .compound { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+        .compound-name { font-weight: 700; }
+        .compound-color { font-size: 0.85rem; color: var(--text-secondary); }
+        .n2o4-text { color: #ff8c42; }
+        .no2-text { color: #4dabf7; }
+        .arrows { font-size: 1.8rem; color: var(--accent-cyan); animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+        .simulation-area { display: flex; gap: 30px; align-items: stretch; }
+        .piston-container { flex: 1; display: flex; flex-direction: column; align-items: center; }
+        .cylinder-wrapper { position: relative; width: 400px; height: 500px; }
+        .cylinder {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 440px;
+            background: linear-gradient(90deg, 
+                rgba(40, 40, 50, 0.95) 0%,
+                rgba(70, 70, 80, 0.9) 5%,
+                rgba(90, 90, 100, 0.7) 50%,
+                rgba(70, 70, 80, 0.9) 95%,
+                rgba(40, 40, 50, 0.95) 100%
+            );
+            border: 4px solid #555;
+            border-top: none;
+            border-radius: 0 0 25px 25px;
+            overflow: hidden;
+            box-shadow: inset 0 -60px 120px rgba(0,0,0,0.5), 0 15px 50px rgba(0,0,0,0.5);
+        }
+        .gas-chamber {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 380px;
+            background: rgba(255, 255, 255, 0.02);
+            transition: height 0.8s cubic-bezier(0.4, 0, 0.2, 1), background-color 1s ease;
+            overflow: hidden;
+        }
+        .piston {
+            position: absolute;
+            top: 0;
+            left: -4px;
+            right: -4px;
+            height: 60px;
+            background: linear-gradient(180deg, #777 0%, #999 20%, #888 50%, #666 80%, #555 100%);
+            border: 4px solid #555;
+            border-radius: 8px 8px 0 0;
+            transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+        }
+        .piston::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 60px;
+            background: linear-gradient(90deg, #666, #888, #666);
+            border-radius: 8px 8px 0 0;
+        }
+        .piston-handle {
+            position: absolute;
+            top: -95px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 30px;
+            background: linear-gradient(180deg, #999, #777);
+            border-radius: 10px;
+            border: 3px solid #666;
+        }
+        
+        .molecule { 
+            position: absolute; 
+            pointer-events: none; 
+            transition: left 0.6s ease-out, bottom 0.6s ease-out;
+            z-index: 10;
+        }
+        .n2o4-molecule { width: 95px; height: 52px; }
+        .no2-molecule { width: 48px; height: 42px; }
+        .n2o4-molecule svg, .no2-molecule svg { width: 100%; height: 100%; }
+        
+        .reaction-effect {
+            position: absolute;
+            pointer-events: none;
+            z-index: 100;
+            opacity: 0;
+        }
+        
+        .merge-flash {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,140,66,0.9) 0%, rgba(255,140,66,0.4) 40%, transparent 70%);
+            animation: mergeFlash 0.8s ease-out forwards;
+        }
+        
+        .split-flash {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(77,171,247,0.9) 0%, rgba(77,171,247,0.4) 40%, transparent 70%);
+            animation: splitFlash 0.8s ease-out forwards;
+        }
+        
+        @keyframes mergeFlash {
+            0% { transform: scale(0); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0.8; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        
+        @keyframes splitFlash {
+            0% { transform: scale(0.5); opacity: 1; }
+            30% { transform: scale(1.8); opacity: 0.9; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+        
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99;
+        }
+        
+        .particle-orange {
+            background: radial-gradient(circle, #ffaa00, #ff6600);
+            box-shadow: 0 0 8px #ff8800;
+        }
+        
+        .particle-blue {
+            background: radial-gradient(circle, #00aaff, #0066ff);
+            box-shadow: 0 0 8px #0088ff;
+        }
+        
+        @keyframes particleExplode {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--px), var(--py)) scale(0); opacity: 0; }
+        }
+        
+        .controls-panel {
+            flex: 0 0 280px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+        .control-section { margin-bottom: 25px; }
+        .control-label { display: block; color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 12px; }
+        .pressure-display {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .pressure-value {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--accent-cyan);
+            line-height: 1;
+            transition: color 0.3s ease;
+        }
+        .pressure-unit { font-size: 1rem; color: var(--text-secondary); }
+        .btn-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-increase {
+            background: linear-gradient(135deg, #1a3a4a, #0d2530);
+            color: var(--accent-cyan);
+            border: 2px solid var(--accent-cyan);
+        }
+        .btn-increase:hover {
+            background: linear-gradient(135deg, var(--accent-cyan), #00a5aa);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 245, 255, 0.3);
+        }
+        .btn-decrease {
+            background: linear-gradient(135deg, #3a2a1a, #302010);
+            color: var(--accent-orange);
+            border: 2px solid var(--accent-orange);
+        }
+        .btn-decrease:hover {
+            background: linear-gradient(135deg, var(--accent-orange), #cc5020);
+            color: var(--bg-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);
+        }
+        .btn-reset {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+        }
+        .btn-reset:hover { background: rgba(255, 255, 255, 0.2); color: var(--text-primary); }
+        .btn-icon { font-size: 1.5rem; }
+        .status-panel { background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 15px; }
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .status-row:last-child { border-bottom: none; }
+        .status-label { color: var(--text-secondary); font-size: 0.85rem; }
+        .status-value { font-weight: 700; font-size: 0.95rem; }
+        .shift-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 600;
+            transition: all 0.5s ease;
+        }
+        .shift-left { background: rgba(255, 140, 66, 0.2); color: #ff8c42; border: 1px solid #ff8c42; }
+        .shift-right { background: rgba(77, 171, 247, 0.2); color: #4dabf7; border: 1px solid #4dabf7; }
+        .shift-none { background: rgba(255, 255, 255, 0.05); color: var(--text-secondary); border: 1px solid var(--glass-border); }
+        .shift-arrow { font-size: 1.2rem; }
+        .color-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        .color-bar {
+            flex: 1;
+            height: 30px;
+            border-radius: 8px;
+            transition: background-color 1s ease;
+            border: 2px solid var(--glass-border);
+        }
+        .color-text { font-size: 0.85rem; color: var(--text-secondary); min-width: 80px; text-align: center; }
+        .reaction-label {
+            text-align: center;
+            padding: 12px;
+            margin-top: 15px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        .reaction-label.show { opacity: 1; transform: scale(1); }
+        .reaction-label.association { background: rgba(255, 140, 66, 0.2); color: #ff8c42; border: 2px solid #ff8c42; }
+        .reaction-label.dissociation { background: rgba(77, 171, 247, 0.2); color: #4dabf7; border: 2px solid #4dabf7; }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)); }
+            25% { transform: translate(calc(var(--tx) + 6px), calc(var(--ty) - 4px)) rotate(calc(var(--rot) + 2deg)); }
+            50% { transform: translate(calc(var(--tx) - 4px), calc(var(--ty) + 6px)) rotate(calc(var(--rot) - 1deg)); }
+            75% { transform: translate(calc(var(--tx) + 4px), calc(var(--ty) + 3px)) rotate(calc(var(--rot) + 1deg)); }
+        }
+        
+        @keyframes moveToMerge {
+            0% { transform: translate(0, 0) scale(1); opacity: 1; filter: brightness(1); }
+            40% { transform: translate(var(--merge-x), var(--merge-y)) scale(1.1); opacity: 1; filter: brightness(1.5) drop-shadow(0 0 15px rgba(255, 140, 66, 0.8)); }
+            70% { transform: translate(var(--merge-x), var(--merge-y)) scale(1.2); opacity: 0.8; filter: brightness(2) drop-shadow(0 0 25px rgba(255, 140, 66, 1)); }
+            100% { transform: translate(var(--merge-x), var(--merge-y)) scale(0); opacity: 0; }
+        }
+        
+        @keyframes shakeThenSplit {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 1; filter: brightness(1); }
+            10% { transform: translate(-4px, 0) scale(1) rotate(-2deg); }
+            20% { transform: translate(4px, 0) scale(1) rotate(2deg); }
+            30% { transform: translate(-6px, 0) scale(1.05) rotate(-3deg); filter: brightness(1.3); }
+            40% { transform: translate(6px, 0) scale(1.1) rotate(3deg); filter: brightness(1.5); }
+            50% { transform: translate(0, 0) scale(1.15) rotate(0deg); filter: brightness(2) drop-shadow(0 0 20px rgba(77, 171, 247, 1)); }
+            70% { transform: scale(1.3); opacity: 0.7; filter: brightness(2.5) drop-shadow(0 0 30px rgba(77, 171, 247, 1)); }
+            100% { transform: scale(0.2); opacity: 0; }
+        }
+        
+        @keyframes spawnN2O4 {
+            0% { opacity: 0; transform: scale(0) rotate(-10deg); filter: brightness(3) drop-shadow(0 0 40px rgba(255, 140, 66, 1)); }
+            40% { transform: scale(1.3) rotate(5deg); filter: brightness(2) drop-shadow(0 0 30px rgba(255, 140, 66, 0.8)); }
+            70% { transform: scale(0.9) rotate(-2deg); filter: brightness(1.3); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(1); }
+        }
+        
+        @keyframes spawnNO2 {
+            0% { opacity: 0; transform: scale(0) translateX(var(--spawn-dir)); filter: brightness(3) drop-shadow(0 0 30px rgba(77, 171, 247, 1)); }
+            30% { opacity: 1; transform: scale(1.2) translateX(calc(var(--spawn-dir) * 0.3)); filter: brightness(2) drop-shadow(0 0 25px rgba(77, 171, 247, 0.8)); }
+            60% { transform: scale(0.9) translateX(0); filter: brightness(1.2); }
+            100% { opacity: 1; transform: scale(1) translateX(0); filter: brightness(1); }
+        }
+        
+        .molecule-merge { animation: moveToMerge 0.7s ease-in-out forwards; }
+        .molecule-split { animation: shakeThenSplit 0.8s ease-in-out forwards; }
+        .molecule-spawn-n2o4 { animation: spawnN2O4 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .molecule-spawn-no2 { animation: spawnNO2 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 20px;
+            padding: 15px 25px;
+            background: var(--glass);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--text-secondary); }
+        .legend-atom { width: 22px; height: 22px; border-radius: 50%; }
+        .legend-nitrogen {
+            background: radial-gradient(circle at 30% 30%, #5c9aff, #2563eb, #1e40af);
+            box-shadow: 0 0 10px rgba(37, 99, 235, 0.7);
+        }
+        .legend-oxygen {
+            background: radial-gradient(circle at 30% 30%, #ff7b7b, #ef4444, #b91c1c);
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.7);
+        }
+        
+        @media (max-width: 900px) {
+            .simulation-area { flex-direction: column; align-items: center; }
+            .controls-panel { flex: none; width: 100%; max-width: 380px; }
+            .cylinder-wrapper { width: 340px; height: 440px; }
+            .title h1 { font-size: 1.6rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="title">
+            <h1>تأثير الضغط على الاتزان الكيميائي</h1>
+        </div>
+        <div class="equation-display">
+            <div class="compound">
+                <span class="compound-name n2o4-text">N₂O₄</span>
+                <span class="compound-color">عديم اللون</span>
+            </div>
+            <span class="arrows">⇌</span>
+            <div class="compound">
+                <span class="compound-name no2-text">2NO₂</span>
+                <span class="compound-color">بني محمر</span>
+            </div>
+        </div>
+        <div class="simulation-area">
+            <div class="piston-container">
+                <div class="cylinder-wrapper">
+                    <div class="piston" id="piston">
+                        <div class="piston-handle"></div>
+                    </div>
+                    <div class="cylinder">
+                        <div class="gas-chamber" id="gasChamber"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="controls-panel">
+                <div class="control-section">
+                    <div class="pressure-display">
+                        <div class="pressure-value" id="pressureValue">1.0</div>
+                        <div class="pressure-unit">ضغط جوي (atm)</div>
+                    </div>
+                </div>
+                <div class="control-section">
+                    <span class="control-label">التحكم بالضغط</span>
+                    <div class="btn-group">
+                        <button class="btn btn-increase" id="btnIncrease">
+                            <span class="btn-icon">▲</span>
+                            <span>زيادة</span>
+                        </button>
+                        <button class="btn btn-decrease" id="btnDecrease">
+                            <span class="btn-icon">▼</span>
+                            <span>تقليل</span>
+                        </button>
+                    </div>
+                    <button class="btn btn-reset" id="btnReset">إعادة ضبط</button>
+                </div>
+                <div class="control-section">
+                    <span class="control-label">حالة النظام</span>
+                    <div class="status-panel">
+                        <div class="status-row">
+                            <span class="status-label">N₂O₄</span>
+                            <span class="status-value n2o4-text" id="n2o4Count">4 جزيئات</span>
+                        </div>
+                        <div class="status-row">
+                            <span class="status-label">NO₂</span>
+                            <span class="status-value no2-text" id="no2Count">6 جزيئات</span>
+                        </div>
+                    </div>
+                    <div class="shift-indicator shift-none" id="shiftIndicator">
+                        <span class="shift-arrow">⚖</span>
+                        <span id="shiftText">في حالة اتزان</span>
+                    </div>
+                    <div class="reaction-label" id="reactionLabel"></div>
+                    <div class="color-indicator">
+                        <span class="color-text">لون الغاز</span>
+                        <div class="color-bar" id="colorBar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-atom legend-nitrogen"></div>
+                <span>نيتروجين (N)</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-atom legend-oxygen"></div>
+                <span>أكسجين (O)</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class EquilibriumSimulator {
+            constructor() {
+                this.pressure = 1.0;
+                this.minPressure = 0.3;
+                this.maxPressure = 3.0;
+                this.n2o4Count = 4;
+                this.no2Count = 6;
+                this.baseN2O4 = 4;
+                this.baseNO2 = 6;
+                this.molecules = [];
+                this.isAnimating = false;
+                this.gasChamber = document.getElementById('gasChamber');
+                this.piston = document.getElementById('piston');
+                this.pressureValue = document.getElementById('pressureValue');
+                this.n2o4CountEl = document.getElementById('n2o4Count');
+                this.no2CountEl = document.getElementById('no2Count');
+                this.shiftIndicator = document.getElementById('shiftIndicator');
+                this.shiftText = document.getElementById('shiftText');
+                this.colorBar = document.getElementById('colorBar');
+                this.reactionLabel = document.getElementById('reactionLabel');
+                this.init();
+            }
+
+            init() {
+                document.getElementById('btnIncrease').addEventListener('click', () => this.changePressure(0.3));
+                document.getElementById('btnDecrease').addEventListener('click', () => this.changePressure(-0.3));
+                document.getElementById('btnReset').addEventListener('click', () => this.reset());
+                this.createMolecules();
+                this.updateDisplay();
+                this.animateMolecules();
+            }
+
+            // N2O4 - smaller version
+            createN2O4SVG() {
+                const id = Math.random().toString(36).substr(2, 9);
+                return `<svg viewBox="0 0 105 55" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="nGrad_${id}" cx="30%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#ffdd70"/>
+                            <stop offset="40%" stop-color="#ff9f43"/>
+                            <stop offset="70%" stop-color="#ee5a24"/>
+                            <stop offset="100%" stop-color="#b33939"/>
+                        </radialGradient>
+                        <radialGradient id="oGrad_${id}" cx="30%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#74b9ff"/>
+                            <stop offset="40%" stop-color="#0984e3"/>
+                            <stop offset="70%" stop-color="#0652DD"/>
+                            <stop offset="100%" stop-color="#1B1464"/>
+                        </radialGradient>
+                        <linearGradient id="bondGrad_${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#bdc3c7"/>
+                            <stop offset="50%" stop-color="#ecf0f1"/>
+                            <stop offset="100%" stop-color="#bdc3c7"/>
+                        </linearGradient>
+                        <filter id="shadow_${id}">
+                            <feDropShadow dx="1" dy="2" stdDeviation="1.5" flood-opacity="0.3"/>
+                        </filter>
+                    </defs>
+                    <line x1="32" y1="22" x2="14" y2="9" stroke="url(#bondGrad_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="32" y1="33" x2="14" y2="46" stroke="url(#bondGrad_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="73" y1="22" x2="91" y2="9" stroke="url(#bondGrad_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="73" y1="33" x2="91" y2="46" stroke="url(#bondGrad_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="42" y1="27.5" x2="63" y2="27.5" stroke="url(#bondGrad_${id})" stroke-width="5" stroke-linecap="round"/>
+                    <circle cx="11" cy="7" r="9" fill="url(#oGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="8" cy="4" rx="3" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="11" y="10" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="11" cy="48" r="9" fill="url(#oGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="8" cy="45" rx="3" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="11" y="51" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="94" cy="7" r="9" fill="url(#oGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="91" cy="4" rx="3" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="94" y="10" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="94" cy="48" r="9" fill="url(#oGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="91" cy="45" rx="3" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="94" y="51" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="35" cy="27.5" r="12" fill="url(#nGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="31" cy="23" rx="4" ry="3" fill="rgba(255,255,255,0.6)"/>
+                    <text x="35" y="31" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">N</text>
+                    <circle cx="70" cy="27.5" r="12" fill="url(#nGrad_${id})" filter="url(#shadow_${id})"/>
+                    <ellipse cx="66" cy="23" rx="4" ry="3" fill="rgba(255,255,255,0.6)"/>
+                    <text x="70" y="31" text-anchor="middle" fill="white" font-size="10" font-weight="bold" font-family="Arial">N</text>
+                </svg>`;
+            }
+
+            // NO2 with N and O labels
+            createNO2SVG() {
+                const id = Math.random().toString(36).substr(2, 9);
+                return `<svg viewBox="0 0 52 45" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <radialGradient id="nGrad2_${id}" cx="30%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#74b9ff"/>
+                            <stop offset="40%" stop-color="#0984e3"/>
+                            <stop offset="70%" stop-color="#0652DD"/>
+                            <stop offset="100%" stop-color="#1B1464"/>
+                        </radialGradient>
+                        <radialGradient id="oGrad2_${id}" cx="30%" cy="25%" r="65%">
+                            <stop offset="0%" stop-color="#ff7675"/>
+                            <stop offset="40%" stop-color="#d63031"/>
+                            <stop offset="70%" stop-color="#c0392b"/>
+                            <stop offset="100%" stop-color="#6D214F"/>
+                        </radialGradient>
+                        <linearGradient id="bondGrad2_${id}" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#bdc3c7"/>
+                            <stop offset="50%" stop-color="#ecf0f1"/>
+                            <stop offset="100%" stop-color="#bdc3c7"/>
+                        </linearGradient>
+                        <filter id="shadow2_${id}">
+                            <feDropShadow dx="1" dy="1.5" stdDeviation="1" flood-opacity="0.3"/>
+                        </filter>
+                        <filter id="glow2_${id}">
+                            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                            <feFlood flood-color="#d63031" flood-opacity="0.35"/>
+                            <feComposite in2="blur" operator="in"/>
+                            <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                    </defs>
+                    <line x1="26" y1="30" x2="10" y2="13" stroke="url(#bondGrad2_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <line x1="26" y1="30" x2="42" y2="13" stroke="url(#bondGrad2_${id})" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="8" cy="10" r="8" fill="url(#oGrad2_${id})" filter="url(#glow2_${id})"/>
+                    <ellipse cx="5.5" cy="7" rx="2.5" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="8" y="13" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="44" cy="10" r="8" fill="url(#oGrad2_${id})" filter="url(#glow2_${id})"/>
+                    <ellipse cx="41.5" cy="7" rx="2.5" ry="2" fill="rgba(255,255,255,0.7)"/>
+                    <text x="44" y="13" text-anchor="middle" fill="white" font-size="7" font-weight="bold" font-family="Arial">O</text>
+                    <circle cx="26" cy="33" r="10" fill="url(#nGrad2_${id})" filter="url(#shadow2_${id})"/>
+                    <ellipse cx="22.5" cy="29" rx="3.5" ry="2.5" fill="rgba(255,255,255,0.6)"/>
+                    <text x="26" y="36" text-anchor="middle" fill="white" font-size="8" font-weight="bold" font-family="Arial">N</text>
+                </svg>`;
+            }
+
+            createN2O4Element() {
+                const mol = document.createElement('div');
+                mol.className = 'molecule n2o4-molecule';
+                mol.innerHTML = this.createN2O4SVG();
+                return mol;
+            }
+
+            createNO2Element() {
+                const mol = document.createElement('div');
+                mol.className = 'molecule no2-molecule';
+                mol.innerHTML = this.createNO2SVG();
+                return mol;
+            }
+
+            // Distribute molecules evenly across available space
+            distributePosition(index, total, type) {
+                const cH = this.gasChamber.offsetHeight || 380;
+                const cW = this.gasChamber.offsetWidth || 392;
+                const w = type === 'n2o4' ? 95 : 48;
+                const h = type === 'n2o4' ? 52 : 42;
+                const padding = 10;
+                
+                // Create a grid-like distribution with some randomness
+                const cols = Math.ceil(Math.sqrt(total * (cW / cH)));
+                const rows = Math.ceil(total / cols);
+                
+                const col = index % cols;
+                const row = Math.floor(index / cols);
+                
+                const cellW = (cW - padding * 2 - w) / Math.max(cols - 1, 1);
+                const cellH = (cH - padding * 2 - h) / Math.max(rows - 1, 1);
+                
+                const baseX = padding + col * cellW;
+                const baseY = padding + row * cellH;
+                
+                // Add randomness
+                const randX = (Math.random() - 0.5) * Math.min(cellW * 0.5, 30);
+                const randY = (Math.random() - 0.5) * Math.min(cellH * 0.5, 30);
+                
+                return {
+                    x: Math.max(padding, Math.min(baseX + randX, cW - w - padding)),
+                    y: Math.max(padding, Math.min(baseY + randY, cH - h - padding))
+                };
+            }
+
+            createMolecules() {
+                this.gasChamber.innerHTML = '';
+                this.molecules = [];
+                
+                const total = this.n2o4Count + this.no2Count;
+                let index = 0;
+                
+                for (let i = 0; i < this.n2o4Count; i++) {
+                    const pos = this.distributePosition(index++, total, 'n2o4');
+                    this.addMolecule('n2o4', false, pos);
+                }
+                for (let i = 0; i < this.no2Count; i++) {
+                    const pos = this.distributePosition(index++, total, 'no2');
+                    this.addMolecule('no2', false, pos);
+                }
+            }
+
+            addMolecule(type, animate = false, position = null, spawnDir = 0) {
+                const mol = type === 'n2o4' ? this.createN2O4Element() : this.createNO2Element();
+                const cH = this.gasChamber.offsetHeight || 380;
+                const cW = this.gasChamber.offsetWidth || 392;
+                const w = type === 'n2o4' ? 95 : 48;
+                const h = type === 'n2o4' ? 52 : 42;
+                
+                let x, y;
+                if (position) {
+                    x = Math.max(5, Math.min(position.x, cW - w - 5));
+                    y = Math.max(5, Math.min(position.y, cH - h - 5));
+                } else {
+                    x = Math.random() * (cW - w - 10) + 5;
+                    y = Math.random() * (cH - h - 10) + 5;
+                }
+                
+                mol.style.left = `${x}px`;
+                mol.style.bottom = `${y}px`;
+                
+                if (animate) {
+                    if (type === 'n2o4') {
+                        mol.classList.add('molecule-spawn-n2o4');
+                    } else {
+                        mol.style.setProperty('--spawn-dir', `${spawnDir}px`);
+                        mol.classList.add('molecule-spawn-no2');
+                    }
+                }
+                
+                const rot = (Math.random() - 0.5) * 15;
+                mol.style.setProperty('--tx', '0px');
+                mol.style.setProperty('--ty', '0px');
+                mol.style.setProperty('--rot', `${rot}deg`);
+                
+                if (!animate) {
+                    mol.style.animation = `float ${4 + Math.random() * 2}s ease-in-out infinite`;
+                    mol.style.animationDelay = `${Math.random() * 2}s`;
+                } else {
+                    setTimeout(() => {
+                        mol.style.animation = `float ${4 + Math.random() * 2}s ease-in-out infinite`;
+                    }, 900);
+                }
+                
+                this.gasChamber.appendChild(mol);
+                this.molecules.push({ element: mol, type, x, y });
+                return mol;
+            }
+
+            createFlashEffect(x, y, type) {
+                const flash = document.createElement('div');
+                flash.className = `reaction-effect ${type}-flash`;
+                flash.style.left = `${x - 60}px`;
+                flash.style.bottom = `${y - 60}px`;
+                flash.style.opacity = '1';
+                this.gasChamber.appendChild(flash);
+                setTimeout(() => flash.remove(), 800);
+            }
+
+            createParticles(x, y, type, count = 10) {
+                for (let i = 0; i < count; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = `particle particle-${type}`;
+                    particle.style.left = `${x}px`;
+                    particle.style.bottom = `${y}px`;
+                    
+                    const angle = (i / count) * Math.PI * 2;
+                    const distance = 30 + Math.random() * 30;
+                    const px = Math.cos(angle) * distance;
+                    const py = Math.sin(angle) * distance;
+                    
+                    particle.style.setProperty('--px', `${px}px`);
+                    particle.style.setProperty('--py', `${py}px`);
+                    particle.style.animation = `particleExplode ${0.4 + Math.random() * 0.3}s ease-out forwards`;
+                    
+                    this.gasChamber.appendChild(particle);
+                    setTimeout(() => particle.remove(), 700);
+                }
+            }
+
+            // Redistribute all molecules to fill available space
+            redistributeMolecules() {
+                const cH = this.gasChamber.offsetHeight;
+                const cW = this.gasChamber.offsetWidth;
+                const total = this.molecules.length;
+                
+                this.molecules.forEach((mol, index) => {
+                    const w = mol.type === 'n2o4' ? 95 : 48;
+                    const h = mol.type === 'n2o4' ? 52 : 42;
+                    const padding = 10;
+                    
+                    const cols = Math.ceil(Math.sqrt(total * (cW / cH)));
+                    const rows = Math.ceil(total / cols);
+                    
+                    const col = index % cols;
+                    const row = Math.floor(index / cols);
+                    
+                    const cellW = (cW - padding * 2 - w) / Math.max(cols - 1, 1);
+                    const cellH = (cH - padding * 2 - h) / Math.max(rows - 1, 1);
+                    
+                    const baseX = padding + col * cellW;
+                    const baseY = padding + row * cellH;
+                    
+                    const randX = (Math.random() - 0.5) * Math.min(cellW * 0.4, 25);
+                    const randY = (Math.random() - 0.5) * Math.min(cellH * 0.4, 25);
+                    
+                    const newX = Math.max(padding, Math.min(baseX + randX, cW - w - padding));
+                    const newY = Math.max(padding, Math.min(baseY + randY, cH - h - padding));
+                    
+                    mol.element.style.left = `${newX}px`;
+                    mol.element.style.bottom = `${newY}px`;
+                    mol.x = newX;
+                    mol.y = newY;
+                });
+            }
+
+            changePressure(delta) {
+                if (this.isAnimating) return;
+                const newP = Math.max(this.minPressure, Math.min(this.maxPressure, this.pressure + delta));
+                if (newP === this.pressure) return;
+                this.isAnimating = true;
+                this.pressure = newP;
+                this.updatePistonPosition();
+                this.updateEquilibrium(delta > 0);
+                setTimeout(() => { this.isAnimating = false; }, 1400);
+            }
+
+            updatePistonPosition() {
+                const normP = (this.pressure - this.minPressure) / (this.maxPressure - this.minPressure);
+                const pTop = normP * 320;
+                this.piston.style.top = `${pTop}px`;
+                this.gasChamber.style.height = `${380 - pTop * 0.88}px`;
+            }
+
+            updateEquilibrium(inc) {
+                if (inc) {
+                    // ASSOCIATION: 2NO₂ → N₂O₄
+                    if (this.no2Count >= 2) {
+                        const no2Mols = this.molecules.filter(m => m.type === 'no2');
+                        if (no2Mols.length >= 2) {
+                            const mol1 = no2Mols[0];
+                            const mol2 = no2Mols[1];
+                            const pos1 = { x: parseFloat(mol1.element.style.left), y: parseFloat(mol1.element.style.bottom) };
+                            const pos2 = { x: parseFloat(mol2.element.style.left), y: parseFloat(mol2.element.style.bottom) };
+                            const centerX = (pos1.x + pos2.x) / 2 + 24;
+                            const centerY = (pos1.y + pos2.y) / 2 + 21;
+                            
+                            const mergeX1 = centerX - pos1.x - 24;
+                            const mergeY1 = centerY - pos1.y - 21;
+                            const mergeX2 = centerX - pos2.x - 24;
+                            const mergeY2 = centerY - pos2.y - 21;
+                            
+                            mol1.element.style.animation = 'none';
+                            mol2.element.style.animation = 'none';
+                            mol1.element.style.setProperty('--merge-x', `${mergeX1}px`);
+                            mol1.element.style.setProperty('--merge-y', `${mergeY1}px`);
+                            mol2.element.style.setProperty('--merge-x', `${mergeX2}px`);
+                            mol2.element.style.setProperty('--merge-y', `${mergeY2}px`);
+                            mol1.element.classList.add('molecule-merge');
+                            mol2.element.classList.add('molecule-merge');
+                            
+                            this.molecules = this.molecules.filter(m => m !== mol1 && m !== mol2);
+                            this.no2Count -= 2;
+                            
+                            setTimeout(() => {
+                                this.createFlashEffect(centerX, centerY, 'merge');
+                                this.createParticles(centerX, centerY, 'orange', 12);
+                            }, 450);
+                            
+                            setTimeout(() => {
+                                mol1.element.remove();
+                                mol2.element.remove();
+                                this.addMolecule('n2o4', true, { x: centerX - 47, y: centerY - 26 });
+                                this.n2o4Count++;
+                                this.updateDisplay();
+                                // Redistribute after reaction
+                                setTimeout(() => this.redistributeMolecules(), 400);
+                            }, 650);
+                            
+                            this.showReactionLabel('⚛️ اتحاد: 2NO₂ → N₂O₄', 'association');
+                        }
+                    }
+                    this.showShift('left');
+                } else {
+                    // DISSOCIATION: N₂O₄ → 2NO₂
+                    if (this.n2o4Count > 0) {
+                        const n2o4Mol = this.molecules.find(m => m.type === 'n2o4');
+                        if (n2o4Mol) {
+                            const pos = { 
+                                x: parseFloat(n2o4Mol.element.style.left), 
+                                y: parseFloat(n2o4Mol.element.style.bottom) 
+                            };
+                            const centerX = pos.x + 47;
+                            const centerY = pos.y + 26;
+                            
+                            n2o4Mol.element.style.animation = 'none';
+                            n2o4Mol.element.classList.add('molecule-split');
+                            
+                            this.molecules = this.molecules.filter(m => m !== n2o4Mol);
+                            this.n2o4Count--;
+                            
+                            setTimeout(() => {
+                                this.createFlashEffect(centerX, centerY, 'split');
+                                this.createParticles(centerX, centerY, 'blue', 14);
+                            }, 450);
+                            
+                            setTimeout(() => {
+                                n2o4Mol.element.remove();
+                                this.addMolecule('no2', true, { x: pos.x - 5, y: pos.y + 5 }, -40);
+                                this.addMolecule('no2', true, { x: pos.x + 55, y: pos.y + 5 }, 40);
+                                this.no2Count += 2;
+                                this.updateDisplay();
+                                // Redistribute after reaction - gas expands to fill space
+                                setTimeout(() => this.redistributeMolecules(), 400);
+                            }, 700);
+                            
+                            this.showReactionLabel('💥 تفكك: N₂O₄ → 2NO₂', 'dissociation');
+                        }
+                    }
+                    this.showShift('right');
+                }
+                this.updateDisplay();
+            }
+
+            showReactionLabel(txt, type) {
+                this.reactionLabel.textContent = txt;
+                this.reactionLabel.className = `reaction-label show ${type}`;
+                setTimeout(() => { this.reactionLabel.classList.remove('show'); }, 3000);
+            }
+
+            showShift(dir) {
+                this.shiftIndicator.className = 'shift-indicator';
+                if (dir === 'left') {
+                    this.shiftIndicator.classList.add('shift-left');
+                    this.shiftText.textContent = '← انزياح نحو N₂O₄';
+                    document.querySelector('.shift-arrow').textContent = '←';
+                } else {
+                    this.shiftIndicator.classList.add('shift-right');
+                    this.shiftText.textContent = 'انزياح نحو NO₂ →';
+                    document.querySelector('.shift-arrow').textContent = '→';
+                }
+                setTimeout(() => {
+                    this.shiftIndicator.className = 'shift-indicator shift-none';
+                    this.shiftText.textContent = 'في حالة اتزان';
+                    document.querySelector('.shift-arrow').textContent = '⚖';
+                }, 3000);
+            }
+
+            updateDisplay() {
+                this.pressureValue.textContent = this.pressure.toFixed(1);
+                this.pressureValue.style.color = this.pressure > 2 ? '#ff6b35' : '#00f5ff';
+                this.n2o4CountEl.textContent = `${this.n2o4Count} جزيئات`;
+                this.no2CountEl.textContent = `${this.no2Count} جزيئات`;
+                const total = this.n2o4Count + this.no2Count;
+                const ratio = total > 0 ? this.no2Count / total : 0;
+                const r = 120 + ratio * 100;
+                const g = 80 + ratio * 40;
+                const b = 60;
+                this.colorBar.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${0.3 + ratio * 0.5})`;
+                this.gasChamber.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${0.03 + ratio * 0.12})`;
+            }
+
+            animateMolecules() {
+                this.molecules.forEach(m => {
+                    if (!m.element.classList.contains('molecule-merge') && 
+                        !m.element.classList.contains('molecule-split')) {
+                        m.element.style.setProperty('--tx', `${(Math.random() - 0.5) * 14}px`);
+                        m.element.style.setProperty('--ty', `${(Math.random() - 0.5) * 14}px`);
+                    }
+                });
+                requestAnimationFrame(() => setTimeout(() => this.animateMolecules(), 2500));
+            }
+
+            reset() {
+                this.pressure = 1.0;
+                this.n2o4Count = this.baseN2O4;
+                this.no2Count = this.baseNO2;
+                this.updatePistonPosition();
+                this.createMolecules();
+                this.updateDisplay();
+                this.shiftIndicator.className = 'shift-indicator shift-none';
+                this.shiftText.textContent = 'في حالة اتزان';
+                document.querySelector('.shift-arrow').textContent = '⚖';
+                this.reactionLabel.classList.remove('show');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => { new EquilibriumSimulator(); });
+    </script>
+</body>
+</html>
