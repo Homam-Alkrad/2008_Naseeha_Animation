@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رسام منحنيات الكيمياء</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0d7377;
+            --primary-light: #14a3a8;
+            --bg-main: #f8fafb;
+            --bg-card: #ffffff;
+            --bg-input: #f0f4f5;
+            --text-dark: #1a2a3a;
+            --text-muted: #5a6a7a;
+            --border-color: #e0e8eb;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --accent: #f7c948;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Tajawal', sans-serif; background: var(--bg-main); color: var(--text-dark); min-height: 100vh; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        header { text-align: center; padding: 25px 0; margin-bottom: 25px; }
+        .logo { display: inline-flex; align-items: center; gap: 15px; }
+        .logo-icon { width: 55px; height: 55px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 8px 25px rgba(13, 115, 119, 0.25); }
+        h1 { font-size: 2rem; font-weight: 800; color: var(--text-dark); }
+        .subtitle { color: var(--text-muted); font-size: 1rem; margin-top: 5px; }
+        .main-layout { display: grid; grid-template-columns: 300px 1fr; gap: 25px; }
+        @media (max-width: 1024px) { .main-layout { grid-template-columns: 1fr; } }
+        .card { background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid var(--border-color); box-shadow: var(--shadow); margin-bottom: 18px; }
+        .card-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; color: var(--primary); }
+        .form-group { margin-bottom: 14px; }
+        label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-muted); font-size: 0.9rem; }
+        input[type="text"], input[type="number"], select { width: 100%; padding: 10px 14px; background: var(--bg-input); border: 2px solid transparent; border-radius: 10px; color: var(--text-dark); font-family: inherit; font-size: 0.95rem; transition: all 0.3s ease; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); background: #fff; }
+        .color-picker-wrapper { display: flex; align-items: center; gap: 10px; }
+        input[type="color"] { -webkit-appearance: none; width: 45px; height: 38px; border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 5px; }
+        .color-value { flex: 1; padding: 9px 12px; background: var(--bg-input); border-radius: 8px; font-family: monospace; font-size: 0.85rem; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 18px; border: none; border-radius: 10px; font-family: inherit; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13, 115, 119, 0.4); }
+        .btn-secondary { background: var(--bg-input); color: var(--text-dark); border: 1px solid var(--border-color); }
+        .btn-danger { background: linear-gradient(135deg, var(--danger), #c0392b); color: white; }
+        .btn-success { background: linear-gradient(135deg, var(--success), #27ae60); color: white; }
+        .btn-warning { background: linear-gradient(135deg, var(--accent), #e6b800); color: var(--text-dark); }
+        .btn-group { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+        .btn-group .btn { flex: 1; }
+        .canvas-container { background: white; border-radius: 14px; overflow: hidden; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        #mainCanvas { display: block; cursor: crosshair; }
+        .tools-bar { display: flex; gap: 8px; padding: 14px; background: var(--bg-card); border-radius: 14px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; box-shadow: var(--shadow); border: 1px solid var(--border-color); }
+        .tool-btn { width: 42px; height: 42px; border: 2px solid transparent; border-radius: 10px; background: var(--bg-input); color: var(--text-dark); cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .tool-btn:hover { background: rgba(13, 115, 119, 0.1); border-color: var(--primary-light); }
+        .tool-btn.active { border-color: var(--primary); background: rgba(13, 115, 119, 0.15); color: var(--primary); }
+        .tool-separator { width: 1px; height: 28px; background: var(--border-color); margin: 0 4px; }
+        .stroke-width-control { display: flex; align-items: center; gap: 8px; margin-right: auto; }
+        .stroke-width-control label { margin: 0; white-space: nowrap; font-size: 0.85rem; }
+        .stroke-width-control input[type="range"] { width: 80px; accent-color: var(--primary); }
+        .stroke-width-value { background: var(--bg-input); padding: 5px 10px; border-radius: 6px; font-size: 0.85rem; min-width: 40px; text-align: center; }
+        .curve-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: var(--bg-input); border-radius: 10px; margin-bottom: 8px; border: 2px solid transparent; cursor: pointer; transition: all 0.3s ease; }
+        .curve-item:hover { background: rgba(13, 115, 119, 0.08); }
+        .curve-item.active { border-color: var(--primary); background: rgba(13, 115, 119, 0.1); }
+        .curve-color { width: 20px; height: 20px; border-radius: 5px; }
+        .curve-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
+        .curve-actions button { width: 28px; height: 28px; border: none; border-radius: 6px; background: rgba(0, 0, 0, 0.05); cursor: pointer; font-size: 0.85rem; }
+        .templates-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 12px; }
+        .template-btn { padding: 12px 8px; background: var(--bg-input); border: 2px solid transparent; border-radius: 10px; cursor: pointer; text-align: center; transition: all 0.3s ease; }
+        .template-btn:hover { border-color: var(--primary); background: rgba(13, 115, 119, 0.08); }
+        .template-btn span { display: block; font-size: 1.4rem; margin-bottom: 6px; }
+        .template-btn small { color: var(--text-muted); font-size: 0.75rem; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--bg-card); padding: 14px 22px; border-radius: 10px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); display: flex; align-items: center; gap: 10px; z-index: 1000; opacity: 0; transition: all 0.4s ease; border: 1px solid var(--border-color); }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .toast.success { border-right: 4px solid var(--success); }
+        .toast.error { border-right: 4px solid var(--danger); }
+        .instructions { background: rgba(13, 115, 119, 0.06); border: 1px solid rgba(13, 115, 119, 0.2); border-radius: 10px; padding: 14px; }
+        .instructions h4 { color: var(--primary); margin-bottom: 10px; font-size: 0.95rem; }
+        .instructions ul { list-style: none; font-size: 0.85rem; color: var(--text-muted); }
+        .instructions li { padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+        .instructions li::before { content: "●"; color: var(--primary); font-size: 0.5rem; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
+        .modal-overlay.show { opacity: 1; visibility: visible; }
+        .modal { background: var(--bg-card); border-radius: 16px; padding: 25px; max-width: 450px; width: 90%; transform: scale(0.9); transition: transform 0.3s ease; }
+        .modal-overlay.show .modal { transform: scale(1); }
+        .modal h3 { margin-bottom: 18px; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <div class="logo-icon">📈</div>
+                <div>
+                    <h1>رسام منحنيات الكيمياء</h1>
+                    <p class="subtitle">ارسم منحنيات التركيز والاتزان وسرعة التفاعل بسهولة</p>
+                </div>
+            </div>
+        </header>
+        <div class="main-layout">
+            <aside>
+                <div class="card">
+                    <h3 class="card-title"><span>⚙️</span> إعدادات المحاور</h3>
+                    <div class="form-group">
+                        <label>اسم المحور السيني (X)</label>
+                        <input type="text" id="xAxisLabel" value="الزمن (ث)">
+                    </div>
+                    <div class="form-group">
+                        <label>اسم المحور الصادي (Y)</label>
+                        <input type="text" id="yAxisLabel" value="التركيز (مول/لتر)">
+                    </div>
+                    <div class="form-group">
+                        <label>عنوان الرسم</label>
+                        <input type="text" id="chartTitle" value="" placeholder="اختياري">
+                    </div>
+                    <button class="btn btn-primary" style="width:100%" onclick="updateAxes()">✓ تطبيق</button>
+                </div>
+                <div class="card">
+                    <h3 class="card-title"><span>📋</span> قوالب جاهزة</h3>
+                    <div class="templates-grid">
+                        <button class="template-btn" onclick="loadTemplate('equilibrium')"><span>⚖️</span>منحنى الاتزان<small>تركيز-زمن</small></button>
+                        <button class="template-btn" onclick="loadTemplate('rate')"><span>📉</span>سرعة التفاعل<small>سرعة-زمن</small></button>
+                        <button class="template-btn" onclick="loadTemplate('concentration')"><span>📊</span>تغير التركيز<small>متفاعلات-نواتج</small></button>
+                        <button class="template-btn" onclick="loadTemplate('energy')"><span>⚡</span>طاقة التنشيط<small>طاقة-مسار</small></button>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="card-title"><span>🎨</span> المنحنيات</h3>
+                    <div class="form-group">
+                        <label>لون المنحنى</label>
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="curveColor" value="#e74c3c">
+                            <span class="color-value" id="colorValue">#e74c3c</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>اسم المنحنى</label>
+                        <input type="text" id="curveName" value="منحنى 1">
+                    </div>
+                    <button class="btn btn-success" style="width:100%" onclick="addNewCurve()">➕ إضافة منحنى جديد</button>
+                    <div id="curvesList" style="margin-top:12px"></div>
+                </div>
+                <div class="instructions">
+                    <h4>💡 كيفية الاستخدام</h4>
+                    <ul>
+                        <li>اختر منحنى من القائمة أو أضف جديد</li>
+                        <li>ارسم بالماوس - كل ضغطة = خط منفصل</li>
+                        <li>اضغط "تنعيم" لمنحنى سلس</li>
+                        <li>صدّر الرسم كصورة PNG</li>
+                    </ul>
+                </div>
+            </aside>
+            <main>
+                <div class="tools-bar">
+                    <button class="tool-btn active" id="drawTool" onclick="setTool('draw')" title="رسم حر">✏️</button>
+                    <button class="tool-btn" id="lineTool" onclick="setTool('line')" title="خط مستقيم">📏</button>
+                    <button class="tool-btn" id="labelTool" onclick="setTool('label')" title="تسمية">🏷️</button>
+                    <button class="tool-btn" id="eraserTool" onclick="setTool('eraser')" title="ممحاة">🧽</button>
+                    <div class="tool-separator"></div>
+                    <button class="tool-btn" onclick="smoothCurrentCurve()" title="تنعيم">〰️</button>
+                    <button class="tool-btn" onclick="undo()" title="تراجع">↩️</button>
+                    <button class="tool-btn" onclick="redo()" title="إعادة">↪️</button>
+                    <div class="tool-separator"></div>
+                    <div class="stroke-width-control">
+                        <label>السماكة:</label>
+                        <input type="range" id="strokeWidth" min="1" max="10" value="3" oninput="updateStrokeWidth()">
+                        <span class="stroke-width-value" id="strokeWidthValue">3px</span>
+                    </div>
+                    <div class="tool-separator"></div>
+                    <button class="btn btn-danger" onclick="clearCanvas()">🗑️ مسح</button>
+                    <button class="btn btn-warning" onclick="exportImage()">💾 تصدير</button>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="mainCanvas" width="900" height="600"></canvas>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div class="modal-overlay" id="labelModal">
+        <div class="modal">
+            <h3>✍️ إضافة تسمية</h3>
+            <div class="form-group">
+                <label>نص التسمية</label>
+                <input type="text" id="labelText" placeholder="مثال: نقطة الاتزان">
+            </div>
+            <div class="form-group">
+                <label>حجم الخط</label>
+                <input type="number" id="labelFontSize" value="14" min="10" max="30">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-secondary" onclick="closeLabelModal()">إلغاء</button>
+                <button class="btn btn-primary" onclick="confirmLabel()">إضافة</button>
+            </div>
+        </div>
+    </div>
+    <div class="toast" id="toast"><span id="toastIcon">✓</span><span id="toastMessage">تم</span></div>
+
+    <script>
+        const canvas = document.getElementById('mainCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let currentTool = 'draw';
+        let isDrawing = false;
+        let currentStroke = [];
+        let curves = [];
+        let labels = [];
+        let history = [];
+        let historyIndex = -1;
+        let currentCurveIndex = 0;
+        let strokeWidth = 3;
+        let pendingLabelPosition = null;
+
+        let axisConfig = { xLabel: 'الزمن (ث)', yLabel: 'التركيز (مول/لتر)', title: '', padding: 70, tickCount: 10 };
+        const curveColors = ['#e74c3c', '#3498db', '#2ecc71', '#9b59b6', '#f39c12', '#1abc9c'];
+
+        function init() {
+            resizeCanvas();
+            curves.push({ name: 'منحنى 1', color: curveColors[0], strokes: [], smoothed: false });
+            updateCurvesList();
+            saveState();
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseleave', stopDrawing);
+            canvas.addEventListener('touchstart', e => { e.preventDefault(); startDrawing(e); }, { passive: false });
+            canvas.addEventListener('touchmove', e => { e.preventDefault(); draw(e); }, { passive: false });
+            canvas.addEventListener('touchend', stopDrawing);
+
+            document.getElementById('curveColor').addEventListener('input', e => {
+                document.getElementById('colorValue').textContent = e.target.value;
+            });
+            window.addEventListener('resize', resizeCanvas);
+        }
+
+        function resizeCanvas() {
+            const container = canvas.parentElement;
+            const width = Math.min(container.offsetWidth, 900);
+            canvas.width = width;
+            canvas.height = width * 0.67;
+            redraw();
+        }
+
+        function drawGrid() {
+            const { padding, tickCount } = axisConfig;
+            const width = canvas.width, height = canvas.height;
+            const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+
+            ctx.strokeStyle = '#e8e8e8';
+            ctx.lineWidth = 0.5;
+            for (let i = 0; i <= tickCount; i++) {
+                const x = padding + (graphWidth / tickCount) * i;
+                const y = padding + (graphHeight / tickCount) * i;
+                ctx.beginPath(); ctx.moveTo(x, padding); ctx.lineTo(x, height - padding); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(padding, y); ctx.lineTo(width - padding, y); ctx.stroke();
+            }
+
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(padding, height - padding); ctx.lineTo(width - padding + 20, height - padding); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(width - padding + 20, height - padding); ctx.lineTo(width - padding + 10, height - padding - 5); ctx.lineTo(width - padding + 10, height - padding + 5); ctx.closePath(); ctx.fillStyle = '#333'; ctx.fill();
+            ctx.beginPath(); ctx.moveTo(padding, height - padding); ctx.lineTo(padding, padding - 20); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(padding, padding - 20); ctx.lineTo(padding - 5, padding - 10); ctx.lineTo(padding + 5, padding - 10); ctx.closePath(); ctx.fill();
+
+            ctx.font = 'bold 14px Tajawal';
+            ctx.fillStyle = '#333';
+            ctx.textAlign = 'center';
+            ctx.fillText(axisConfig.xLabel, width / 2, height - 20);
+            ctx.save(); ctx.translate(20, height / 2); ctx.rotate(-Math.PI / 2); ctx.fillText(axisConfig.yLabel, 0, 0); ctx.restore();
+            if (axisConfig.title) { ctx.font = 'bold 18px Tajawal'; ctx.fillText(axisConfig.title, width / 2, 30); }
+            ctx.font = '12px Tajawal'; ctx.fillText('0', padding - 15, height - padding + 15);
+        }
+
+        function drawCurves() {
+            curves.forEach(curve => {
+                if (!curve.strokes || curve.strokes.length === 0) return;
+                ctx.strokeStyle = curve.color;
+                ctx.lineWidth = strokeWidth;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                curve.strokes.forEach(stroke => {
+                    if (stroke.length < 2) return;
+                    ctx.beginPath();
+                    if (curve.smoothed && stroke.length > 2) {
+                        ctx.moveTo(stroke[0].x, stroke[0].y);
+                        for (let i = 1; i < stroke.length - 2; i++) {
+                            const xc = (stroke[i].x + stroke[i + 1].x) / 2;
+                            const yc = (stroke[i].y + stroke[i + 1].y) / 2;
+                            ctx.quadraticCurveTo(stroke[i].x, stroke[i].y, xc, yc);
+                        }
+                        const last = stroke.length - 1;
+                        ctx.quadraticCurveTo(stroke[last - 1].x, stroke[last - 1].y, stroke[last].x, stroke[last].y);
+                    } else {
+                        ctx.moveTo(stroke[0].x, stroke[0].y);
+                        for (let i = 1; i < stroke.length; i++) ctx.lineTo(stroke[i].x, stroke[i].y);
+                    }
+                    ctx.stroke();
+                });
+            });
+        }
+
+        function drawLabels() {
+            labels.forEach(label => {
+                ctx.font = label.fontSize + 'px Tajawal';
+                ctx.fillStyle = '#333';
+                ctx.textAlign = 'center';
+                ctx.fillText(label.text, label.x, label.y);
+                ctx.beginPath(); ctx.arc(label.x, label.y + 10, 3, 0, Math.PI * 2); ctx.fillStyle = '#e74c3c'; ctx.fill();
+            });
+        }
+
+        function redraw() { drawGrid(); drawCurves(); drawLabels(); }
+
+        function getMousePos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width, scaleY = canvas.height / rect.height;
+            if (e.touches && e.touches.length > 0) return { x: (e.touches[0].clientX - rect.left) * scaleX, y: (e.touches[0].clientY - rect.top) * scaleY };
+            return { x: (e.clientX - rect.left) * scaleX, y: (e.clientY - rect.top) * scaleY };
+        }
+
+        function startDrawing(e) {
+            const pos = getMousePos(e);
+            if (currentTool === 'label') { pendingLabelPosition = pos; openLabelModal(); return; }
+            if (currentTool === 'eraser') { isDrawing = true; return; }
+            isDrawing = true;
+            currentStroke = [pos];
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const pos = getMousePos(e);
+            if (currentTool === 'draw') {
+                currentStroke.push(pos);
+                redraw();
+                if (currentStroke.length > 1) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = curves[currentCurveIndex]?.color || '#e74c3c';
+                    ctx.lineWidth = strokeWidth;
+                    ctx.lineCap = 'round';
+                    ctx.moveTo(currentStroke[0].x, currentStroke[0].y);
+                    for (let i = 1; i < currentStroke.length; i++) ctx.lineTo(currentStroke[i].x, currentStroke[i].y);
+                    ctx.stroke();
+                }
+            } else if (currentTool === 'line') {
+                redraw();
+                ctx.beginPath();
+                ctx.strokeStyle = curves[currentCurveIndex]?.color || '#e74c3c';
+                ctx.lineWidth = strokeWidth;
+                ctx.moveTo(currentStroke[0].x, currentStroke[0].y);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            } else if (currentTool === 'eraser') {
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(pos.x, pos.y, 15, 0, Math.PI * 2); ctx.fill();
+            }
+        }
+
+        function stopDrawing(e) {
+            if (!isDrawing) return;
+            if (currentTool === 'draw' && currentStroke.length > 1) {
+                if (curves[currentCurveIndex]) {
+                    curves[currentCurveIndex].strokes.push([...currentStroke]);
+                    curves[currentCurveIndex].smoothed = false;
+                }
+                saveState();
+            } else if (currentTool === 'line' && currentStroke.length > 0 && e) {
+                const pos = getMousePos(e);
+                if (curves[currentCurveIndex]) curves[currentCurveIndex].strokes.push([currentStroke[0], pos]);
+                saveState();
+            }
+            isDrawing = false;
+            currentStroke = [];
+            redraw();
+        }
+
+        function setTool(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tool + 'Tool')?.classList.add('active');
+            canvas.style.cursor = tool === 'eraser' ? 'cell' : 'crosshair';
+        }
+
+        function smoothCurrentCurve() {
+            const curve = curves[currentCurveIndex];
+            if (!curve || !curve.strokes || curve.strokes.length === 0) { showToast('لا يوجد خطوط', 'error'); return; }
+            curve.strokes = curve.strokes.map(stroke => stroke.length > 3 ? simplifyPath(stroke, 5) : stroke);
+            curve.smoothed = true;
+            redraw(); saveState();
+            showToast('تم التنعيم', 'success');
+        }
+
+        function simplifyPath(points, tolerance) {
+            if (points.length <= 2) return points;
+            let maxDist = 0, maxIndex = 0;
+            const start = points[0], end = points[points.length - 1];
+            for (let i = 1; i < points.length - 1; i++) {
+                const dist = perpendicularDistance(points[i], start, end);
+                if (dist > maxDist) { maxDist = dist; maxIndex = i; }
+            }
+            if (maxDist > tolerance) {
+                const left = simplifyPath(points.slice(0, maxIndex + 1), tolerance);
+                const right = simplifyPath(points.slice(maxIndex), tolerance);
+                return left.slice(0, -1).concat(right);
+            }
+            return [start, end];
+        }
+
+        function perpendicularDistance(point, lineStart, lineEnd) {
+            const dx = lineEnd.x - lineStart.x, dy = lineEnd.y - lineStart.y;
+            const d = Math.sqrt(dx * dx + dy * dy);
+            if (d === 0) return Math.sqrt((point.x - lineStart.x) ** 2 + (point.y - lineStart.y) ** 2);
+            return Math.abs(dy * point.x - dx * point.y + lineEnd.x * lineStart.y - lineEnd.y * lineStart.x) / d;
+        }
+
+        function updateAxes() {
+            axisConfig.xLabel = document.getElementById('xAxisLabel').value || 'X';
+            axisConfig.yLabel = document.getElementById('yAxisLabel').value || 'Y';
+            axisConfig.title = document.getElementById('chartTitle').value;
+            redraw();
+            showToast('تم التحديث', 'success');
+        }
+
+        function updateStrokeWidth() {
+            strokeWidth = parseInt(document.getElementById('strokeWidth').value);
+            document.getElementById('strokeWidthValue').textContent = strokeWidth + 'px';
+        }
+
+        function addNewCurve() {
+            const name = document.getElementById('curveName').value || 'منحنى ' + (curves.length + 1);
+            const color = document.getElementById('curveColor').value;
+            curves.push({ name, color, strokes: [], smoothed: false });
+            currentCurveIndex = curves.length - 1;
+            updateCurvesList();
+            document.getElementById('curveName').value = 'منحنى ' + (curves.length + 1);
+            const nextColor = curveColors[curves.length % curveColors.length];
+            document.getElementById('curveColor').value = nextColor;
+            document.getElementById('colorValue').textContent = nextColor;
+            showToast('تمت الإضافة', 'success');
+        }
+
+        function updateCurvesList() {
+            document.getElementById('curvesList').innerHTML = curves.map((curve, i) => 
+                '<div class="curve-item ' + (i === currentCurveIndex ? 'active' : '') + '" onclick="selectCurve(' + i + ')">' +
+                '<div class="curve-color" style="background:' + curve.color + '"></div>' +
+                '<span class="curve-name">' + curve.name + '</span>' +
+                '<div class="curve-actions"><button onclick="event.stopPropagation();deleteCurve(' + i + ')">🗑️</button></div></div>'
+            ).join('');
+        }
+
+        function selectCurve(i) { currentCurveIndex = i; updateCurvesList(); }
+        function deleteCurve(i) {
+            if (curves.length <= 1) { showToast('يجب وجود منحنى واحد', 'error'); return; }
+            curves.splice(i, 1);
+            if (currentCurveIndex >= curves.length) currentCurveIndex = curves.length - 1;
+            updateCurvesList(); redraw(); saveState();
+        }
+
+        function loadTemplate(type) {
+            const { padding } = axisConfig;
+            const width = canvas.width, height = canvas.height;
+            const graphWidth = width - padding * 2, graphHeight = height - padding * 2;
+            curves = []; labels = [];
+
+            const genDecay = (sL, eL) => { const pts = []; for (let i = 0; i <= 50; i++) { const t = i/50; pts.push({x: padding + graphWidth*t, y: height - padding - graphHeight*(sL - (sL-eL)*(1-Math.exp(-4*t)))}); } return pts; };
+            const genRise = (sL, eL) => { const pts = []; for (let i = 0; i <= 50; i++) { const t = i/50; pts.push({x: padding + graphWidth*t, y: height - padding - graphHeight*(sL + (eL-sL)*(1-Math.exp(-4*t)))}); } return pts; };
+            const genEnergy = () => { const pts = []; for (let i = 0; i <= 50; i++) { const t = i/50; let y; if (t < 0.15) y = 0.4; else if (t < 0.5) { const lt = (t-0.15)/0.35; y = 0.4 + Math.sin(lt*Math.PI)*0.5; } else if (t < 0.65) y = 0.9 - ((t-0.5)/0.15)*0.6; else y = 0.3; pts.push({x: padding + graphWidth*t, y: height - padding - graphHeight*y}); } return pts; };
+
+            if (type === 'equilibrium') {
+                document.getElementById('xAxisLabel').value = 'الزمن (ث)';
+                document.getElementById('yAxisLabel').value = 'التركيز (مول/لتر)';
+                document.getElementById('chartTitle').value = 'منحنى الاتزان';
+                curves.push({name:'المتفاعلات [A]',color:'#e74c3c',strokes:[genDecay(0.8,0.4)],smoothed:true});
+                curves.push({name:'النواتج [B]',color:'#3498db',strokes:[genRise(0.2,0.6)],smoothed:true});
+                labels.push({text:'حالة الاتزان',x:padding+graphWidth*0.75,y:padding+graphHeight*0.3,fontSize:14});
+            } else if (type === 'rate') {
+                document.getElementById('xAxisLabel').value = 'الزمن (ث)';
+                document.getElementById('yAxisLabel').value = 'سرعة التفاعل';
+                document.getElementById('chartTitle').value = 'سرعة التفاعل';
+                curves.push({name:'السرعة الأمامية',color:'#e74c3c',strokes:[genDecay(0.8,0.35)],smoothed:true});
+                curves.push({name:'السرعة العكسية',color:'#3498db',strokes:[genRise(0.1,0.35)],smoothed:true});
+            } else if (type === 'concentration') {
+                document.getElementById('xAxisLabel').value = 'الزمن (ث)';
+                document.getElementById('yAxisLabel').value = 'التركيز';
+                document.getElementById('chartTitle').value = 'تغير التركيز';
+                curves.push({name:'[A] متفاعل',color:'#e74c3c',strokes:[genDecay(0.9,0.1)],smoothed:true});
+                curves.push({name:'[B] ناتج',color:'#2ecc71',strokes:[genRise(0.0,0.9)],smoothed:true});
+            } else if (type === 'energy') {
+                document.getElementById('xAxisLabel').value = 'مسار التفاعل';
+                document.getElementById('yAxisLabel').value = 'الطاقة';
+                document.getElementById('chartTitle').value = 'طاقة التنشيط';
+                curves.push({name:'مسار الطاقة',color:'#9b59b6',strokes:[genEnergy()],smoothed:true});
+                labels.push({text:'Ea',x:padding+graphWidth*0.35,y:padding+graphHeight*0.15,fontSize:14});
+            }
+            updateAxes(); currentCurveIndex = 0; updateCurvesList(); redraw(); saveState();
+            showToast('تم تحميل القالب', 'success');
+        }
+
+        function openLabelModal() { document.getElementById('labelModal').classList.add('show'); document.getElementById('labelText').focus(); }
+        function closeLabelModal() { document.getElementById('labelModal').classList.remove('show'); pendingLabelPosition = null; }
+        function confirmLabel() {
+            const text = document.getElementById('labelText').value;
+            const fontSize = parseInt(document.getElementById('labelFontSize').value) || 14;
+            if (text && pendingLabelPosition) { labels.push({text, x:pendingLabelPosition.x, y:pendingLabelPosition.y, fontSize}); redraw(); saveState(); }
+            document.getElementById('labelText').value = '';
+            closeLabelModal();
+        }
+
+        function clearCanvas() {
+            if (confirm('مسح كل شيء؟')) {
+                curves = [{name:'منحنى 1',color:curveColors[0],strokes:[],smoothed:false}];
+                labels = []; currentCurveIndex = 0;
+                updateCurvesList(); redraw(); saveState();
+                showToast('تم المسح', 'success');
+            }
+        }
+
+        function exportImage() {
+            const link = document.createElement('a');
+            link.download = 'chemistry-curve.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            showToast('تم التصدير', 'success');
+        }
+
+        function saveState() {
+            historyIndex++;
+            history = history.slice(0, historyIndex);
+            history.push({curves:JSON.parse(JSON.stringify(curves)),labels:JSON.parse(JSON.stringify(labels))});
+            if (history.length > 50) { history.shift(); historyIndex--; }
+        }
+
+        function undo() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                const state = history[historyIndex];
+                curves = JSON.parse(JSON.stringify(state.curves));
+                labels = JSON.parse(JSON.stringify(state.labels));
+                currentCurveIndex = Math.min(currentCurveIndex, curves.length - 1);
+                updateCurvesList(); redraw();
+            }
+        }
+
+        function redo() {
+            if (historyIndex < history.length - 1) {
+                historyIndex++;
+                const state = history[historyIndex];
+                curves = JSON.parse(JSON.stringify(state.curves));
+                labels = JSON.parse(JSON.stringify(state.labels));
+                updateCurvesList(); redraw();
+            }
+        }
+
+        function showToast(message, type) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastIcon').textContent = type === 'success' ? '✓' : '✗';
+            document.getElementById('toastMessage').textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'z') { e.preventDefault(); undo(); }
+                else if (e.key === 'y') { e.preventDefault(); redo(); }
+                else if (e.key === 's') { e.preventDefault(); exportImage(); }
+            }
+        });
+
+        document.getElementById('labelText').addEventListener('keypress', e => { if (e.key === 'Enter') confirmLabel(); });
+
+        init();
+    </script>
+</body>
+</html>
