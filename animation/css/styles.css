@@ -1,0 +1,391 @@
+/* ═══════════════════════════════════════════
+   Ramadan Greeting — Master Stylesheet
+   ═══════════════════════════════════════════ */
+
+:root {
+  --gold:        #e8b730;
+  --gold-light:  #ffd96a;
+  --gold-strong: #ffe8a3;
+  --gold-dim:    #b8892a;
+  --teal:        #1a8a74;
+
+  /* Theme-driven (overridden by JS) */
+  --sky-shadow:     #0a1e3d;
+  --mosque-color:   #070e1e;
+  --tree-color:     #040a14;
+  --cloud-fill:     rgba(26,48,80,0.18);
+  --cloud-color:    #1a3050;
+  --bird-color:     #1a2a40;
+  --card-bg:        rgba(6,16,36,0.78);
+  --card-border:    rgba(232,183,48,0.35);
+  --card-glow:      rgba(232,183,48,0.08);
+  --text-main:      #f0f4ff;
+  --text-soft:      #c8d6f0;
+  --scene-overlay:  rgba(5,15,35,0.15);
+  --particle-hue:   42;
+  --lantern-glow:   1;
+}
+
+/* ── Reset ── */
+*,*::before,*::after { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100%; overflow:hidden;
+  font-family:"Cairo","Amiri","Segoe UI",sans-serif;
+  background:#020b1a;
+  color:var(--text-main);
+  animation: pageReveal 1.4s ease-out;
+}
+
+@keyframes pageReveal {
+  from { opacity:0 } to { opacity:1 }
+}
+
+/* ══════════ SCENE LAYERS ══════════ */
+.scene {
+  position:fixed; inset:0; width:100%; height:100%;
+}
+#bg-svg       { z-index:1; pointer-events:none; }
+#particle-layer { z-index:2; pointer-events:none; }
+#lantern-layer {
+  position:fixed; inset:0; z-index:3;
+  pointer-events:none; overflow:hidden;
+}
+
+/* ══════════ MOON ══════════ */
+.moon-body {
+  filter: drop-shadow(0 0 6px rgba(255,222,140,0.35));
+}
+.moon-halo-outer {
+  animation: haloBreath 6.5s ease-in-out infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+.moon-halo-inner {
+  animation: haloBreath 6.5s ease-in-out 0.6s infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes haloBreath {
+  0%,100% { opacity:.25; transform:scale(1) }
+  50%     { opacity:.42; transform:scale(1.05) }
+}
+.moon-glow {
+  animation: moonPulse 5.5s ease-in-out infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes moonPulse {
+  0%,100% { opacity:.92; transform:scale(1) }
+  50%     { opacity:1;   transform:scale(1.015) }
+}
+
+/* ══════════ SUN ══════════ */
+#sun-rays {
+  animation: sunRaysSpin 80s linear infinite;
+  transform-origin:800px 200px;
+}
+@keyframes sunRaysSpin {
+  to { transform:rotate(360deg) }
+}
+#sun-core {
+  animation: sunPulse 4s ease-in-out infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes sunPulse {
+  0%,100% { transform:scale(1) }
+  50%     { transform:scale(1.04) }
+}
+
+/* ══════════ STARS ══════════ */
+.star {
+  animation: starTwinkle var(--dur,3s) ease-in-out var(--delay,0s) infinite;
+}
+@keyframes starTwinkle {
+  0%,100% { opacity:var(--min-o,0.15) }
+  50%     { opacity:var(--max-o,0.95) }
+}
+.star-cross line {
+  stroke-linecap:round;
+  animation: starTwinkle var(--dur,3s) ease-in-out var(--delay,0s) infinite;
+}
+
+/* ══════════ SHOOTING STARS ══════════ */
+.shooting-star {
+  animation: shoot var(--shoot-dur,3s) ease-in var(--shoot-delay,0s) infinite;
+  transform-origin:0 0;
+}
+@keyframes shoot {
+  0%   { opacity:0; transform:translate(0,0) }
+  2%   { opacity:1 }
+  18%  { opacity:.85 }
+  25%  { opacity:0; transform:translate(var(--dx,-260px),var(--dy,140px)) }
+  100% { opacity:0; transform:translate(var(--dx,-260px),var(--dy,140px)) }
+}
+
+/* ══════════ CLOUDS ══════════ */
+.cloud {
+  animation: cloudDrift var(--cloud-speed,90s) linear infinite;
+  will-change:transform;
+}
+@keyframes cloudDrift {
+  0%   { transform:translateX(0) }
+  100% { transform:translateX(-220px) }
+}
+
+/* ══════════ CANNON ══════════ */
+.smoke {
+  fill:rgba(200,215,245,0.3);
+  animation: smokeFloat 4.5s ease-out infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+.smoke-2 { animation-delay:1.6s }
+.smoke-3 { animation-delay:0.8s }
+@keyframes smokeFloat {
+  0%   { opacity:0; transform:translate(0,0) scale(.5) }
+  15%  { opacity:.48 }
+  100% { opacity:0; transform:translate(-30px,-68px) scale(1.7) }
+}
+.cannon-flash {
+  opacity:0;
+  animation: cannonFlash var(--cannon-interval,8s) ease-in-out infinite;
+}
+@keyframes cannonFlash {
+  0%,72%,100% { opacity:0 }
+  75%  { opacity:1 }
+  78%  { opacity:.3 }
+  82%  { opacity:0 }
+}
+
+/* ══════════ LANTERNS ══════════ */
+.lantern-wrap {
+  position:absolute;
+  animation: lanternSway var(--swing,5s) ease-in-out infinite;
+  transform-origin:50% -30px;
+  filter: drop-shadow(0 0 calc(14px * var(--lantern-glow,1)) rgba(232,183,48,calc(0.5 * var(--lantern-glow,1))))
+          drop-shadow(0 0 calc(36px * var(--lantern-glow,1)) rgba(232,183,48,calc(0.2 * var(--lantern-glow,1))));
+}
+@keyframes lanternSway {
+  0%,100% { transform:rotate(-3.5deg) }
+  50%     { transform:rotate(3.5deg) }
+}
+.lantern-svg {
+  width:clamp(28px,4.5vw,52px); height:auto;
+}
+.lantern-flame {
+  animation: flameFlicker .8s ease-in-out infinite alternate;
+  transform-origin:center bottom; transform-box:fill-box;
+}
+@keyframes flameFlicker {
+  0%  { transform:scaleY(1) scaleX(1);      opacity:.88 }
+  30% { transform:scaleY(1.14) scaleX(.9);  opacity:1 }
+  60% { transform:scaleY(.92) scaleX(1.08); opacity:.82 }
+  100%{ transform:scaleY(1.08) scaleX(.94); opacity:.92 }
+}
+.lantern-inner-glow {
+  animation: innerGlow 2.2s ease-in-out infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes innerGlow {
+  0%,100% { opacity:.45 }
+  50%     { opacity:.78 }
+}
+.lantern-string {
+  position:absolute;
+  top:-42px; left:50%;
+  width:1.5px; height:44px;
+  transform:translateX(-50%);
+  background:linear-gradient(to bottom, rgba(232,183,48,0.12), rgba(232,183,48,0.55));
+}
+
+/* ══════════ SCENE FADE (vignette + time overlay) ══════════ */
+.scene-fade {
+  position:fixed; inset:0; z-index:2;
+  pointer-events:none;
+  background:
+    linear-gradient(to top, rgba(2,8,18,0.9) 0%, rgba(2,8,18,0.12) 26%, transparent 58%),
+    radial-gradient(ellipse at 82% 18%, rgba(255,210,90,0.03) 0%, transparent 50%),
+    radial-gradient(circle at 50% 48%, transparent 0%, rgba(2,8,18,0.28) 100%);
+  transition: background 2s ease;
+}
+
+/* ══════════ MESSAGE CARD ══════════ */
+.message-card {
+  position:fixed;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  z-index:4;
+  width:min(92vw,720px);
+  border-radius:28px;
+  background:var(--card-bg);
+  border:1px solid var(--card-border);
+  box-shadow:
+    0 20px 60px rgba(0,0,0,0.55),
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 0 80px var(--card-glow);
+  backdrop-filter:blur(18px) saturate(1.3);
+  -webkit-backdrop-filter:blur(18px) saturate(1.3);
+  overflow:hidden;
+  animation: cardReveal 1.2s cubic-bezier(.22,1,.36,1) .5s both;
+  transition: background .8s, border-color .8s, box-shadow .8s;
+}
+.message-card::before {
+  content:"";
+  position:absolute; inset:0;
+  background:
+    linear-gradient(145deg, rgba(232,183,48,0.06) 0%, transparent 40%),
+    linear-gradient(320deg, rgba(26,138,116,0.04) 0%, transparent 40%);
+  pointer-events:none; border-radius:inherit;
+}
+.message-card::after {
+  content:"";
+  position:absolute; top:0; left:0; right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(232,183,48,0.4), transparent);
+  pointer-events:none;
+}
+@keyframes cardReveal {
+  from { opacity:0; transform:translate(-50%,-50%) scale(.86) translateY(24px) }
+  to   { opacity:1; transform:translate(-50%,-50%) scale(1) translateY(0) }
+}
+
+/* Card ornaments */
+.card-ornament {
+  position:absolute; left:50%; transform:translateX(-50%);
+  width:min(78%,400px); height:28px; pointer-events:none;
+}
+.card-ornament-top    { top:0 }
+.card-ornament-bottom { bottom:0; transform:translateX(-50%) rotate(180deg) }
+
+/* Card content */
+.card-content {
+  position:relative;
+  padding:clamp(28px,4vw,48px) clamp(24px,3.5vw,44px);
+  display:grid; gap:14px;
+}
+
+/* Title wrapper with sparkles */
+.card-title-wrap {
+  display:flex; align-items:center; justify-content:center; gap:clamp(10px,2vw,18px);
+  opacity:0;
+  animation: titleBurst 1s cubic-bezier(.22,1,.36,1) .6s forwards;
+}
+@keyframes titleBurst {
+  0%   { opacity:0; transform:scale(.7) }
+  60%  { transform:scale(1.06) }
+  100% { opacity:1; transform:scale(1) }
+}
+
+.card-title {
+  font-family:"Amiri","Cairo",serif;
+  font-size:clamp(1.7rem,4vw,2.8rem);
+  color:var(--gold-strong);
+  font-weight:700;
+  text-align:center;
+  letter-spacing:1px;
+  text-shadow:
+    0 0 28px rgba(232,183,48,0.35),
+    0 0 56px rgba(232,183,48,0.12);
+  background:linear-gradient(135deg, #ffe8a3, #ffd96a, #e8b730, #ffd96a, #ffe8a3);
+  background-size:200% 100%;
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  animation: titleShimmer 4s ease-in-out infinite;
+}
+@keyframes titleShimmer {
+  0%,100% { background-position:0% 50% }
+  50%     { background-position:100% 50% }
+}
+
+.title-sparkle {
+  font-size:clamp(0.9rem,2vw,1.4rem);
+  color:var(--gold);
+  animation: sparkleRotate 3s ease-in-out infinite;
+  text-shadow:0 0 10px rgba(232,183,48,0.5);
+}
+.title-sparkle-l { animation-delay:.4s }
+@keyframes sparkleRotate {
+  0%,100% { opacity:.5; transform:scale(.8) rotate(0deg) }
+  50%     { opacity:1;  transform:scale(1.2) rotate(180deg) }
+}
+
+/* Decorative divider */
+.card-divider {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin:2px 0 6px;
+  opacity:0;
+  animation: lineReveal .6s ease-out .9s forwards;
+}
+.divider-line {
+  display:block;
+  width:clamp(40px,10vw,90px); height:1px;
+  background:linear-gradient(90deg, transparent, rgba(232,183,48,0.35), transparent);
+}
+.divider-star {
+  font-size:.65rem;
+  color:var(--gold);
+  opacity:.6;
+  animation: sparkleRotate 5s ease-in-out infinite;
+}
+
+/* Message lines */
+.card-line {
+  font-size:clamp(1rem,2.2vw,1.22rem);
+  line-height:2.05;
+  color:var(--text-soft);
+  text-align:center;
+  opacity:0;
+  animation: lineReveal .7s ease-out forwards;
+}
+.card-line:nth-child(3) { animation-delay:1.15s }
+.card-line:nth-child(4) { animation-delay:1.55s }
+.card-line:nth-child(5) { animation-delay:1.95s }
+.card-line:nth-child(6) { animation-delay:2.35s }
+@keyframes lineReveal {
+  from { opacity:0; transform:translateY(12px) }
+  to   { opacity:1; transform:translateY(0) }
+}
+
+.card-line.highlight {
+  color:#fff;
+  font-weight:700;
+  font-size:clamp(1.06rem,2.5vw,1.32rem);
+  text-shadow:0 0 18px rgba(255,255,255,0.08);
+}
+
+/* Footer */
+.card-footer {
+  margin-top:14px; padding-top:10px;
+  border-top:1px solid rgba(232,183,48,0.12);
+  display:flex; align-items:center; justify-content:center; gap:14px;
+  color:rgba(255,255,255,0.88);
+  font-size:clamp(.9rem,1.9vw,1.04rem);
+  opacity:0;
+  animation: lineReveal .7s ease-out 2.8s forwards;
+}
+.footer-crescent {
+  font-size:1rem;
+  color:var(--gold);
+  text-shadow:0 0 8px rgba(232,183,48,0.45);
+  animation: crescentPulse 3s ease-in-out infinite;
+}
+@keyframes crescentPulse {
+  0%,100% { opacity:.55; transform:scale(1) }
+  50%     { opacity:1;   transform:scale(1.15) }
+}
+
+/* ══════════ RESPONSIVE ══════════ */
+@media (max-width:768px) {
+  .message-card { width:92vw }
+}
+@media (max-width:520px) {
+  .card-content { padding:22px 16px; gap:8px }
+  .card-line { line-height:1.85 }
+}
+
+/* ══════════ ACCESSIBILITY ══════════ */
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after {
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+}
