@@ -105,6 +105,10 @@
       <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
     </filter>
     <filter id="sunBlur"><feGaussianBlur stdDeviation="8"/></filter>
+    <filter id="bulbGlow">
+      <feGaussianBlur stdDeviation="3" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
 
   <!-- ── Sky ── -->
@@ -402,6 +406,140 @@
     <circle cx="800" cy="534" r="3.5" fill="#f3c55a" opacity="0.4"/>
     <circle cx="485" cy="534" r="2.8" fill="#f3c55a" opacity="0.3"/>
     <circle cx="1065" cy="534" r="2.8" fill="#f3c55a" opacity="0.3"/>
+  </g>
+
+  <!-- ══ Ramadan decoration: strings & bunting (always visible) ══ -->
+  <g id="decor-fabric">
+    <!-- Upper string wires: minaret-to-minaret across domes -->
+    <path d="M364,455 Q425,472 485,418" stroke="rgba(160,130,60,0.35)" stroke-width="1" fill="none"/>
+    <path d="M485,418 Q643,445 800,365" stroke="rgba(160,130,60,0.35)" stroke-width="1" fill="none"/>
+    <path d="M800,365 Q933,445 1065,435" stroke="rgba(160,130,60,0.35)" stroke-width="1" fill="none"/>
+    <path d="M1065,435 Q1143,470 1221,475" stroke="rgba(160,130,60,0.35)" stroke-width="1" fill="none"/>
+
+    <!-- Lower facade string wire -->
+    <path d="M395,532 Q810,552 1235,532" stroke="rgba(160,130,60,0.3)" stroke-width="0.8" fill="none"/>
+
+    <!-- Bunting pennant flags (lower string) -->
+    <path d="M455,537 L467,537 L461,554Z" fill="#d9534f" class="bunting-flag" style="--fd:0s"    opacity="0.7"/>
+    <path d="M525,540 L537,540 L531,557Z" fill="#2d9b5c" class="bunting-flag" style="--fd:0.4s"  opacity="0.7"/>
+    <path d="M590,543 L602,543 L596,560Z" fill="#d4a528" class="bunting-flag" style="--fd:0.8s"  opacity="0.7"/>
+    <path d="M655,545 L667,545 L661,562Z" fill="#4a87c0" class="bunting-flag" style="--fd:1.2s"  opacity="0.7"/>
+    <path d="M720,546 L732,546 L726,563Z" fill="#d9a834" class="bunting-flag" style="--fd:1.6s"  opacity="0.7"/>
+    <path d="M785,547 L797,547 L791,564Z" fill="#d9534f" class="bunting-flag" style="--fd:0.2s"  opacity="0.7"/>
+    <path d="M845,547 L857,547 L851,564Z" fill="#2d9b5c" class="bunting-flag" style="--fd:0.6s"  opacity="0.7"/>
+    <path d="M910,545 L922,545 L916,562Z" fill="#d4a528" class="bunting-flag" style="--fd:1s"    opacity="0.7"/>
+    <path d="M975,543 L987,543 L981,560Z" fill="#4a87c0" class="bunting-flag" style="--fd:1.4s"  opacity="0.7"/>
+    <path d="M1040,540 L1052,540 L1046,557Z" fill="#d9a834" class="bunting-flag" style="--fd:1.8s" opacity="0.7"/>
+    <path d="M1100,537 L1112,537 L1106,554Z" fill="#d9534f" class="bunting-flag" style="--fd:0.3s" opacity="0.7"/>
+    <path d="M1160,534 L1172,534 L1166,551Z" fill="#2d9b5c" class="bunting-flag" style="--fd:0.7s" opacity="0.7"/>
+  </g>
+
+  <!-- ══ Ramadan decoration: lights (time-controlled) ══ -->
+  <g id="decor-lights">
+    <!-- Warm facade glow wash -->
+    <rect x="330" y="540" width="940" height="190" fill="#f5d87a" opacity="0.04" filter="url(#softBlur)"/>
+
+    <!-- ── Upper string bulbs ── -->
+    <!-- Segment 1: left minaret → left dome -->
+    <circle cx="388" cy="458" r="3" fill="#fbbf24" class="string-bulb" style="--bd:0s"   filter="url(#bulbGlow)"/>
+    <circle cx="413" cy="455" r="3" fill="#34d399" class="string-bulb" style="--bd:0.2s" filter="url(#bulbGlow)"/>
+    <circle cx="437" cy="448" r="3" fill="#fb7185" class="string-bulb" style="--bd:0.4s" filter="url(#bulbGlow)"/>
+    <circle cx="461" cy="436" r="3" fill="#60a5fa" class="string-bulb" style="--bd:0.6s" filter="url(#bulbGlow)"/>
+    <!-- Segment 2: left dome → main dome -->
+    <circle cx="520" cy="422" r="3" fill="#fef08a" class="string-bulb" style="--bd:0.8s" filter="url(#bulbGlow)"/>
+    <circle cx="560" cy="426" r="3" fill="#fbbf24" class="string-bulb" style="--bd:1s"   filter="url(#bulbGlow)"/>
+    <circle cx="600" cy="428" r="3" fill="#34d399" class="string-bulb" style="--bd:1.2s" filter="url(#bulbGlow)"/>
+    <circle cx="645" cy="426" r="3" fill="#fb7185" class="string-bulb" style="--bd:1.4s" filter="url(#bulbGlow)"/>
+    <circle cx="695" cy="416" r="3" fill="#60a5fa" class="string-bulb" style="--bd:1.6s" filter="url(#bulbGlow)"/>
+    <circle cx="755" cy="393" r="3" fill="#fef08a" class="string-bulb" style="--bd:1.8s" filter="url(#bulbGlow)"/>
+    <!-- Segment 3: main dome → right dome -->
+    <circle cx="840" cy="380" r="3" fill="#fbbf24" class="string-bulb" style="--bd:2s"   filter="url(#bulbGlow)"/>
+    <circle cx="880" cy="396" r="3" fill="#34d399" class="string-bulb" style="--bd:2.2s" filter="url(#bulbGlow)"/>
+    <circle cx="920" cy="410" r="3" fill="#fb7185" class="string-bulb" style="--bd:2.4s" filter="url(#bulbGlow)"/>
+    <circle cx="960" cy="422" r="3" fill="#60a5fa" class="string-bulb" style="--bd:2.6s" filter="url(#bulbGlow)"/>
+    <circle cx="1000" cy="430" r="3" fill="#fef08a" class="string-bulb" style="--bd:2.8s" filter="url(#bulbGlow)"/>
+    <circle cx="1046" cy="434" r="3" fill="#fbbf24" class="string-bulb" style="--bd:3s"   filter="url(#bulbGlow)"/>
+    <!-- Segment 4: right dome → right minaret -->
+    <circle cx="1090" cy="443" r="3" fill="#34d399" class="string-bulb" style="--bd:3.2s" filter="url(#bulbGlow)"/>
+    <circle cx="1120" cy="452" r="3" fill="#fb7185" class="string-bulb" style="--bd:3.4s" filter="url(#bulbGlow)"/>
+    <circle cx="1150" cy="460" r="3" fill="#60a5fa" class="string-bulb" style="--bd:3.6s" filter="url(#bulbGlow)"/>
+    <circle cx="1180" cy="467" r="3" fill="#fef08a" class="string-bulb" style="--bd:3.8s" filter="url(#bulbGlow)"/>
+
+    <!-- ── Lower facade string bulbs ── -->
+    <circle cx="430" cy="535" r="2.5" fill="#fbbf24" class="string-bulb" style="--bd:0.1s"/>
+    <circle cx="495" cy="539" r="2.5" fill="#34d399" class="string-bulb" style="--bd:0.3s"/>
+    <circle cx="560" cy="542" r="2.5" fill="#fb7185" class="string-bulb" style="--bd:0.5s"/>
+    <circle cx="625" cy="544" r="2.5" fill="#60a5fa" class="string-bulb" style="--bd:0.7s"/>
+    <circle cx="690" cy="546" r="2.5" fill="#fef08a" class="string-bulb" style="--bd:0.9s"/>
+    <circle cx="755" cy="547" r="2.5" fill="#fbbf24" class="string-bulb" style="--bd:1.1s"/>
+    <circle cx="810" cy="548" r="2.5" fill="#34d399" class="string-bulb" style="--bd:1.3s"/>
+    <circle cx="875" cy="547" r="2.5" fill="#fb7185" class="string-bulb" style="--bd:1.5s"/>
+    <circle cx="940" cy="545" r="2.5" fill="#60a5fa" class="string-bulb" style="--bd:1.7s"/>
+    <circle cx="1005" cy="542" r="2.5" fill="#fef08a" class="string-bulb" style="--bd:1.9s"/>
+    <circle cx="1070" cy="539" r="2.5" fill="#fbbf24" class="string-bulb" style="--bd:2.1s"/>
+    <circle cx="1135" cy="536" r="2.5" fill="#34d399" class="string-bulb" style="--bd:2.3s"/>
+    <circle cx="1200" cy="533" r="2.5" fill="#fb7185" class="string-bulb" style="--bd:2.5s"/>
+
+    <!-- ── Dome outline lights ── -->
+    <!-- Main dome -->
+    <circle cx="704" cy="499" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:0s"/>
+    <circle cx="728" cy="476" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:0.3s"/>
+    <circle cx="752" cy="459" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:0.6s"/>
+    <circle cx="776" cy="448" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:0.9s"/>
+    <circle cx="800" cy="445" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:1.2s"/>
+    <circle cx="824" cy="448" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:1.5s"/>
+    <circle cx="848" cy="459" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:1.8s"/>
+    <circle cx="872" cy="476" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:2.1s"/>
+    <circle cx="896" cy="499" r="2.2" fill="#f5d87a" class="dome-light" style="--dd:2.4s"/>
+    <!-- Left dome -->
+    <circle cx="439" cy="492" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.2s"/>
+    <circle cx="462" cy="472" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.5s"/>
+    <circle cx="485" cy="468" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.8s"/>
+    <circle cx="508" cy="472" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:1.1s"/>
+    <circle cx="531" cy="492" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:1.4s"/>
+    <!-- Right dome -->
+    <circle cx="1025" cy="492" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.1s"/>
+    <circle cx="1049" cy="472" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.4s"/>
+    <circle cx="1065" cy="468" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:0.7s"/>
+    <circle cx="1081" cy="472" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:1s"/>
+    <circle cx="1105" cy="492" r="1.8" fill="#f5d87a" class="dome-light" style="--dd:1.3s"/>
+
+    <!-- ── Small hanging lanterns at arches ── -->
+    <!-- Center entrance lantern -->
+    <line x1="810" y1="540" x2="810" y2="558" stroke="#f5d87a" stroke-width="0.7" opacity="0.5"/>
+    <rect x="804" y="558" width="12" height="16" rx="3" fill="#f5d87a" opacity="0.35"/>
+    <ellipse cx="810" cy="566" rx="3" ry="4" fill="#fbbf24" opacity="0.6" class="string-bulb" style="--bd:0.5s"/>
+    <!-- Left arch lantern -->
+    <line x1="530" y1="555" x2="530" y2="570" stroke="#f5d87a" stroke-width="0.6" opacity="0.4"/>
+    <rect x="525" y="570" width="10" height="14" rx="2.5" fill="#f5d87a" opacity="0.3"/>
+    <ellipse cx="530" cy="577" rx="2.5" ry="3.5" fill="#fbbf24" opacity="0.55" class="string-bulb" style="--bd:1s"/>
+    <!-- Right arch lantern -->
+    <line x1="1060" y1="555" x2="1060" y2="570" stroke="#f5d87a" stroke-width="0.6" opacity="0.4"/>
+    <rect x="1055" y="570" width="10" height="14" rx="2.5" fill="#f5d87a" opacity="0.3"/>
+    <ellipse cx="1060" cy="577" rx="2.5" ry="3.5" fill="#fbbf24" opacity="0.55" class="string-bulb" style="--bd:1.5s"/>
+
+    <!-- ── Hanging crescents from upper string ── -->
+    <line x1="650" y1="426" x2="650" y2="441" stroke="#f5d87a" stroke-width="0.6" opacity="0.4"/>
+    <circle cx="650" cy="446" r="4.5" fill="#fbbf24" opacity="0.55"/>
+    <circle cx="652.5" cy="444.5" r="4.5" fill="var(--mosque-color,#070e1e)" opacity="0.75"/>
+    <line x1="960" y1="422" x2="960" y2="437" stroke="#f5d87a" stroke-width="0.6" opacity="0.4"/>
+    <circle cx="960" cy="442" r="4.5" fill="#fbbf24" opacity="0.55"/>
+    <circle cx="962.5" cy="440.5" r="4.5" fill="var(--mosque-color,#070e1e)" opacity="0.75"/>
+
+    <!-- ── Hanging star from center dome ── -->
+    <line x1="800" y1="380" x2="800" y2="398" stroke="#f5d87a" stroke-width="0.8" opacity="0.5"/>
+    <polygon points="800,399 802,406 809,406 803,410 806,417 800,413 794,417 797,410 791,406 798,406"
+      fill="#fbbf24" opacity="0.65" class="dome-light" style="--dd:0.5s"/>
+
+    <!-- ── Minaret string lights (vertical) ── -->
+    <!-- Left minaret -->
+    <circle cx="364" cy="410" r="2" fill="#fbbf24" class="string-bulb" style="--bd:0.1s"/>
+    <circle cx="364" cy="425" r="2" fill="#34d399" class="string-bulb" style="--bd:0.5s"/>
+    <circle cx="364" cy="440" r="2" fill="#fb7185" class="string-bulb" style="--bd:0.9s"/>
+    <!-- Right minaret -->
+    <circle cx="1221" cy="430" r="2" fill="#60a5fa" class="string-bulb" style="--bd:0.3s"/>
+    <circle cx="1221" cy="445" r="2" fill="#fef08a" class="string-bulb" style="--bd:0.7s"/>
+    <circle cx="1221" cy="460" r="2" fill="#fbbf24" class="string-bulb" style="--bd:1.1s"/>
   </g>
 
   <!-- ── Palm trees ── -->
