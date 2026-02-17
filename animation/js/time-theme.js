@@ -335,15 +335,15 @@ window.TimeTheme = (function () {
   /* ── Time-aware greeting ── */
   function getTimeGreeting(period) {
     const greetings = {
-      night:   "تقبل الله صيامكم وقيامكم",
-      fajr:    "سحور مبارك — قوّة ليومك",
-      sunrise: "أشرقت شمس يوم جديد من رمضان",
-      morning: "صباح مبارك — يوم مليء بالخير",
-      noon:    "اللهم أعنّا على الصيام",
-      asr:     "اقترب الفرج — صبرًا جميلًا",
-      maghrib: "الله أكبر — حان وقت الإفطار 🌙",
-      isha:    "ليلة مباركة من ليالي رمضان"
-    };
+  night:   "تقبل الله صيامكم وقيامكم ✨",
+  fajr:    "سحور مبارك — قوّة ليومك 🌙",
+  sunrise: "أشرقت شمس يوم جديد من رمضان 🕌",
+  morning: "صباح مبارك — يوم مليء بالخير ✨",
+  noon:    "اللهم أعنّا على الصيام 🌙",
+  asr:     "رمضان مبارك — تقبل الله طاعاتكم 🕌",
+  maghrib: "صومًا مقبولاً — إفطاراً شهياً 🌙",
+  isha:    "ليلة مباركة من ليالي رمضان ✨"
+};
     return greetings[period] || "مبارك عليك الإنجاز";
   }
 
@@ -374,3 +374,4 @@ window.TimeTheme = (function () {
 
   return { init, update, getThemeAt, getSunPosition };
 })();
+
