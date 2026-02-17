@@ -14,7 +14,7 @@ window.TimeTheme = (function () {
       sky:    [[2,11,26],  [9,28,58],   [11,26,48]],
       ground: [[16,34,58], [6,14,28]],
       moon: 1.0,  sun: 0,  stars: 1.0,  birds: 0,
-      mosqueLights: 0.8,  lanternGlow: 1.0,
+      mosqueLights: 0.8,  lanternGlow: 1.0,  decorLights: 1.0,
       cloudRgb: [26,48,80],  cloudAlpha: 0.16,
       mosqueRgb: [7,14,30],
       treeRgb: [4,10,20],
@@ -30,7 +30,7 @@ window.TimeTheme = (function () {
       sky:    [[8,18,40],  [18,42,75],  [38,62,88]],
       ground: [[22,40,60], [12,22,38]],
       moon: 0.5,  sun: 0,  stars: 0.35,  birds: 0,
-      mosqueLights: 0.5,  lanternGlow: 0.65,
+      mosqueLights: 0.5,  lanternGlow: 0.65,  decorLights: 0.6,
       cloudRgb: [42,58,80],  cloudAlpha: 0.14,
       mosqueRgb: [10,18,36],
       treeRgb: [6,14,26],
@@ -46,7 +46,7 @@ window.TimeTheme = (function () {
       sky:    [[28,48,90],  [85,108,148], [190,140,95]],
       ground: [[48,58,68],  [30,38,48]],
       moon: 0.04,  sun: 0.85,  stars: 0.02,  birds: 0.3,
-      mosqueLights: 0.12,  lanternGlow: 0.18,
+      mosqueLights: 0.12,  lanternGlow: 0.18,  decorLights: 0.2,
       cloudRgb: [210,160,130],  cloudAlpha: 0.18,
       mosqueRgb: [18,26,44],
       treeRgb: [12,20,32],
@@ -62,7 +62,7 @@ window.TimeTheme = (function () {
       sky:    [[55,118,195], [95,168,235], [148,208,252]],
       ground: [[58,72,88],   [42,54,66]],
       moon: 0,  sun: 1,  stars: 0,  birds: 0.7,
-      mosqueLights: 0.06,  lanternGlow: 0.1,
+      mosqueLights: 0.06,  lanternGlow: 0.1,  decorLights: 0.12,
       cloudRgb: [205,215,230],  cloudAlpha: 0.2,
       mosqueRgb: [22,34,55],
       treeRgb: [15,25,38],
@@ -78,7 +78,7 @@ window.TimeTheme = (function () {
       sky:    [[50,110,188], [88,158,228], [142,198,248]],
       ground: [[60,74,90],   [44,56,68]],
       moon: 0,  sun: 1,  stars: 0,  birds: 0.6,
-      mosqueLights: 0.05,  lanternGlow: 0.08,
+      mosqueLights: 0.05,  lanternGlow: 0.08,  decorLights: 0.1,
       cloudRgb: [198,208,222],  cloudAlpha: 0.22,
       mosqueRgb: [24,36,58],
       treeRgb: [16,26,40],
@@ -94,7 +94,7 @@ window.TimeTheme = (function () {
       sky:    [[58,108,178], [105,160,220], [172,200,230]],
       ground: [[62,72,82],   [46,55,65]],
       moon: 0,  sun: 0.95,  stars: 0,  birds: 0.45,
-      mosqueLights: 0.08,  lanternGlow: 0.1,
+      mosqueLights: 0.08,  lanternGlow: 0.1,  decorLights: 0.12,
       cloudRgb: [195,200,215],  cloudAlpha: 0.2,
       mosqueRgb: [22,34,55],
       treeRgb: [15,25,38],
@@ -110,7 +110,7 @@ window.TimeTheme = (function () {
       sky:    [[22,16,44],  [138,52,58],  [225,115,52]],
       ground: [[48,40,44],  [24,22,30]],
       moon: 0.22,  sun: 0.5,  stars: 0.08,  birds: 0.12,
-      mosqueLights: 0.52,  lanternGlow: 0.6,
+      mosqueLights: 0.52,  lanternGlow: 0.6,  decorLights: 0.75,
       cloudRgb: [170,85,65],  cloudAlpha: 0.25,
       mosqueRgb: [14,16,30],
       treeRgb: [8,12,22],
@@ -126,7 +126,7 @@ window.TimeTheme = (function () {
       sky:    [[6,14,34],   [16,32,60],   [22,38,62]],
       ground: [[22,36,56],  [10,20,34]],
       moon: 0.85,  sun: 0,  stars: 0.78,  birds: 0,
-      mosqueLights: 0.7,  lanternGlow: 0.85,
+      mosqueLights: 0.7,  lanternGlow: 0.85,  decorLights: 0.9,
       cloudRgb: [30,48,74],  cloudAlpha: 0.15,
       mosqueRgb: [8,16,30],
       treeRgb: [5,12,22],
@@ -142,7 +142,7 @@ window.TimeTheme = (function () {
       sky:    [[2,11,26],  [9,28,58],   [11,26,48]],
       ground: [[16,34,58], [6,14,28]],
       moon: 1.0,  sun: 0,  stars: 1.0,  birds: 0,
-      mosqueLights: 0.8,  lanternGlow: 1.0,
+      mosqueLights: 0.8,  lanternGlow: 1.0,  decorLights: 1.0,
       cloudRgb: [26,48,80],  cloudAlpha: 0.16,
       mosqueRgb: [7,14,30],
       treeRgb: [4,10,20],
@@ -192,6 +192,7 @@ window.TimeTheme = (function () {
       birds:          lerp(prev.birds, next.birds, t),
       mosqueLights:   lerp(prev.mosqueLights, next.mosqueLights, t),
       lanternGlow:    lerp(prev.lanternGlow, next.lanternGlow, t),
+      decorLights:    lerp(prev.decorLights, next.decorLights, t),
       cloudRgb:       lerpRgb(prev.cloudRgb, next.cloudRgb, t),
       cloudAlpha:     lerp(prev.cloudAlpha, next.cloudAlpha, t),
       mosqueRgb:      lerpRgb(prev.mosqueRgb, next.mosqueRgb, t),
@@ -254,6 +255,7 @@ window.TimeTheme = (function () {
     setOpacity("shooting-stars", theme.stars);
     setOpacity("birds", theme.birds);
     setOpacity("mosque-lights", theme.mosqueLights);
+    setOpacity("decor-lights", theme.decorLights);
 
     // Atmospheric elements (nebula, milky way)
     setOpacity("milky-way", theme.stars * 0.07);
@@ -333,14 +335,14 @@ window.TimeTheme = (function () {
   /* ── Time-aware greeting ── */
   function getTimeGreeting(period) {
     const greetings = {
-      night:   "تقبل الله صيامكم وقيامكم ✨",
-      fajr:    "سحور مبارك — قوّة ليومك 🌙",
-      sunrise: "أشرقت شمس يوم جديد من رمضان 🕌",
-      morning: "صباح مبارك — يوم مليء بالخير ✨",
-      noon:    "اللهم أعنّا على الصيام 🌙",
-      asr:     "رمضان مبارك — تقبل الله طاعاتكم 🕌",
-      maghrib: "صومًا مقبولاً — إفطاراً شهياً 🌙",
-      isha:    "ليلة مباركة من ليالي رمضان ✨"
+      night:   "تقبل الله صيامكم وقيامكم",
+      fajr:    "سحور مبارك — قوّة ليومك",
+      sunrise: "أشرقت شمس يوم جديد من رمضان",
+      morning: "صباح مبارك — يوم مليء بالخير",
+      noon:    "اللهم أعنّا على الصيام",
+      asr:     "اقترب الفرج — صبرًا جميلًا",
+      maghrib: "الله أكبر — حان وقت الإفطار 🌙",
+      isha:    "ليلة مباركة من ليالي رمضان"
     };
     return greetings[period] || "مبارك عليك الإنجاز";
   }

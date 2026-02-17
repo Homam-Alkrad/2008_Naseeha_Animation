@@ -154,6 +154,32 @@ html, body {
   82%  { opacity:0 }
 }
 
+/* ══════════ RAMADAN DECORATIONS ══════════ */
+.string-bulb {
+  animation: bulbTwinkle 2.2s ease-in-out var(--bd,0s) infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes bulbTwinkle {
+  0%,100% { opacity:.4;  transform:scale(.82) }
+  50%     { opacity:1;   transform:scale(1.18) }
+}
+.dome-light {
+  animation: domePulse 3s ease-in-out var(--dd,0s) infinite;
+  transform-origin:center; transform-box:fill-box;
+}
+@keyframes domePulse {
+  0%,100% { opacity:.3 }
+  50%     { opacity:.95 }
+}
+.bunting-flag {
+  animation: flagSway 3.5s ease-in-out var(--fd,0s) infinite;
+  transform-origin:top center; transform-box:fill-box;
+}
+@keyframes flagSway {
+  0%,100% { transform:rotate(-3deg) }
+  50%     { transform:rotate(3deg) }
+}
+
 /* ══════════ LANTERNS ══════════ */
 .lantern-wrap {
   position:absolute;
@@ -200,28 +226,28 @@ html, body {
   position:fixed; inset:0; z-index:2;
   pointer-events:none;
   background:
-    linear-gradient(to top, rgba(2,8,18,0.9) 0%, rgba(2,8,18,0.12) 26%, transparent 58%),
+    linear-gradient(to top, rgba(2,8,18,0.55) 0%, rgba(2,8,18,0.08) 18%, transparent 45%),
     radial-gradient(ellipse at 82% 18%, rgba(255,210,90,0.03) 0%, transparent 50%),
-    radial-gradient(circle at 50% 48%, transparent 0%, rgba(2,8,18,0.28) 100%);
+    radial-gradient(circle at 50% 50%, transparent 0%, rgba(2,8,18,0.18) 100%);
   transition: background 2s ease;
 }
 
 /* ══════════ MESSAGE CARD ══════════ */
 .message-card {
   position:fixed;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
+  bottom:2.5vh; left:50%;
+  transform:translateX(-50%);
   z-index:4;
-  width:min(92vw,720px);
-  border-radius:28px;
-  background:var(--card-bg);
+  width:min(92vw,680px);
+  max-height:70vh;
+  border-radius:24px;
   border:1px solid var(--card-border);
   box-shadow:
-    0 20px 60px rgba(0,0,0,0.55),
+    0 -4px 40px rgba(0,0,0,0.4),
     inset 0 1px 0 rgba(255,255,255,0.06),
-    0 0 80px var(--card-glow);
-  backdrop-filter:blur(18px) saturate(1.3);
-  -webkit-backdrop-filter:blur(18px) saturate(1.3);
+    0 0 60px var(--card-glow);
+  backdrop-filter:blur(2px) saturate(1.35);
+  -webkit-backdrop-filter:blur(20px) saturate(1.35);
   overflow:hidden;
   animation: cardReveal 1.2s cubic-bezier(.22,1,.36,1) .5s both;
   transition: background .8s, border-color .8s, box-shadow .8s;
@@ -229,21 +255,17 @@ html, body {
 .message-card::before {
   content:"";
   position:absolute; inset:0;
-  background:
-    linear-gradient(145deg, rgba(232,183,48,0.06) 0%, transparent 40%),
-    linear-gradient(320deg, rgba(26,138,116,0.04) 0%, transparent 40%);
   pointer-events:none; border-radius:inherit;
 }
 .message-card::after {
   content:"";
   position:absolute; top:0; left:0; right:0;
   height:1px;
-  background:linear-gradient(90deg, transparent, rgba(232,183,48,0.4), transparent);
   pointer-events:none;
 }
 @keyframes cardReveal {
-  from { opacity:0; transform:translate(-50%,-50%) scale(.86) translateY(24px) }
-  to   { opacity:1; transform:translate(-50%,-50%) scale(1) translateY(0) }
+  from { opacity:0; transform:translateX(-50%) translateY(40px) scale(.92) }
+  to   { opacity:1; transform:translateX(-50%) translateY(0) scale(1) }
 }
 
 /* Card ornaments */
@@ -257,8 +279,8 @@ html, body {
 /* Card content */
 .card-content {
   position:relative;
-  padding:clamp(28px,4vw,48px) clamp(24px,3.5vw,44px);
-  display:grid; gap:14px;
+  padding:clamp(18px,2.8vw,32px) clamp(22px,3vw,38px);
+  display:grid; gap:8px;
 }
 
 /* Title wrapper with sparkles */
@@ -374,11 +396,13 @@ html, body {
 
 /* ══════════ RESPONSIVE ══════════ */
 @media (max-width:768px) {
-  .message-card { width:92vw }
+  .message-card { width:94vw; bottom:1.5vh; border-radius:20px; }
 }
 @media (max-width:520px) {
-  .card-content { padding:22px 16px; gap:8px }
-  .card-line { line-height:1.85 }
+  .card-content { padding:16px 14px; gap:6px; }
+  .card-line { line-height:1.8; }
+  .card-title { font-size:clamp(1.3rem,3.5vw,2rem) !important; }
+  .message-card { bottom:1vh; border-radius:18px; }
 }
 
 /* ══════════ ACCESSIBILITY ══════════ */
