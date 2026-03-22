@@ -10,17 +10,12 @@
   <style>
     :root {
       --cream:       #fffdf6;
-      --cream-2:     #fef9ec;
       --gold:        #d4920a;
       --gold-light:  #f0b429;
       --gold-pale:   #fde68a;
       --blue-deep:   #1e3a5f;
-      --blue-mid:    #2c5282;
-      --green:       #1a7a45;
-      --red:         #c0392b;
       --text-dark:   #1a1209;
       --text-mid:    #4a3a1a;
-      --text-soft:   #7a6540;
       --card-bg:     rgba(255, 253, 246, 0.88);
       --card-border: rgba(212, 146, 10, 0.3);
       --shadow:      rgba(100, 60, 0, 0.14);
@@ -37,7 +32,6 @@
       font-family: 'Cairo', sans-serif;
     }
 
-    /* Subtle warm gradient bg */
     body::before {
       content: '';
       position: fixed;
@@ -110,7 +104,6 @@
       to   { opacity: 1; transform: translate(-50%,-50%) scale(1);    filter: blur(0); }
     }
 
-    /* Gold corner brackets */
     #party-info::before, #party-info::after {
       content: '';
       position: absolute;
@@ -123,7 +116,6 @@
     #party-info::before { top: 14px; right: 14px; border-width: 2px 2px 0 0; border-radius: 0 7px 0 0; }
     #party-info::after  { bottom: 14px; left: 14px; border-width: 0 0 2px 2px; border-radius: 0 0 0 7px; }
 
-    /* ── Ornament SVG ── */
     .card-ornament { display: block; width: 100%; height: 24px; }
     .card-ornament-top    { margin-bottom: 14px; }
     .card-ornament-bottom { margin-top: 14px; }
@@ -296,7 +288,6 @@
 <canvas id="birthday"></canvas>
 <div id="confetti"></div>
 
-<!-- ════ CARD ════ -->
 <div id="party-info">
 
   <svg class="card-ornament card-ornament-top" viewBox="0 0 400 24" fill="none" aria-hidden="true">
@@ -351,35 +342,94 @@
 </div>
 
 <script>
-/* ── Messages ── */
-(function() {
+/* ══ MESSAGES ══ */
+(function () {
   var titles = [
-    "أبدعت","تجاوزت المألوف","بلغت القمة","حققت المستحيل",
-    "أدهشت العقول","صنعت الفارق","رسمت الإبداع","تخطيت التوقعات",
-    "نسجت التميز","أتقنت الصنعة","سطرت النجاح","جسّدت الإتقان","لامست السحاب"
+    "على شعرة!",
+    "كنت قريب جداً!",
+    "ما بينقصك إلا خطوة!",
+    "كاد يكون كاملاً!",
+    "لمستَ القمة تقريباً!",
+    "شبه مثالي!",
+    "ناقصك رمشة عين!",
+    "أقل من المثالية بقليل!"
   ];
+
   var messages = [
-    ["مش غريب عليك هاد التألق.","كنت بتطمح للقمة، وهلا إنت صرت القمة نفسها.","العلامة الكاملة مو بس رقم، هي مكافأة لتعبك وسهرك وإصرارك اللي ما بيلين.","كمل طريقك، إحنا دايمًا بضهرك وفخورين فيك وبكل خطوة بتعملها."],
-    ["في ناس بتمر على النجاح مرور الكرام.","وفي ناس متلك، بتترك بصمة بكل مكان بتدخله.","مبروك العلامة الكاملة اللي بتشبه طموحك الصافي.","خليك دايمًا واثق إنك بتستحق الأفضل، لأنك ببساطة مبدع."],
-    ["مين اللي سرق الأضواء وأخد العلامة الكاملة؟","أكيد الشخص اللي ما بنقدر نلحق على ذكائه وسرعته.","ألف مبروك يا بطل، هيك الشغل وإلا بلاش.","هلا صار وقت نحتفل فيك وبإنجازك اللي بيرفع الراس."],
-    ["أبدعت فأبهرت.","مو بس وصلت للهدف، إنت تجاوزته بمراحل.","العلامة الكاملة لايقة عليك وعلى اجتهادك.","مبروك من القلب، ومن نجاح لنجاح أكبر إن شاء الله."],
-    ["كل الكلمات بتعجز توصف فرحتنا فيك اليوم.","إنت مثال حي للنجاح اللي بيجي من تعب وشغف.","شكرًا لأنك رفعت راسنا، وشكرًا لأنك دايمًا بتثبت إنك الأفضل.","من القلب: إنجازك يستحق كل تقدير."],
-    ["هالنتيجة مو صدفة أبدًا.","هي نتيجة ليالي سهر ومثابرة وعزيمة ما بتنكسر.","اليوم العالم كله لازم يعرف إنك إنسان استثنائي.","مبروك العلامة الكاملة، وإن شاء الله هاي بس البداية."],
-    ["كم مرة حسّيت بالتعب وكمّلت؟","كم مرة فكّرت تستسلم بس رفضت؟ هاي النتيجة هي الجواب.","مبروك من كل قلوبنا — علامة كاملة تستحقها بجدارة.","الله يوفقك ويحفظك ويعطيك فوق ما تتمنى."],
-    ["الكل بيحكي عن النجاح، بس إنت بتعيشه.","علامة كاملة من شخص كامل الطموح والإرادة.","ما في كلام بيوفّيك حقك، بس مبروك من أعماق القلب.","ضليت تشتغل بصمت، وهلا النتيجة بتحكي بصوت عالي."],
-    ["إنت ما بتعرف كلمة مستحيل.","كل مرة بتثبت إنك فوق التوقعات بمراحل.","العلامة الكاملة شهادة على إنك بطل حقيقي.","كمل يا غالي، السما هي الحد بس إذا إنت سمحت."],
-    ["لما بنسمع عن التفوق، بنتذكرك إنت أول شي.","مبروك — إنجازك فخر لكل اللي بيعرفوك.","هاي العلامة مو بس رقم، هي عنوان لشخصيتك القوية.","ربنا يكمل عليك ويزيدك من فضله."]
+    [
+      "على شعرة من العلامة الكاملة — وهاد بحد ذاته إنجاز ما كل واحد يوصله.",
+      "الفرق كان صغير جداً، بس الطريق اللي مشيته كان كبير.",
+      "هاد المستوى يحكي عن إنسان شاطر وجاهد وما استسلم.",
+      "المرة الجاية هي إلك، إحنا واثقين فيك وبتعبك."
+    ],
+    [
+      "كنت قريب جداً لدرجة إنك حسّيت بنكهة الكمال.",
+      "والله ما ضل شي وتجيبها كاملة، كنت قدها وزيادة.",
+      "أظهرت أداءً مميزًا، استمر بهذا المستوى مع تحسين بسيط.",
+      "النجاح القادم راح يكون أكبر وأحلى إن شاء الله."
+    ],
+    [
+      "ناقصك خطوة صغيرة وصرت في القمة.",
+      "بس خليك تعرف إن اللي وصل لهون ما وصله كثير.",
+      "مبروك هالنتيجة الرائعة — هي دليل على قدرتك وإصرارك.",
+      "استمر، لأن أحسن ما فيك لسا جاي."
+    ],
+    [
+      "شبه مثالي، وهاد يعني إنك تقريباً وصلت للقمة.",
+      "الفرق اللي بينك وبين العلامة الكاملة أصغر من ما تتخيل.",
+      "مبروك يا بطل — هالنتيجة رفعت راسنا كلنا.",
+      "خطوة صغيرة بس وبتكون حيث تستحق تماماً."
+    ],
+    [
+      "ما بينقصك إلا لحظة تركيز واحدة — وهاد أمر سهل عليك.",
+      "كنت قريب لدرجة إن المسافة كانت أصغر من أن تُرى.",
+      "أداؤك يتحدث عن إنسان استثنائي بكل معنى الكلمة.",
+      "المرة الجاية رح تجيبها كاملة، ونحن على يقين بهيك."
+    ],
+    [
+      "لمستَ حدود الكمال، وده إنجاز قليلون يصلوا إليه.",
+      "على شعرة — بس هاي الشعرة بتفرق بين ناس كثار وناس متلك.",
+      "مبروك على هالمستوى الرفيع اللي وصلت إله.",
+      "الله يوفقك ويعطيك فوق ما تتمنى دايماً."
+    ],
+    [
+      "كاد يكون كاملاً — وكاد هون تعني إنك من الأفضل.",
+      "ما كل طالب يقدر يوصل لهالمستوى، إنت وصلت.",
+      "النتيجة تعكس مثابرتك وحبك للتفوق.",
+      "كمل طريقك، القمة بانتظارك ومو بعيدة عنك."
+    ],
+    [
+      "ناقصك رمشة عين بس — وهاد يحكي كيف قرّبت من المثالية.",
+      "علامتك هاي دليل إنك تشتغل بجد وبشغف حقيقي.",
+      "مبروك من كل قلوبنا، نتيجة تستاهل الاحتفال.",
+      "إن شاء الله المرة القادمة تكملها — وإحنا بضهرك."
+    ],
+    [
+      "أقل من المثالية بشوية — بس أكثر من رائع بكثير.",
+      "هالنتيجة بتحكي عن شخص ما بيتوقف ودايماً بيطمح لأعلى.",
+      "مبروك يا نجم — كل خطوة بتخطوها بتقربك أكثر من هدفك.",
+      "ربنا يكمل عليك ويزيدك نجاح فوق نجاح."
+    ],
+    [
+      "والله ما في فرق كبير بينك وبين العلامة الكاملة.",
+      "اللي مشيته لوصول لهون كان رحلة حقيقية تستحق الاحترام.",
+      "إنت ثبتّ إنك من الطلاب اللي بيتركوا بصمة.",
+      "مبروك — وإحنا فخورين فيك هلا وبكل وقت."
+    ]
   ];
-  document.getElementById('card-title').textContent = titles[Math.floor(Math.random()*titles.length)];
-  var s = messages[Math.floor(Math.random()*messages.length)];
+
+  document.getElementById('card-title').textContent =
+    titles[Math.floor(Math.random() * titles.length)];
+
+  var s = messages[Math.floor(Math.random() * messages.length)];
   document.getElementById('line1').textContent = s[0];
   document.getElementById('line2').textContent = s[1];
   document.getElementById('line3').textContent = s[2];
   document.getElementById('line4').textContent = s[3];
 })();
 
-/* ── Sparkles ── */
-(function() {
+/* ══ SPARKLES ══ */
+(function () {
   var card   = document.getElementById('party-info');
   var colors = ['#f0b429','#f9d976','#e74c3c','#3498db','#27ae60','#fff'];
   for (var i = 0; i < 20; i++) {
@@ -387,115 +437,129 @@
     el.className = 'sparkle';
     var sz = 2 + Math.random() * 4;
     el.style.cssText =
-      'width:'+sz+'px;height:'+sz+'px;'
-      +'left:'+(Math.random()*94)+'%;top:'+(Math.random()*94)+'%;'
-      +'--del:'+(Math.random()*2.4).toFixed(2)+'s;'
-      +'--dur:'+(1.5+Math.random()*1.5).toFixed(2)+'s;'
-      +'background:'+colors[Math.floor(Math.random()*colors.length)]+';'
-      +'opacity:0;box-shadow:0 0 4px currentColor;';
+      'width:' + sz + 'px;height:' + sz + 'px;'
+      + 'left:'  + (Math.random() * 94) + '%;'
+      + 'top:'   + (Math.random() * 94) + '%;'
+      + '--del:' + (Math.random() * 2.4).toFixed(2) + 's;'
+      + '--dur:' + (1.5 + Math.random() * 1.5).toFixed(2) + 's;'
+      + 'background:' + colors[Math.floor(Math.random() * colors.length)] + ';'
+      + 'opacity:0;box-shadow:0 0 4px currentColor;';
     card.appendChild(el);
   }
 })();
 
-/* ── Fireworks ── */
-const PI2 = Math.PI*2;
-const rnd  = (a,b) => Math.random()*(b-a)+a;
-const rndI = (a,b) => (Math.random()*(b-a+1)+a)|0;
-const ts   = () => Date.now();
+/* ══ FIREWORKS ══ */
+const PI2  = Math.PI * 2;
+const rnd  = (a, b) => Math.random() * (b - a) + a;
+const rndI = (a, b) => (Math.random() * (b - a + 1) + a) | 0;
 
 class Birthday {
-  constructor() { this.fw=[]; this.pt=[]; this.ctr=0; this.resize(); }
+  constructor() { this.fw = []; this.pt = []; this.ctr = 0; this.resize(); }
   resize() {
     this.w = canvas.width  = window.innerWidth;
     this.h = canvas.height = window.innerHeight;
-    const c=this.w/2;
-    this.sA=c-c/3; this.sB=c+c/3;
-    this.sC=this.h*0.12; this.sD=this.h*0.45;
+    const c = this.w / 2;
+    this.sA = c - c / 3; this.sB = c + c / 3;
+    this.sC = this.h * 0.12; this.sD = this.h * 0.45;
   }
   update(dt) {
-    // Light trail: semi-transparent white fade
-    ctx.globalCompositeOperation='source-over';
-    ctx.fillStyle='rgba(255,253,246,0.22)';
-    ctx.fillRect(0,0,this.w,this.h);
-    ctx.globalCompositeOperation='source-over';
-    this.fw.forEach(f=>f.update(dt));
-    this.pt.forEach(p=>p.update(dt));
-    this.ctr+=dt*3.2;
-    if(this.ctr>=1){
-      this.fw.push(new FW(rnd(this.sA,this.sB),this.h,rnd(this.w*.15,this.w*.85),rnd(this.sC,this.sD),rndI(0,360)));
-      this.ctr=0;
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(255,253,246,0.22)';
+    ctx.fillRect(0, 0, this.w, this.h);
+    this.fw.forEach(f => f.update(dt));
+    this.pt.forEach(p => p.update(dt));
+    this.ctr += dt * 3.2;
+    if (this.ctr >= 1) {
+      this.fw.push(new FW(
+        rnd(this.sA, this.sB), this.h,
+        rnd(this.w * .15, this.w * .85),
+        rnd(this.sC, this.sD),
+        rndI(0, 360)
+      ));
+      this.ctr = 0;
     }
-    this.fw=this.fw.filter(f=>!f.dead);
-    this.pt=this.pt.filter(p=>!p.dead);
+    this.fw = this.fw.filter(f => !f.dead);
+    this.pt = this.pt.filter(p => !p.dead);
   }
 }
 
 class FW {
-  constructor(x,y,tx,ty,sh){this.dead=false;this.x=x;this.y=y;this.tx=tx;this.ty=ty;this.sh=sh;this.hist=[];this.vel=0;this.acc=1.05;this.ex=false;}
-  update(dt){
-    if(this.dead)return;
-    const dx=this.tx-this.x,dy=this.ty-this.y,d=Math.sqrt(dx*dx+dy*dy);
-    if(d>5){
-      this.vel+=this.acc*dt*60;
-      const a=Math.atan2(dy,dx);
-      this.x+=Math.cos(a)*this.vel*dt*60;
-      this.y+=Math.sin(a)*this.vel*dt*60;
-      this.hist.push({x:this.x,y:this.y});
-      if(this.hist.length>8)this.hist.shift();
+  constructor(x, y, tx, ty, sh) {
+    this.dead = false; this.x = x; this.y = y;
+    this.tx = tx; this.ty = ty; this.sh = sh;
+    this.hist = []; this.vel = 0; this.acc = 1.05; this.ex = false;
+  }
+  update(dt) {
+    if (this.dead) return;
+    const dx = this.tx - this.x, dy = this.ty - this.y;
+    const d  = Math.sqrt(dx * dx + dy * dy);
+    if (d > 5) {
+      this.vel += this.acc * dt * 60;
+      const a = Math.atan2(dy, dx);
+      this.x += Math.cos(a) * this.vel * dt * 60;
+      this.y += Math.sin(a) * this.vel * dt * 60;
+      this.hist.push({ x: this.x, y: this.y });
+      if (this.hist.length > 8) this.hist.shift();
     } else {
-      if(!this.ex){this.explode();this.ex=true;}
+      if (!this.ex) { this.explode(); this.ex = true; }
       this.hist.shift();
     }
-    if(!this.hist.length)this.dead=true;
-    this.hist.forEach((p,i)=>{
-      const al=i/this.hist.length;
+    if (!this.hist.length) this.dead = true;
+    this.hist.forEach((p, i) => {
+      const al = i / this.hist.length;
       ctx.beginPath();
-      ctx.fillStyle=`hsla(${this.sh},90%,48%,${al})`;
-      ctx.arc(p.x,p.y,2.8,0,PI2);
+      ctx.fillStyle = `hsla(${this.sh},90%,48%,${al})`;
+      ctx.arc(p.x, p.y, 2.8, 0, PI2);
       ctx.fill();
     });
   }
-  explode(){
-    const n=rndI(140,200);
-    const types=['burst','ring','willow','palm','spiral','heart'];
-    const tp=types[rndI(0,types.length-1)];
-    for(let i=0;i<n;i++){
-      let a,sp,lf;
-      if(tp==='burst'){a=rnd(0,PI2);sp=rnd(3,10);lf=rnd(1,2);}
-      else if(tp==='ring'){a=(PI2/n)*i;sp=rnd(5,8);lf=rnd(1.2,2.2);}
-      else if(tp==='willow'){a=rnd(0,PI2);sp=rnd(2,6);lf=rnd(2,3);}
-      else if(tp==='palm'){a=rnd(-Math.PI/3,-Math.PI*2/3);sp=rnd(4,9);lf=rnd(1.5,2.5);}
-      else if(tp==='spiral'){a=(PI2/n)*i+rnd(0,Math.PI/4);sp=rnd(3,7);lf=rnd(1.5,2.5);}
-      else{const t=(i/n)*PI2;a=Math.atan2(Math.sin(t)-Math.sin(2*t)/2,Math.cos(t)-Math.cos(2*t)/2);sp=rnd(4,8);lf=rnd(1.5,2.5);}
-      bday.pt.push(new PT(this.x,this.y,a,sp,this.sh,lf,tp));
+  explode() {
+    const n     = rndI(140, 200);
+    const types = ['burst','ring','willow','palm','spiral','heart'];
+    const tp    = types[rndI(0, types.length - 1)];
+    for (let i = 0; i < n; i++) {
+      let a, sp, lf;
+      if      (tp === 'burst')  { a = rnd(0, PI2);                           sp = rnd(3, 10); lf = rnd(1, 2);    }
+      else if (tp === 'ring')   { a = (PI2 / n) * i;                          sp = rnd(5, 8);  lf = rnd(1.2,2.2); }
+      else if (tp === 'willow') { a = rnd(0, PI2);                            sp = rnd(2, 6);  lf = rnd(2, 3);    }
+      else if (tp === 'palm')   { a = rnd(-Math.PI/3, -Math.PI*2/3);          sp = rnd(4, 9);  lf = rnd(1.5,2.5); }
+      else if (tp === 'spiral') { a = (PI2/n)*i + rnd(0, Math.PI/4);          sp = rnd(3, 7);  lf = rnd(1.5,2.5); }
+      else {
+        const t = (i / n) * PI2;
+        a = Math.atan2(Math.sin(t) - Math.sin(2*t)/2, Math.cos(t) - Math.cos(2*t)/2);
+        sp = rnd(4, 8); lf = rnd(1.5, 2.5);
+      }
+      bday.pt.push(new PT(this.x, this.y, a, sp, this.sh, lf, tp));
     }
   }
 }
 
 class PT {
-  constructor(x,y,a,sp,sh,lf,tp){
-    this.x=x;this.y=y;
-    this.vx=Math.cos(a)*sp;this.vy=Math.sin(a)*sp;
-    this.sh=sh+rndI(-20,20);this.lf=lf;this.mlf=lf;this.dead=false;
-    this.grav=tp==='willow'?.14:.07;this.fric=tp==='ring'?.98:.96;
-    this.sz=rnd(1.8,3.6);
+  constructor(x, y, a, sp, sh, lf, tp) {
+    this.x = x; this.y = y;
+    this.vx = Math.cos(a) * sp; this.vy = Math.sin(a) * sp;
+    this.sh = sh + rndI(-20, 20); this.lf = lf; this.mlf = lf;
+    this.dead = false;
+    this.grav = tp === 'willow' ? .14 : .07;
+    this.fric = tp === 'ring'   ? .98 : .96;
+    this.sz   = rnd(1.8, 3.6);
   }
-  update(dt){
-    if(this.dead)return;
-    this.lf-=dt;if(this.lf<=0){this.dead=true;return;}
-    this.vx*=this.fric;this.vy*=this.fric;this.vy+=this.grav;
-    this.x+=this.vx;this.y+=this.vy;
-    const al=this.lf/this.mlf;
-    // On light bg: use darker, more saturated colors
-    const l=38+al*22;
+  update(dt) {
+    if (this.dead) return;
+    this.lf -= dt;
+    if (this.lf <= 0) { this.dead = true; return; }
+    this.vx *= this.fric; this.vy *= this.fric; this.vy += this.grav;
+    this.x  += this.vx;  this.y  += this.vy;
+    const al = this.lf / this.mlf;
+    const l  = 38 + al * 22;
     ctx.beginPath();
-    ctx.fillStyle=`hsla(${this.sh},88%,${l}%,${al*0.9})`;
-    ctx.arc(this.x,this.y,this.sz*al,0,PI2);
+    ctx.fillStyle = `hsla(${this.sh},88%,${l}%,${al * 0.9})`;
+    ctx.arc(this.x, this.y, this.sz * al, 0, PI2);
     ctx.fill();
-    if(al>0.55){
+    if (al > 0.55) {
       ctx.beginPath();
-      ctx.fillStyle=`hsla(${this.sh},88%,${l+15}%,${al*0.18})`;
-      ctx.arc(this.x,this.y,this.sz*al*2.1,0,PI2);
+      ctx.fillStyle = `hsla(${this.sh},88%,${l+15}%,${al * 0.18})`;
+      ctx.arc(this.x, this.y, this.sz * al * 2.1, 0, PI2);
       ctx.fill();
     }
   }
@@ -503,38 +567,38 @@ class PT {
 
 const canvas = document.getElementById('birthday');
 const ctx    = canvas.getContext('2d');
-let then = ts();
-const bday = new Birthday();
+let then     = Date.now();
+const bday   = new Birthday();
 window.onresize = () => bday.resize();
-(function loop(){
+(function loop() {
   requestAnimationFrame(loop);
-  const now=ts();
-  bday.update(Math.min((now-then)/1000,.1));
-  then=now;
+  const now = Date.now();
+  bday.update(Math.min((now - then) / 1000, .1));
+  then = now;
 })();
 
-/* ── Confetti ── */
-(function(){
+/* ══ CONFETTI ══ */
+(function () {
   const wrap   = document.getElementById('confetti');
   const colors = ['#e74c3c','#f0b429','#3498db','#9b59b6','#1abc9c','#e67e22','#f1c40f','#27ae60','#e84393'];
   const count  = window.innerWidth < 480 ? 80 : 150;
-  for(let i=0;i<count;i++){
+  for (let i = 0; i < count; i++) {
     const el  = document.createElement('div');
     el.className = 'confetti-piece';
-    const size = Math.random()*11+5;
-    const sh   = rndI(0,3);
-    let w=size,h=size,r='3px';
-    if(sh===1){r='50%';}
-    else if(sh===2){w=size*1.9;h=size*0.65;r='2px';}
-    else if(sh===3){w=size*0.4;h=size*2.1;r='2px';}
-    const dx=(Math.random()-.5)*160;
-    el.style.cssText=
+    const size = Math.random() * 11 + 5;
+    const sh   = rndI(0, 3);
+    let w = size, h = size, r = '3px';
+    if      (sh === 1) { r = '50%'; }
+    else if (sh === 2) { w = size * 1.9; h = size * 0.65; r = '2px'; }
+    else if (sh === 3) { w = size * 0.4; h = size * 2.1;  r = '2px'; }
+    const dx = (Math.random() - .5) * 160;
+    el.style.cssText =
       `width:${w}px;height:${h}px;border-radius:${r};`
-      +`background:${colors[rndI(0,colors.length-1)]};`
-      +`left:${Math.random()*100}%;--dx:${dx}px;`
-      +`animation-duration:${(Math.random()*3+2).toFixed(2)}s;`
-      +`animation-delay:${(Math.random()*6).toFixed(2)}s;`
-      +`opacity:${(Math.random()*.55+0.45).toFixed(2)};`;
+      + `background:${colors[rndI(0, colors.length-1)]};`
+      + `left:${Math.random()*100}%;--dx:${dx}px;`
+      + `animation-duration:${(Math.random()*3+2).toFixed(2)}s;`
+      + `animation-delay:${(Math.random()*6).toFixed(2)}s;`
+      + `opacity:${(Math.random()*.55+0.45).toFixed(2)};`;
     wrap.appendChild(el);
   }
 })();
