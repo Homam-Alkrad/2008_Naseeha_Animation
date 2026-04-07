@@ -27,6 +27,7 @@ body {
   min-height: 100vh;
   direction: rtl;
   overflow-x: hidden;
+  /* allow normal scrolling but we'll auto-scroll via JS */
 }
 
 /* ===== FIREWORKS CANVAS ===== */
@@ -58,13 +59,89 @@ canvas#birthday {
   100% { top: 110%; transform: translateX(var(--dx, 80px)) rotateZ(520deg) rotateY(360deg); }
 }
 
+/* ===== SCROLL HINT ===== */
+#scroll-hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 1;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+#scroll-hint.hidden { opacity: 0; }
+
+#scroll-hint .arrow-track {
+  width: 28px;
+  height: 46px;
+  border: 2.5px solid rgba(240,160,24,0.8);
+  border-radius: 14px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 6px;
+  background: rgba(255,255,255,0.7);
+  backdrop-filter: blur(4px);
+}
+
+#scroll-hint .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f0a018;
+  animation: scroll-dot 1.4s ease-in-out infinite;
+}
+
+@keyframes scroll-dot {
+  0%   { transform: translateY(0);   opacity: 1; }
+  60%  { transform: translateY(18px); opacity: 0.3; }
+  100% { transform: translateY(0);   opacity: 1; }
+}
+
+#scroll-hint .hint-text {
+  font-family: 'Cairo', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #f0a018;
+  text-shadow: 0 1px 3px rgba(255,255,255,0.9);
+  letter-spacing: 0.5px;
+}
+
+/* ===== PAUSE / RESUME BTN ===== */
+#pause-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 20;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(240,160,24,0.92);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  transition: transform 0.15s, background 0.2s;
+}
+#pause-btn:hover { background: #d4920a; transform: scale(1.08); }
+
 /* ===== MAIN CONTENT ===== */
 .main-content {
   position: relative;
   z-index: 5;
   max-width: 1300px;
   margin: 0 auto;
-  padding: 20px 12px 40px;
+  padding: 20px 12px 120px;
 }
 
 /* ===== HEADER ===== */
@@ -112,13 +189,30 @@ canvas#birthday {
   min-height: 58px;
   border: 1.5px solid #e0ddd6;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+  /* lazy reveal — starts invisible */
   opacity: 0;
-  animation: cardPop 0.4s ease both;
+  transform: translateY(22px) scale(0.97);
+  transition: opacity 0.55s ease, transform 0.55s ease,
+              box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-@keyframes cardPop {
-  from { opacity: 0; transform: scale(0.95) translateY(8px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
+/* when card enters viewport */
+.card.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* subtle glow as card reveals */
+.card.revealed:not(.glow-done) {
+  border-color: rgba(240,160,24,0.55);
+  box-shadow: 0 0 14px rgba(240,160,24,0.22), 0 2px 6px rgba(0,0,0,0.07);
+  animation: card-glow-fade 1.2s ease forwards;
+}
+
+@keyframes card-glow-fade {
+  0%   { border-color: rgba(240,160,24,0.55); box-shadow: 0 0 14px rgba(240,160,24,0.22), 0 2px 6px rgba(0,0,0,0.07); }
+  100% { border-color: #e0ddd6;               box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
 }
 
 /* ===== BADGE ===== */
@@ -188,7 +282,7 @@ canvas#birthday {
   .card { padding: 8px 8px 8px 5px; min-height: 42px; }
   .shield-circle { width: 26px; height: 26px; font-size: 12px; }
   .header p { font-size: 18px; }
-  .main-content { padding: 10px 3px 24px; }
+  .main-content { padding: 10px 3px 100px; }
 }
 </style>
 </head>
@@ -196,6 +290,15 @@ canvas#birthday {
 
 <canvas id="birthday"></canvas>
 <div id="confetti"></div>
+
+<!-- Scroll hint indicator -->
+<div id="scroll-hint">
+  <div class="arrow-track"><div class="dot"></div></div>
+  <span class="hint-text">مرّر للأسفل</span>
+</div>
+
+<!-- Pause / Resume button -->
+<button id="pause-btn" title="إيقاف / تشغيل التمرير">⏸</button>
 
 <div class="main-content">
   <div class="header">
@@ -254,10 +357,9 @@ const feminineFirst = new Set([
 function isFemale(name) { return feminineFirst.has(name.split(' ')[0]); }
 
 const grid = document.getElementById('grid');
-students.forEach((name, i) => {
+students.forEach((name) => {
   const card = document.createElement('div');
   card.className = 'card';
-  card.style.animationDelay = (i * 0.025) + 's';
   const label = isFemale(name) ? 'الطالبة' : 'الطالب';
   card.innerHTML = `
     <div class="badge"><span class="star-icon">⭐</span><span>${label}</span></div>
@@ -266,6 +368,99 @@ students.forEach((name, i) => {
   `;
   grid.appendChild(card);
 });
+
+/* ===== INTERSECTION OBSERVER — lazy reveal ===== */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const card = entry.target;
+      card.classList.add('revealed');
+      // after glow animation ends, mark as done so re-entering doesn't re-glow
+      card.addEventListener('animationend', () => card.classList.add('glow-done'), { once: true });
+      observer.unobserve(card);
+    }
+  });
+}, {
+  threshold: 0.15,
+  rootMargin: '0px 0px -20px 0px'
+});
+
+document.querySelectorAll('.card').forEach(c => observer.observe(c));
+
+/* ===== AUTO-SCROLL ===== */
+let scrolling = true;
+let scrollPos = 0;
+const SPEED = 0.55;   // px per frame  — increase to go faster
+let rafId = null;
+let userScrollTimeout = null;
+
+function autoScroll() {
+  if (scrolling) {
+    scrollPos += SPEED;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if (scrollPos >= maxScroll) {
+      // reached bottom — pause 2s then scroll back to top slowly
+      scrolling = false;
+      setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        setTimeout(() => {
+          scrollPos = 0;
+          scrolling = true;
+          // re-observe all cards for another round
+          document.querySelectorAll('.card').forEach(c => {
+            c.classList.remove('revealed','glow-done');
+            observer.observe(c);
+          });
+        }, 1200);
+      }, 2000);
+    } else {
+      window.scrollTo(0, scrollPos);
+    }
+  }
+  rafId = requestAnimationFrame(autoScroll);
+}
+rafId = requestAnimationFrame(autoScroll);
+
+/* ===== PAUSE / RESUME on user scroll ===== */
+window.addEventListener('wheel', onUserInteract, { passive: true });
+window.addEventListener('touchmove', onUserInteract, { passive: true });
+window.addEventListener('keydown', (e) => {
+  if (['ArrowDown','ArrowUp','PageDown','PageUp','Space'].includes(e.key)) onUserInteract();
+});
+
+function onUserInteract() {
+  if (scrolling) {
+    scrolling = false;
+    pauseBtn.textContent = '▶';
+    hintEl.classList.add('hidden');
+  }
+  clearTimeout(userScrollTimeout);
+  // resume auto-scroll after 4s of inactivity
+  userScrollTimeout = setTimeout(() => {
+    scrollPos = window.scrollY;
+    scrolling = true;
+    pauseBtn.textContent = '⏸';
+  }, 4000);
+}
+
+/* ===== PAUSE BUTTON ===== */
+const pauseBtn = document.getElementById('pause-btn');
+const hintEl   = document.getElementById('scroll-hint');
+
+pauseBtn.addEventListener('click', () => {
+  scrolling = !scrolling;
+  pauseBtn.textContent = scrolling ? '⏸' : '▶';
+  if (scrolling) {
+    scrollPos = window.scrollY;
+    hintEl.classList.remove('hidden');
+  } else {
+    clearTimeout(userScrollTimeout);
+    hintEl.classList.add('hidden');
+  }
+});
+
+// hide scroll hint after a moment
+setTimeout(() => hintEl.classList.add('hidden'), 4500);
 
 /* ===== FIREWORKS ENGINE ===== */
 const PI2 = Math.PI * 2;
