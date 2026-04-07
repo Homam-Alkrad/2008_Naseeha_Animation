@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>قائمة الطلاب المتفوقين</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=Cairo:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:       #fffdf6;
+  --cream-2:     #fef9ec;
+  --gold:        #d4920a;
+  --gold-light:  #f0b429;
+  --gold-pale:   #fde68a;
+  --blue-deep:   #1e3a5f;
+  --card-border: rgba(212, 146, 10, 0.3);
+  --shadow:      rgba(100, 60, 0, 0.14);
+}
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Tajawal', sans-serif;
+  background: #ffffff;
+  min-height: 100vh;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+/* ===== FIREWORKS CANVAS ===== */
+canvas#birthday {
+  position: fixed;
+  inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* ===== CONFETTI ===== */
+#confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -10%;
+  animation: confetti-fall linear infinite;
+}
+
+@keyframes confetti-fall {
+  0%   { top: -10%; transform: translateX(0) rotateZ(0deg) rotateY(0deg); }
+  100% { top: 110%; transform: translateX(var(--dx, 80px)) rotateZ(520deg) rotateY(360deg); }
+}
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  position: relative;
+  z-index: 5;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 20px 12px 40px;
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  padding: 28px 20px 32px;
+  margin-bottom: 20px;
+  animation: fadeSlideIn 0.8s ease both;
+}
+
+.header p {
+  color: var(--blue-deep);
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.7;
+  max-width: 900px;
+  margin: 0 auto;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(-18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== GRID ===== */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 6px;
+}
+
+/* ===== CARD ===== */
+.card {
+  position: relative;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 0;
+  padding: 14px 16px 14px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 58px;
+  border: 1.5px solid #e0ddd6;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  opacity: 0;
+  animation: cardPop 0.4s ease both;
+}
+
+@keyframes cardPop {
+  from { opacity: 0; transform: scale(0.95) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* ===== BADGE ===== */
+.badge {
+  position: absolute;
+  top: -10px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0a018;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 3px 12px 4px;
+  border-radius: 5px;
+  box-shadow: 0 1.5px 4px rgba(180,140,50,0.35);
+  z-index: 6;
+}
+
+.badge .star-icon { font-size: 14px; }
+
+/* ===== NAME ===== */
+.student-name {
+  color: #2c2c2c;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  flex: 1;
+  padding-right: 4px;
+  padding-left: 8px;
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.3;
+}
+
+/* ===== SHIELD CIRCLE ===== */
+.shield-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a3a6e 0%, #1e4580 50%, #163264 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 19px;
+  box-shadow: 0 2px 5px rgba(26,58,110,0.3);
+}
+
+/* ===== RESPONSIVE — always 3 cols ===== */
+@media (max-width: 900px) {
+  .grid { gap: 14px 5px; }
+  .student-name { font-size: 16px; }
+  .badge { font-size: 12px; padding: 2px 8px 3px; }
+  .badge .star-icon { font-size: 11px; }
+  .card { padding: 10px 10px 10px 7px; min-height: 48px; }
+  .shield-circle { width: 32px; height: 32px; font-size: 15px; }
+  .header p { font-size: 24px; }
+}
+
+@media (max-width: 550px) {
+  .grid { gap: 12px 3px; }
+  .student-name { font-size: 13px; }
+  .badge { font-size: 10px; padding: 2px 6px 2px; top: -8px; right: 6px; }
+  .badge .star-icon { font-size: 9px; }
+  .card { padding: 8px 8px 8px 5px; min-height: 42px; }
+  .shield-circle { width: 26px; height: 26px; font-size: 12px; }
+  .header p { font-size: 18px; }
+  .main-content { padding: 10px 3px 24px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="birthday"></canvas>
+<div id="confetti"></div>
+
+<div class="main-content">
+  <div class="header">
+    <p>يُبارك الأستاذ <span style="color:#f0a018;text-shadow:0 1px 2px rgba(240,160,24,0.3);">ثامر قدورة</span> وأعضاء <span style="color:#f0a018;text-shadow:0 1px 2px rgba(240,160,24,0.3);">موقع النصيحة التعليمي </span><br> للطلبة المتفوقين والمبدعين في دورة رياضيات الصف العاشر.</p>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<script>
+/* ===== STUDENTS DATA ===== */
+const students = [
+  "آلاء محمد","آمنة وليد أبو حرب","آية طارق","آية هشام","ابراهيم قادوس",
+  "أحمد أبو علي","أحمد عوض الصرايرة","أسماء السرحان","أسيل أحمد النواجي",
+  "أشرف أبو علي","الحارث محمود","أوس فادي الشرع","إياد المناصير","إيلاف قوقزة",
+  "إيلاف محمد","أيهم ملكاوي","بانا الحسنين","براء الجبالي","براء القضاة",
+  "بيلسان الشويات","تالا إياد","تامر مصعب محمد علي","تبارك جهاد","تقى نزيه",
+  "تميم أحمد","تولين فادي خشاشنه","تيماء الدويري","تيماء نوافلة","جاد الفيصل",
+  "جمانة حسن الخطيب","جنى أحمد جمعة","جنى القبلان","جود الرشايدة","جودي أحمد",
+  "جودي الدويكات","جودي غوانمة","حسن الحريري","حلا الجهماني","حلا جاغوب",
+  "حمزة البلوي","خديجة جرادات","دانة زكي هيلات","راشد فؤاد","راما نوافله",
+  "رانسي الشويات","رفيف عمر","رنا مالك خطابي","رنيم خالد ياسين","رنيم سليمان",
+  "روان صالح الماضي","ريان خطاطبة","ريتال الخرشة","ريماس ابراهيم المعايطة",
+  "ريماس محمد","زيد العليمات","زيد عسكر","زين يوسف الشرمان","سارة رائد",
+  "سرى عبيدات","سلسبيل عماد","سلطان دعجة","سلمان القرم","سلمان خالد",
+  "سلمى ابراهيم الشولي","سنابل الثنيات","سوار أبو صيام","سيف أحمد جبرين",
+  "سيف الرواشدة","شذى شريف","شهاب عيسى بني سلامة","شهد الحريري","شهد القضاة",
+  "صبا صايل","عبادة الشمالي","عبد الله الهباهبة","عبدالحميد الشرمان",
+  "عبدالرحمن أبو بكر","عبدالرحمن عثمان","عبدالرحمن وليد الزبون",
+  "عبداللطيف أحمد سليمان","عبدالله سالم الرواشده","عز الدين مؤتمن الخصاونة",
+  "علي زيد الرشدان","علي عامر","عمار أحمد سلمي","عمار اللوزي","عمار ناصر الصالح",
+  "عمر المومني","غزل الجندي","غزل الظهيرات","غزل حجازين ♥️","غنى محمد صمادي",
+  "فاطمة محمود العكل","فرح هياجنة","فضل بني ارشيد","قصي محمد","قمر قرباع",
+  "لجين شتات","لقمان بني عمر","لمى ياغي","ليان الزيادين","ليمار الناصر",
+  "ليمار عدوان","لين القرم","ماجد عزيز الزبيدي","ماريا القلانزة","ماريا سلطي",
+  "مالك عباس","محمد الطرودي","محمد الكيلاني","محمد اللصاصمة","محمد المصري",
+  "محمد المومني","محمد الناصر","محمد رواشدة","محمد سعد","محمد شاكر العمري",
+  "محمد شخاترة","محمد عوض","محمود ضيف الله","مروة محمد بني نصر",
+  "معاذ منذر علي ياغي","ملاك بشار غرايبة","ملك درويش","موسى علي البطوش",
+  "ميار خالد","ميرا عثامنة","ميرا محمد","ميس الشيخ","ندى جمال أبو عرجة",
+  "نغم الشرمان","نور داهود الأقرط","نور عبدالهادي","نور محمد","نوران عودة",
+  "نيرمين خطّاب","هاجر الشولي","هاشم عبابنة","هدايا الرحمن إبراهيم","وتين عليان",
+  "وجد بسام","ياسمين احمد","ياسمين صبري","يافا عبادي","ياقوت بسام",
+  "يحيى الصمادي","يزن أبو سلوم","يقين الدهون","يقين حوامدة","يوسف العمر",
+  "يوسف سعد","يوسف عمر المعايطة"
+];
+
+const feminineFirst = new Set([
+  "آلاء","آمنة","آية","أسماء","أسيل","إيلاف","بانا","بيلسان","تالا","تبارك","تقى",
+  "تولين","تيماء","جمانة","جنى","جود","جودي","حلا","خديجة","دانة","راما","رانسي",
+  "رفيف","رنا","رنيم","روان","ريتال","ريماس","سارة","سرى","سلسبيل","سلمى","سنابل",
+  "سوار","شذى","شهد","صبا","غزل","غنى","فاطمة","فرح","قمر","لجين","لمى","ليان",
+  "ليمار","لين","ماريا","مروة","ملاك","ملك","ميار","ميرا","ميس","ندى","نغم","نور",
+  "نوران","نيرمين","هاجر","هدايا","وتين","وجد","ياسمين","يافا","ياقوت","يقين"
+]);
+
+function isFemale(name) { return feminineFirst.has(name.split(' ')[0]); }
+
+const grid = document.getElementById('grid');
+students.forEach((name, i) => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.animationDelay = (i * 0.025) + 's';
+  card.innerHTML = `
+    <div class="badge"><span class="star-icon">⭐</span><span>الطالب</span></div>
+    <span class="student-name">${name}</span>
+    <div class="shield-circle">🛡️</div>
+  `;
+  grid.appendChild(card);
+});
+
+/* ===== FIREWORKS ENGINE ===== */
+const PI2 = Math.PI * 2;
+const rnd  = (a, b) => Math.random() * (b - a) + a;
+const rndI = (a, b) => (Math.random() * (b - a + 1) + a) | 0;
+
+const canvas = document.getElementById('birthday');
+const ctx = canvas.getContext('2d');
+
+class Birthday {
+  constructor() { this.fw = []; this.pt = []; this.ctr = 0; this.resize(); }
+  resize() {
+    this.w = canvas.width = window.innerWidth;
+    this.h = canvas.height = window.innerHeight;
+    const c = this.w / 2;
+    this.sA = c - c / 3; this.sB = c + c / 3;
+    this.sC = this.h * 0.05; this.sD = this.h * 0.35;
+  }
+  update(dt) {
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.fillRect(0, 0, this.w, this.h);
+    this.fw.forEach(f => f.update(dt));
+    this.pt.forEach(p => p.update(dt));
+    this.ctr += dt * 2.5;
+    if (this.ctr >= 1) {
+      this.fw.push(new FW(rnd(this.sA, this.sB), this.h, rnd(this.w * 0.1, this.w * 0.9), rnd(this.sC, this.sD), rndI(0, 360)));
+      this.ctr = 0;
+    }
+    this.fw = this.fw.filter(f => !f.dead);
+    this.pt = this.pt.filter(p => !p.dead);
+  }
+}
+
+class FW {
+  constructor(x, y, tx, ty, sh) { this.dead = false; this.x = x; this.y = y; this.tx = tx; this.ty = ty; this.sh = sh; this.hist = []; this.vel = 0; this.acc = 1.05; this.ex = false; }
+  update(dt) {
+    if (this.dead) return;
+    const dx = this.tx - this.x, dy = this.ty - this.y, d = Math.sqrt(dx * dx + dy * dy);
+    if (d > 5) {
+      this.vel += this.acc * dt * 60;
+      const a = Math.atan2(dy, dx);
+      this.x += Math.cos(a) * this.vel * dt * 60;
+      this.y += Math.sin(a) * this.vel * dt * 60;
+      this.hist.push({ x: this.x, y: this.y });
+      if (this.hist.length > 8) this.hist.shift();
+    } else {
+      if (!this.ex) { this.explode(); this.ex = true; }
+      this.hist.shift();
+    }
+    if (!this.hist.length) this.dead = true;
+    this.hist.forEach((p, i) => {
+      const al = i / this.hist.length;
+      ctx.beginPath();
+      ctx.fillStyle = `hsla(${this.sh},90%,48%,${al})`;
+      ctx.arc(p.x, p.y, 2.8, 0, PI2);
+      ctx.fill();
+    });
+  }
+  explode() {
+    const n = rndI(120, 180);
+    for (let i = 0; i < n; i++) {
+      let a = rnd(0, PI2), sp = rnd(3, 9), lf = rnd(1, 2);
+      bday.pt.push(new PT(this.x, this.y, a, sp, this.sh, lf));
+    }
+  }
+}
+
+class PT {
+  constructor(x, y, a, sp, sh, lf) {
+    this.x = x; this.y = y;
+    this.vx = Math.cos(a) * sp; this.vy = Math.sin(a) * sp;
+    this.sh = sh + rndI(-20, 20); this.lf = lf; this.mlf = lf; this.dead = false;
+    this.grav = 0.07; this.fric = 0.96; this.sz = rnd(1.8, 3.6);
+  }
+  update(dt) {
+    if (this.dead) return;
+    this.lf -= dt; if (this.lf <= 0) { this.dead = true; return; }
+    this.vx *= this.fric; this.vy *= this.fric; this.vy += this.grav;
+    this.x += this.vx; this.y += this.vy;
+    const al = this.lf / this.mlf;
+    ctx.beginPath();
+    ctx.fillStyle = `hsla(${this.sh},88%,${38 + al * 22}%,${al * 0.9})`;
+    ctx.arc(this.x, this.y, this.sz * al, 0, PI2);
+    ctx.fill();
+  }
+}
+
+let then = Date.now();
+const bday = new Birthday();
+window.addEventListener('resize', () => bday.resize());
+(function loop() {
+  requestAnimationFrame(loop);
+  const now = Date.now();
+  bday.update(Math.min((now - then) / 1000, 0.1));
+  then = now;
+})();
+
+/* ===== CONFETTI ===== */
+(function () {
+  const wrap = document.getElementById('confetti');
+  const colors = ['#e74c3c', '#f0b429', '#3498db', '#9b59b6', '#1abc9c', '#1a3a6e', '#d4a94b'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    const size = Math.random() * 10 + 5;
+    const dx = (Math.random() - 0.5) * 160;
+    el.style.cssText = `width:${size}px;height:${size}px;background:${colors[rndI(0, colors.length - 1)]};left:${Math.random() * 100}%;--dx:${dx}px;animation-duration:${(Math.random() * 3 + 2.5).toFixed(2)}s;animation-delay:${(Math.random() * 6).toFixed(2)}s;border-radius:${Math.random() > 0.5 ? '50%' : '2px'};`;
+    wrap.appendChild(el);
+  }
+})();
+</script>
+</body>
+</html>
