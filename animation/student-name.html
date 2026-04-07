@@ -258,8 +258,9 @@ students.forEach((name, i) => {
   const card = document.createElement('div');
   card.className = 'card';
   card.style.animationDelay = (i * 0.025) + 's';
+  const label = isFemale(name) ? 'الطالبة' : 'الطالب';
   card.innerHTML = `
-    <div class="badge"><span class="star-icon">⭐</span><span>الطالب</span></div>
+    <div class="badge"><span class="star-icon">⭐</span><span>${label}</span></div>
     <span class="student-name">${name}</span>
     <div class="shield-circle">🛡️</div>
   `;
