@@ -1,0 +1,155 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    padding: 2rem 1rem;
+    font-family: 'Cairo', sans-serif;
+    direction: rtl;
+  }
+
+  .card {
+    position: relative;
+    width: min(480px, 100%);
+    padding: clamp(28px, 6vw, 52px) clamp(24px, 6vw, 48px);
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .ornament-line {
+    display: block;
+    width: 60%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #d4920a55, transparent);
+    margin: 0 auto 20px;
+  }
+  .ornament-line.bottom { margin: 20px auto 0; }
+
+  .gem-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+  .gem {
+    width: 6px; height: 6px;
+    background: #d4920a;
+    transform: rotate(45deg);
+    animation: gemPulse 2.6s ease-in-out infinite;
+    opacity: 0.7;
+  }
+  .gem:nth-child(2) { animation-delay: 0.4s; }
+  .gem:nth-child(3) { animation-delay: 0.8s; }
+  @keyframes gemPulse {
+    0%,100% { opacity: 0.35; transform: rotate(45deg) scale(0.85); }
+    50%      { opacity: 1;    transform: rotate(45deg) scale(1.25); }
+  }
+
+  .main-text {
+    font-family: 'Amiri', serif;
+    font-size: clamp(1.55rem, 5vw, 2.4rem);
+    font-weight: 700;
+    color: #b37a08;
+    line-height: 1.7;
+    animation: fadeUp 1s ease both;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.5);
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .shimmer-dots {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 18px;
+  }
+  .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: #d4920a;
+    opacity: 0;
+    animation: dotBlink 2.4s ease-in-out infinite;
+  }
+  .dot:nth-child(1) { animation-delay: 0s; }
+  .dot:nth-child(2) { animation-delay: 0.4s; }
+  .dot:nth-child(3) { animation-delay: 0.8s; }
+  @keyframes dotBlink {
+    0%,100% { opacity: 0;   transform: scale(0.7); }
+    45%,55% { opacity: 0.8; transform: scale(1.2); }
+  }
+
+  .stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .star {
+    position: absolute;
+    width: 3px; height: 3px;
+    border-radius: 50%;
+    background: #d4920a;
+    opacity: 0;
+    animation: starTwinkle var(--dur) ease-in-out var(--del) infinite;
+  }
+  @keyframes starTwinkle {
+    0%,100% { opacity: 0; transform: scale(0.5); }
+    50%      { opacity: 0.6; transform: scale(1.4); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .main-text { color: #f0b429; }
+    .ornament-line { background: linear-gradient(90deg, transparent, #f0b42955, transparent); }
+  }
+</style>
+
+<div class="wrap">
+  <div class="card">
+    <div class="stars" id="stars"></div>
+
+    <span class="ornament-line"></span>
+
+    <div class="gem-row">
+      <div class="gem"></div>
+      <div class="gem"></div>
+      <div class="gem"></div>
+    </div>
+
+    <p class="main-text">الله يعطيكم العافية</p>
+
+    <div class="shimmer-dots">
+      <div class="dot"></div>
+      <div class="dot"></div>
+      <div class="dot"></div>
+    </div>
+
+    <span class="ornament-line bottom"></span>
+  </div>
+</div>
+
+<script>
+const starsEl = document.getElementById('stars');
+for (let i = 0; i < 18; i++) {
+  const s = document.createElement('div');
+  s.className = 'star';
+  s.style.cssText =
+    `left:${Math.random()*95}%;top:${Math.random()*95}%;`
+    +`--dur:${(2+Math.random()*2.5).toFixed(2)}s;`
+    +`--del:${(Math.random()*3).toFixed(2)}s;`;
+  starsEl.appendChild(s);
+}
+</script>
