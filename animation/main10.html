@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تهانينا - نصيحة التعليمي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-1:    #fffbf5;
+      --bg-2:    #fef3e2;
+      --bg-3:    #ecfdf5;
+      --amber-1: #fffbeb;
+      --amber-2: #fde68a;
+      --amber-3: #f59e0b;
+      --amber-4: #d97706;
+      --amber-5: #b45309;
+      --amber-6: #92400e;
+      --emerald: #059669;
+      --emerald-l:#10b981;
+      --emerald-p:#d1fae5;
+      --text-1:  #1c1917;
+      --text-2:  #44403c;
+      --text-3:  #78716c;
+      --glass:   rgba(255,255,255,0.52);
+      --glass-b: rgba(255,255,255,0.7);
+    }
+
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+    html,body{
+      width:100%;height:100%;
+      font-family:'Cairo',sans-serif;
+      overflow:hidden;
+      background:var(--bg-1);
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ── Animated Mesh Background ── */
+    .mesh-bg{
+      position:fixed;inset:0;z-index:0;
+      background:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(245,158,11,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 85% 75%, rgba(16,185,129,0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 50%, rgba(251,191,36,0.08) 0%, transparent 60%),
+        linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 40%, var(--bg-3) 100%);
+    }
+
+    .mesh-blob{
+      position:fixed;
+      border-radius:50%;
+      filter:blur(80px);
+      pointer-events:none;
+      z-index:0;
+      will-change:transform;
+    }
+    .blob-a{
+      width:clamp(300px,50vw,600px);height:clamp(300px,50vw,600px);
+      background:radial-gradient(circle,rgba(245,158,11,0.22),transparent 70%);
+      top:-10%;right:-8%;
+      animation:blobA 18s ease-in-out infinite;
+    }
+    .blob-b{
+      width:clamp(250px,40vw,500px);height:clamp(250px,40vw,500px);
+      background:radial-gradient(circle,rgba(16,185,129,0.15),transparent 70%);
+      bottom:-8%;left:-5%;
+      animation:blobB 22s ease-in-out infinite;
+    }
+    .blob-c{
+      width:clamp(200px,35vw,400px);height:clamp(200px,35vw,400px);
+      background:radial-gradient(circle,rgba(251,191,36,0.12),transparent 70%);
+      top:40%;left:30%;
+      animation:blobC 15s ease-in-out infinite;
+    }
+    @keyframes blobA{
+      0%,100%{transform:translate(0,0) scale(1);}
+      33%{transform:translate(40px,-30px) scale(1.1);}
+      66%{transform:translate(-20px,25px) scale(0.95);}
+    }
+    @keyframes blobB{
+      0%,100%{transform:translate(0,0) scale(1);}
+      33%{transform:translate(-30px,20px) scale(1.05);}
+      66%{transform:translate(25px,-35px) scale(0.92);}
+    }
+    @keyframes blobC{
+      0%,100%{transform:translate(0,0) scale(1);}
+      50%{transform:translate(30px,20px) scale(1.12);}
+    }
+
+    /* ── Canvases ── */
+    canvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;}
+    #fireworksCanvas{z-index:1;}
+    #particlesCanvas{z-index:2;}
+
+    /* ── Confetti ── */
+    #confettiBox{position:fixed;inset:0;pointer-events:none;z-index:3;overflow:hidden;}
+    .confetti-p{
+      position:absolute;top:-16px;
+      animation:cFall linear infinite;
+      will-change:transform;
+    }
+    @keyframes cFall{
+      0%{top:-16px;transform:translateX(0) rotateZ(0) rotateY(0);opacity:1;}
+      82%{opacity:1;}
+      100%{top:110vh;transform:translateX(var(--dx)) rotateZ(var(--rz)) rotateY(360deg);opacity:0;}
+    }
+
+    /* ── Floating Stars ── */
+    #starField{position:fixed;inset:0;pointer-events:none;z-index:4;overflow:hidden;}
+    .f-star{
+      position:absolute;
+      animation:fStar var(--dur) ease-in-out var(--del) infinite;
+      opacity:0;will-change:transform,opacity;
+    }
+    @keyframes fStar{
+      0%{opacity:0;transform:translateY(0) scale(.5) rotate(0);}
+      12%{opacity:var(--pk);}
+      88%{opacity:var(--pk);}
+      100%{opacity:0;transform:translateY(-75vh) scale(1.1) rotate(180deg);}
+    }
+
+    /* ══════════════════════════════════════
+       MAIN CONTAINER
+       ══════════════════════════════════════ */
+    .main-wrap{
+      position:fixed;inset:0;
+      z-index:10;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:24px 20px;
+      overflow-y:auto;
+    }
+
+    .content-card{
+      position:relative;
+      width:min(540px,92vw);
+      padding:clamp(28px,5vw,52px) clamp(24px,5vw,48px);
+      background:var(--glass);
+      border:1px solid rgba(255,255,255,0.6);
+      border-radius:36px;
+      backdrop-filter:blur(24px) saturate(1.6);
+      -webkit-backdrop-filter:blur(24px) saturate(1.6);
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,0.3) inset,
+        0 1px 0 rgba(255,255,255,0.5) inset,
+        0 20px 60px rgba(120,80,0,0.08),
+        0 4px 16px rgba(120,80,0,0.06);
+      text-align:center;
+      animation:cardReveal 1s cubic-bezier(0.16,1,0.3,1) both;
+    }
+    @keyframes cardReveal{
+      from{opacity:0;transform:scale(0.9) translateY(30px);filter:blur(8px);}
+      to{opacity:1;transform:scale(1) translateY(0);filter:blur(0);}
+    }
+
+    /* Subtle animated border glow */
+    .content-card::before{
+      content:'';
+      position:absolute;inset:-1px;
+      border-radius:37px;
+      background:linear-gradient(135deg,rgba(245,158,11,0.2),rgba(16,185,129,0.15),rgba(245,158,11,0.1));
+      z-index:-1;
+      animation:borderGlow 6s ease-in-out infinite alternate;
+    }
+    @keyframes borderGlow{
+      0%{opacity:0.5;filter:hue-rotate(0deg);}
+      100%{opacity:1;filter:hue-rotate(15deg);}
+    }
+
+    /* ── Score Ring ── */
+    .ring-area{
+      position:relative;
+      width:clamp(170px,38vw,240px);
+      height:clamp(170px,38vw,240px);
+      margin:0 auto clamp(12px,2.5vw,24px);
+    }
+    .ring-glow{
+      position:absolute;inset:-30px;
+      border-radius:50%;
+      background:radial-gradient(circle,rgba(245,158,11,0.15),transparent 70%);
+      opacity:0;
+      transition:opacity 1.5s ease;
+    }
+    .ring-glow.on{
+      opacity:1;
+      animation:rGlow 3.5s ease-in-out infinite;
+    }
+    @keyframes rGlow{
+      0%,100%{transform:scale(1);opacity:.6;}
+      50%{transform:scale(1.12);opacity:1;}
+    }
+
+    .ring-svg{
+      width:100%;height:100%;
+      transform:rotate(-90deg);
+      filter:drop-shadow(0 4px 12px rgba(245,158,11,0.2));
+    }
+    .r-track{
+      fill:none;
+      stroke:rgba(245,158,11,0.08);
+      stroke-width:8;
+    }
+    .r-fill{
+      fill:none;
+      stroke:url(#rGrad);
+      stroke-width:8;
+      stroke-linecap:round;
+      stroke-dasharray:502.65;
+      stroke-dashoffset:502.65;
+      transition:stroke-dashoffset 2.6s cubic-bezier(0.22,1,0.36,1);
+    }
+    .r-fill.done{stroke-dashoffset:0;}
+
+    /* Tick marks around ring */
+    .r-ticks{
+      fill:none;
+      stroke:rgba(245,158,11,0.06);
+      stroke-width:1;
+    }
+
+    .ring-center{
+      position:absolute;inset:0;
+      display:flex;align-items:center;justify-content:center;
+      gap:2px;
+    }
+    .s-num{
+      font-family:'Cairo',sans-serif;
+      font-size:clamp(2.8rem,8vw,4.2rem);
+      font-weight:900;
+      background:linear-gradient(135deg,var(--amber-3),var(--amber-4));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      line-height:1;
+    }
+    .s-pct{
+      font-family:'Cairo',sans-serif;
+      font-size:clamp(0.9rem,2.5vw,1.3rem);
+      font-weight:800;
+      color:var(--amber-3);
+      align-self:flex-start;
+      margin-top:clamp(8px,2vw,16px);
+      opacity:.7;
+    }
+
+    /* ── Trophy ── */
+    .trophy-wrap{
+      position:absolute;
+      top:-26px;left:50%;
+      transform:translateX(-50%) scale(0) rotate(-20deg);
+      z-index:5;opacity:0;
+      transition:all 0.8s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .trophy-wrap.show{
+      transform:translateX(-50%) scale(1) rotate(0deg);
+      opacity:1;
+    }
+    .trophy-svg{
+      width:clamp(48px,10vw,60px);
+      height:clamp(48px,10vw,60px);
+      filter:drop-shadow(0 6px 16px rgba(245,158,11,0.5));
+      animation:tFloat 3.5s ease-in-out infinite;
+    }
+    @keyframes tFloat{
+      0%,100%{transform:translateY(0) rotate(0deg);}
+      30%{transform:translateY(-5px) rotate(3deg);}
+      70%{transform:translateY(-3px) rotate(-2deg);}
+    }
+
+    /* ── Score Label ── */
+    .s-label{
+      font-size:clamp(0.75rem,1.8vw,0.88rem);
+      font-weight:700;
+      color:var(--emerald);
+      letter-spacing:0.12em;
+      text-transform:uppercase;
+      margin-bottom:clamp(8px,2vw,16px);
+      opacity:0;
+      animation:fadeUp 0.6s ease 3.2s forwards;
+    }
+
+    /* ── Title ── */
+    .title-row{
+      display:flex;align-items:center;justify-content:center;gap:12px;
+      margin-bottom:8px;
+      opacity:0;
+      animation:fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) 2.8s forwards;
+    }
+    .t-star{
+      font-size:clamp(0.7rem,1.4vw,0.85rem);
+      color:var(--amber-3);
+      display:inline-block;
+      animation:tStar 3s ease-in-out infinite;
+    }
+    .t-star:last-child{animation-delay:1.5s;}
+    @keyframes tStar{
+      0%,100%{opacity:0.3;transform:scale(0.7) rotate(0deg);}
+      50%{opacity:1;transform:scale(1.4) rotate(30deg);}
+    }
+
+    .main-title{
+      font-family:'Amiri',serif;
+      font-size:clamp(2.2rem,6vw,3.4rem);
+      font-weight:700;
+      background:linear-gradient(135deg,var(--amber-5),var(--amber-3),var(--emerald));
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      line-height:1.2;
+      animation:titleShift 6s ease-in-out infinite alternate;
+      background-size:200% 200%;
+    }
+    @keyframes titleShift{
+      0%{background-position:0% 50%;}
+      100%{background-position:100% 50%;}
+    }
+
+    /* ── Divider ── */
+    .div-row{
+      display:flex;align-items:center;gap:10px;
+      width:min(260px,55vw);
+      margin:12px auto 20px;
+      opacity:0;
+      animation:fadeUp 0.5s ease 3.1s forwards;
+    }
+    .div-line{
+      flex:1;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(245,158,11,0.3),rgba(16,185,129,0.2),transparent);
+    }
+    .div-dot{
+      width:8px;height:8px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--amber-3),var(--emerald));
+      box-shadow:0 0 10px rgba(245,158,11,0.4);
+      animation:dDot 2.5s ease-in-out infinite;
+    }
+    @keyframes dDot{
+      0%,100%{transform:scale(0.8);opacity:0.6;}
+      50%{transform:scale(1.3);opacity:1;}
+    }
+
+    /* ── Message ── */
+    .msg{
+      font-size:clamp(0.92rem,2.4vw,1.1rem);
+      font-weight:400;
+      color:var(--text-2);
+      line-height:2;
+      margin-bottom:4px;
+      opacity:0;
+      animation:fadeUp 0.55s ease forwards;
+    }
+    .msg:nth-child(1){animation-delay:3.4s;}
+    .msg:nth-child(2){animation-delay:3.6s;}
+    .msg:nth-child(3){animation-delay:3.8s;}
+
+    .msg.hl{
+      font-weight:800;
+      font-size:clamp(1rem,2.8vw,1.2rem);
+      color:var(--text-1);
+      background:linear-gradient(135deg,rgba(245,158,11,0.06),rgba(16,185,129,0.08));
+      border:1px solid rgba(245,158,11,0.12);
+      border-radius:12px;
+      padding:6px 16px;
+      margin:6px 0;
+      display:inline-block;
+    }
+
+    /* ── Footer Dots ── */
+    .f-dots{
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      margin-top:22px;padding-top:16px;
+      border-top:1px solid rgba(245,158,11,0.08);
+      opacity:0;
+      animation:fadeUp 0.5s ease 4.2s forwards;
+    }
+    .f-d{
+      width:4px;height:4px;border-radius:50%;
+      background:var(--amber-3);opacity:0.35;
+    }
+    .f-d.big{
+      width:7px;height:7px;opacity:0.65;
+      background:linear-gradient(135deg,var(--amber-3),var(--emerald));
+      box-shadow:0 0 6px rgba(245,158,11,0.3);
+      animation:dDot 2s ease-in-out infinite;
+    }
+
+    /* ── Badge ── */
+    .brand{
+      display:inline-block;
+      margin-top:16px;
+      padding:9px 28px;
+      background:linear-gradient(135deg,var(--amber-3),var(--amber-4));
+      color:#fff;
+      font-size:clamp(0.68rem,1.6vw,0.8rem);
+      font-weight:800;
+      letter-spacing:0.08em;
+      border-radius:30px;
+      box-shadow:0 4px 20px rgba(245,158,11,0.3),0 1px 0 rgba(255,255,255,0.25) inset;
+      opacity:0;
+      animation:fadeUp 0.5s ease 4.4s forwards;
+      transition:transform 0.3s ease,box-shadow 0.3s ease;
+    }
+    .brand:hover{
+      transform:translateY(-2px);
+      box-shadow:0 6px 28px rgba(245,158,11,0.45),0 1px 0 rgba(255,255,255,0.25) inset;
+    }
+
+    /* ── Sparkles ── */
+    .sparkle{
+      position:absolute;border-radius:50%;pointer-events:none;
+      animation:spk var(--dur) ease-in-out var(--del) infinite;
+    }
+    @keyframes spk{
+      0%,100%{opacity:0;transform:scale(0);}
+      45%,55%{opacity:1;transform:scale(1);}
+    }
+
+    /* ── Burst ── */
+    .burst{
+      position:fixed;
+      width:6px;height:6px;border-radius:50%;
+      pointer-events:none;z-index:8;
+      animation:burstA 1s ease-out forwards;
+    }
+    @keyframes burstA{
+      0%{opacity:1;transform:translate(0,0) scale(1);}
+      100%{opacity:0;transform:translate(var(--bx),var(--by)) scale(0);}
+    }
+
+    /* ── General ── */
+    @keyframes fadeUp{
+      from{opacity:0;transform:translateY(16px);filter:blur(4px);}
+      to{opacity:1;transform:translateY(0);filter:blur(0);}
+    }
+
+    /* ── Responsive ── */
+    @media(max-width:480px){
+      .content-card{border-radius:28px;padding:clamp(20px,4vw,30px) clamp(18px,4vw,26px);}
+      .ring-area{width:150px;height:150px;}
+    }
+    @media(max-width:360px){
+      .main-title{font-size:1.8rem;}
+      .msg{font-size:0.84rem;line-height:1.8;}
+    }
+    @media(min-height:900px){
+      .content-card{padding:56px 52px;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        animation-duration:0.01ms!important;
+        animation-iteration-count:1!important;
+        transition-duration:0.01ms!important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="mesh-bg"></div>
+<div class="mesh-blob blob-a"></div>
+<div class="mesh-blob blob-b"></div>
+<div class="mesh-blob blob-c"></div>
+
+<!-- Canvases -->
+<canvas id="fireworksCanvas"></canvas>
+<canvas id="particlesCanvas"></canvas>
+
+<!-- Confetti -->
+<div id="confettiBox"></div>
+
+<!-- Floating Stars -->
+<div id="starField"></div>
+
+<!-- ════ CONTENT ════ -->
+<div class="main-wrap">
+<div class="content-card" id="card">
+
+  <!-- Score Ring -->
+  <div class="ring-area">
+    <div class="ring-glow" id="ringGlow"></div>
+    <svg class="ring-svg" viewBox="0 0 200 200">
+      <defs>
+        <linearGradient id="rGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#fde68a"/>
+          <stop offset="40%" stop-color="#f59e0b"/>
+          <stop offset="100%" stop-color="#059669"/>
+        </linearGradient>
+      </defs>
+      <!-- Tick marks -->
+      <g class="r-ticks" id="tickMarks"></g>
+      <circle class="r-track" cx="100" cy="100" r="80"/>
+      <circle class="r-fill" id="rFill" cx="100" cy="100" r="80"/>
+    </svg>
+    <div class="ring-center">
+      <span class="s-num" id="sNum">0</span>
+      <span class="s-pct">%</span>
+    </div>
+
+    <!-- Trophy -->
+    <div class="trophy-wrap" id="trophy">
+      <svg class="trophy-svg" viewBox="0 0 56 56" fill="none">
+        <ellipse cx="28" cy="48" rx="12" ry="3" fill="rgba(245,158,11,0.15)"/>
+        <path d="M18 8h20v9c0 7.73-4.48 14-10 14s-10-6.27-10-14V8z" fill="url(#tG)" stroke="#92400e" stroke-width="1"/>
+        <path d="M18 11h-6c0 5.5 2.8 9 6 10V11zM38 11h6c0 5.5-2.8 9-6 10V11z" fill="url(#tG)" stroke="#92400e" stroke-width="1"/>
+        <rect x="24" y="31" width="8" height="5" rx="1.5" fill="url(#tG)" stroke="#92400e" stroke-width="0.8"/>
+        <rect x="19" y="36" width="18" height="4" rx="2" fill="url(#tG)" stroke="#92400e" stroke-width="0.8"/>
+        <path d="M28 13l2 4 4.5.7-3.2 3.1.7 4.7-4-2.1-4 2.1.7-4.7-3.2-3.1 4.5-.7z" fill="rgba(255,255,255,0.5)"/>
+        <defs>
+          <linearGradient id="tG" x1="0" y1="0" x2="56" y2="56">
+            <stop offset="0%" stop-color="#fde68a"/>
+            <stop offset="50%" stop-color="#f59e0b"/>
+            <stop offset="100%" stop-color="#d97706"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <p class="s-label">العلامة الكاملة</p>
+
+  <!-- Title -->
+  <div class="title-row">
+    <span class="t-star">&#10022;</span>
+    <h1 class="main-title">ما شاء الله</h1>
+    <span class="t-star">&#10022;</span>
+  </div>
+
+  <!-- Divider -->
+  <div class="div-row">
+    <span class="div-line"></span>
+    <span class="div-dot"></span>
+    <span class="div-line"></span>
+  </div>
+
+  <!-- Message -->
+  <p class="msg">انطلاقة أكثر من رائعة!</p>
+  <p class="msg hl">أداء مميز وبداية تبشر بنتائج مشرفة.</p>
+  <p class="msg">إلى الأمام دائمًا، وبالتوفيق في كل امتحان قادم.</p>
+
+  <!-- Footer -->
+  <div class="f-dots">
+    <span class="f-d"></span>
+    <span class="f-d big"></span>
+    <span class="f-d"></span>
+  </div>
+
+  <span class="brand">موقع نصيحة التعليمي</span>
+
+</div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   TICK MARKS around ring
+   ══════════════════════════════════════ */
+(function(){
+  const g = document.getElementById('tickMarks');
+  const cx = 100, cy = 100, r = 90;
+  for(let i = 0; i < 60; i++){
+    const angle = (Math.PI * 2 / 60) * i - Math.PI / 2;
+    const len = i % 5 === 0 ? 8 : 4;
+    const x1 = cx + Math.cos(angle) * r;
+    const y1 = cy + Math.sin(angle) * r;
+    const x2 = cx + Math.cos(angle) * (r - len);
+    const y2 = cy + Math.sin(angle) * (r - len);
+    const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x1);line.setAttribute('y1',y1);
+    line.setAttribute('x2',x2);line.setAttribute('y2',y2);
+    line.setAttribute('stroke','rgba(245,158,11,0.07)');
+    line.setAttribute('stroke-width', i % 5 === 0 ? '1.5' : '0.8');
+    g.appendChild(line);
+  }
+})();
+
+/* ══════════════════════════════════════
+   SCORE COUNTER + RING
+   ══════════════════════════════════════ */
+(function(){
+  const el = document.getElementById('sNum');
+  const ring = document.getElementById('rFill');
+  const glow = document.getElementById('ringGlow');
+  const trophy = document.getElementById('trophy');
+  const target = 100;
+  const dur = 2600;
+  const delay = 600;
+
+  setTimeout(()=>{
+    ring.classList.add('done');
+    const t0 = performance.now();
+    function tick(now){
+      const p = Math.min((now - t0) / dur, 1);
+      const e = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(e * target);
+      if(p < 1) requestAnimationFrame(tick);
+      else {
+        el.textContent = target;
+        glow.classList.add('on');
+        trophy.classList.add('show');
+        fireConfetti();
+        fireBurst();
+        fireFwBurst();
+      }
+    }
+    requestAnimationFrame(tick);
+  }, delay);
+})();
+
+/* ══════════════════════════════════════
+   SPARKLES on card
+   ══════════════════════════════════════ */
+(function(){
+  const card = document.getElementById('card');
+  const cols = ['#f59e0b','#fde68a','#10b981','#059669','#fff','#fbbf24'];
+  for(let i = 0; i < 28; i++){
+    const d = document.createElement('div');
+    d.className = 'sparkle';
+    const sz = 2 + Math.random() * 4;
+    d.style.cssText =
+      `width:${sz}px;height:${sz}px;`
+      +`left:${Math.random()*96}%;top:${Math.random()*96}%;`
+      +`--del:${(Math.random()*3.5).toFixed(2)}s;`
+      +`--dur:${(1.5+Math.random()*2).toFixed(2)}s;`
+      +`background:${cols[Math.floor(Math.random()*cols.length)]};`
+      +`opacity:0;box-shadow:0 0 6px currentColor;`;
+    card.appendChild(d);
+  }
+})();
+
+/* ══════════════════════════════════════
+   BURST SPARKLES
+   ══════════════════════════════════════ */
+function fireBurst(){
+  const card = document.getElementById('card');
+  const r = card.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height * 0.28;
+  const cols = ['#f59e0b','#fde68a','#10b981','#059669','#fbbf24','#fff'];
+  for(let i = 0; i < 36; i++){
+    const d = document.createElement('div');
+    d.className = 'burst';
+    const a = (Math.PI * 2 / 36) * i + Math.random() * 0.4;
+    const dist = 70 + Math.random() * 120;
+    const sz = 3 + Math.random() * 6;
+    d.style.cssText =
+      `left:${cx}px;top:${cy}px;width:${sz}px;height:${sz}px;`
+      +`background:${cols[Math.floor(Math.random()*cols.length)]};`
+      +`--bx:${(Math.cos(a)*dist).toFixed(1)}px;--by:${(Math.sin(a)*dist).toFixed(1)}px;`
+      +`box-shadow:0 0 8px currentColor;`
+      +`animation-delay:${(Math.random()*0.35).toFixed(2)}s;`
+      +`animation-duration:${(0.7+Math.random()*0.5).toFixed(2)}s;`;
+    document.body.appendChild(d);
+    setTimeout(()=>d.remove(), 2200);
+  }
+}
+
+/* ══════════════════════════════════════
+   FLOATING STARS
+   ══════════════════════════════════════ */
+(function(){
+  const w = document.getElementById('starField');
+  const syms = ['✦','✧','⋆','✶','✵','❋','⁂','◆'];
+  const cols = ['#f59e0b','#fbbf24','#10b981','#059669','#fde68a'];
+  const n = window.innerWidth < 480 ? 16 : 28;
+  for(let i = 0; i < n; i++){
+    const d = document.createElement('div');
+    d.className = 'f-star';
+    const sz = 10 + Math.random() * 20;
+    d.style.cssText =
+      `left:${Math.random()*100}%;top:${55+Math.random()*55}%;`
+      +`font-size:${sz}px;`
+      +`--dur:${(6+Math.random()*10).toFixed(1)}s;`
+      +`--del:${(Math.random()*8).toFixed(1)}s;`
+      +`--pk:${(0.12+Math.random()*0.3).toFixed(2)};`
+      +`color:${cols[Math.floor(Math.random()*cols.length)]};`;
+    d.textContent = syms[Math.floor(Math.random()*syms.length)];
+    w.appendChild(d);
+  }
+})();
+
+/* ══════════════════════════════════════
+   CONFETTI
+   ══════════════════════════════════════ */
+function fireConfetti(){
+  const w = document.getElementById('confettiBox');
+  const cols = ['#f59e0b','#fbbf24','#fde68a','#10b981','#059669','#34d399','#ef4444','#8b5cf6','#ec4899','#fff','#f97316'];
+  const n = window.innerWidth < 480 ? 110 : 200;
+  for(let i = 0; i < n; i++){
+    const d = document.createElement('div');
+    d.className = 'confetti-p';
+    const sz = Math.random() * 10 + 4;
+    const sh = Math.floor(Math.random() * 4);
+    let cw = sz, ch = sz, br = '2px';
+    if(sh===1)br='50%';
+    else if(sh===2){cw=sz*1.8;ch=sz*.5;br='1px';}
+    else if(sh===3){cw=sz*.35;ch=sz*2;br='1px';}
+    const dx=(Math.random()-.5)*220;
+    const rz=300+Math.random()*500;
+    d.style.cssText =
+      `width:${cw}px;height:${ch}px;border-radius:${br};`
+      +`background:${cols[Math.floor(Math.random()*cols.length)]};`
+      +`left:${Math.random()*100}%;`
+      +`--dx:${dx}px;--rz:${rz}deg;`
+      +`animation-duration:${(Math.random()*3.5+2.5).toFixed(2)}s;`
+      +`animation-delay:${(Math.random()*2.8).toFixed(2)}s;`
+      +`opacity:${(Math.random()*.5+.5).toFixed(2)};`;
+    w.appendChild(d);
+  }
+  setTimeout(()=>{while(w.firstChild)w.removeChild(w.firstChild);},10000);
+}
+
+/* ══════════════════════════════════════
+   FIREWORKS
+   ══════════════════════════════════════ */
+const PI2=Math.PI*2;
+const rnd=(a,b)=>Math.random()*(b-a)+a;
+const rndI=(a,b)=>(Math.random()*(b-a+1)+a)|0;
+const now=()=>performance.now();
+
+class FWsys{
+  constructor(c){this.c=c;this.x=c.getContext('2d');this.fw=[];this.pt=[];this.ct=0;this.burst=false;this.resize();}
+  resize(){this.w=this.c.width=innerWidth;this.h=this.c.height=innerHeight;this.a=this.w*.25;this.b=this.w*.75;this.d=this.h*.12;this.e=this.h*.45;}
+  burstOn(){this.burst=true;for(let i=0;i<6;i++)setTimeout(()=>{this.fw.push(new FW(rnd(this.a,this.b),this.h,rnd(this.w*.1,this.w*.9),rnd(this.d,this.e),rndI(0,360)));},i*200);setTimeout(()=>this.burst=false,1800);}
+  update(dt){
+    const x=this.x;x.globalCompositeOperation='source-over';
+    x.fillStyle='rgba(255,251,245,0.16)';x.fillRect(0,0,this.w,this.h);
+    if(!this.burst){this.ct+=dt*2.6;if(this.ct>=1){this.fw.push(new FW(rnd(this.a,this.b),this.h,rnd(this.w*.1,this.w*.9),rnd(this.d,this.e),rndI(0,360)));this.ct=0;}}
+    this.fw.forEach(f=>f.up(dt,x));this.pt.forEach(p=>p.up(dt,x));
+    this.fw=this.fw.filter(f=>!f.dead);this.pt=this.pt.filter(p=>!p.dead);
+  }
+}
+class FW{
+  constructor(x,y,tx,ty,sh){this.dead=false;this.x=x;this.y=y;this.tx=tx;this.ty=ty;this.sh=sh;this.h=[];this.v=0;this.a=1.05;this.ex=false;}
+  up(dt,x){
+    if(this.dead)return;const dx=this.tx-this.x,dy=this.ty-this.y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d>5){this.v+=this.a*dt*60;const a=Math.atan2(dy,dx);this.x+=Math.cos(a)*this.v*dt*60;this.y+=Math.sin(a)*this.v*dt*60;this.h.push({x:this.x,y:this.y});if(this.h.length>8)this.h.shift();}
+    else{if(!this.ex){this.explode();this.ex=true;}this.h.shift();}
+    if(!this.h.length)this.dead=true;
+    this.h.forEach((p,i)=>{const al=i/this.h.length;x.beginPath();x.fillStyle=`hsla(${this.sh},88%,50%,${al})`;x.arc(p.x,p.y,2.6,0,PI2);x.fill();});
+  }
+  explode(){
+    const n=rndI(140,220);const tp=['burst','ring','willow','palm','spiral','heart'][rndI(0,5)];
+    for(let i=0;i<n;i++){let a,sp,lf;
+    if(tp==='burst'){a=rnd(0,PI2);sp=rnd(3,10);lf=rnd(1,2);}
+    else if(tp==='ring'){a=PI2/n*i;sp=rnd(5,8);lf=rnd(1.2,2.2);}
+    else if(tp==='willow'){a=rnd(0,PI2);sp=rnd(2,6);lf=rnd(2,3);}
+    else if(tp==='palm'){a=rnd(-Math.PI/3,-Math.PI*2/3);sp=rnd(4,9);lf=rnd(1.5,2.5);}
+    else if(tp==='spiral'){a=PI2/n*i+rnd(0,Math.PI/4);sp=rnd(3,7);lf=rnd(1.5,2.5);}
+    else{const t=PI2/n*i;a=Math.atan2(Math.sin(t)-Math.sin(2*t)/2,Math.cos(t)-Math.cos(2*t)/2);sp=rnd(4,8);lf=rnd(1.5,2.5);}
+    sys.pt.push(new PT(this.x,this.y,a,sp,this.sh,lf,tp));}
+  }
+}
+class PT{
+  constructor(x,y,a,sp,sh,lf,tp){
+    this.x=x;this.y=y;this.vx=Math.cos(a)*sp;this.vy=Math.sin(a)*sp;
+    this.sh=sh+rndI(-20,20);this.lf=lf;this.ml=lf;this.dead=false;
+    this.g=tp==='willow'?.14:.07;this.f=tp==='ring'?.98:.96;this.sz=rnd(1.8,3.6);
+  }
+  up(dt,x){
+    if(this.dead)return;this.lf-=dt;if(this.lf<=0){this.dead=true;return;}
+    this.vx*=this.f;this.vy*=this.f;this.vy+=this.g;this.x+=this.vx;this.y+=this.vy;
+    const al=this.lf/this.ml;const l=38+al*22;
+    x.beginPath();x.fillStyle=`hsla(${this.sh},85%,${l}%,${al*.9})`;x.arc(this.x,this.y,this.sz*al,0,PI2);x.fill();
+    if(al>.5){x.beginPath();x.fillStyle=`hsla(${this.sh},85%,${l+15}%,${al*.18})`;x.arc(this.x,this.y,this.sz*al*2.2,0,PI2);x.fill();}
+  }
+}
+
+const fwC=document.getElementById('fireworksCanvas');
+const sys=new FWsys(fwC);
+window.addEventListener('resize',()=>sys.resize());
+let fwT=now();
+(function fwLoop(){requestAnimationFrame(fwLoop);const n=now();sys.update(Math.min((n-fwT)/1000,.1));fwT=n;})();
+function fireFwBurst(){sys.burstOn();}
+
+/* ══════════════════════════════════════
+   PARTICLES
+   ══════════════════════════════════════ */
+(function(){
+  const c=document.getElementById('particlesCanvas');
+  const x=c.getContext('2d');
+  let w,h,ps=[];
+  function rz(){w=c.width=innerWidth;h=c.height=innerHeight;}
+  rz();window.addEventListener('resize',rz);
+
+  class P{
+    constructor(){this.rz();this.y=Math.random()*h;}
+    rz(){this.x=Math.random()*w;this.y=h+10;this.r=Math.random()*2.2+.5;this.sp=Math.random()*.35+.12;this.dr=(Math.random()-.5)*.25;this.op=Math.random()*.35+.1;this.hu=35+Math.random()*25;}
+    up(){this.y-=this.sp;this.x+=this.dr+Math.sin(this.y*.004)*.15;if(this.y<-10)this.rz();}
+    draw(){
+      x.beginPath();x.arc(this.x,this.y,this.r,0,PI2);
+      x.fillStyle=`hsla(${this.hu},70%,60%,${this.op})`;x.fill();
+      if(this.r>1.4){x.beginPath();x.arc(this.x,this.y,this.r*2.8,0,PI2);x.fillStyle=`hsla(${this.hu},70%,60%,${this.op*.12})`;x.fill();}
+    }
+  }
+  const n=Math.min(65,Math.floor(w*h/18000));
+  for(let i=0;i<n;i++)ps.push(new P());
+  function lp(){x.clearRect(0,0,w,h);ps.forEach(p=>{p.up();p.draw();});requestAnimationFrame(lp);}
+  lp();
+})();
+</script>
+</body>
+</html>
