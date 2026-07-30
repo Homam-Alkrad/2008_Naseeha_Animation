@@ -99,11 +99,35 @@
       0 30px 70px -20px rgba(90,65,20,0.16),
       0 6px 18px -6px rgba(90,65,20,0.08);
     text-align:center;
+    overflow:hidden;
     animation:cardIn 1s cubic-bezier(0.16,1,0.3,1) both;
+    transition:transform .5s cubic-bezier(0.22,1,0.36,1), box-shadow .5s ease;
+  }
+  .card:hover{
+    transform:translateY(-4px);
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.6) inset,
+      0 38px 80px -20px rgba(90,65,20,0.20),
+      0 8px 22px -6px rgba(90,65,20,0.10);
   }
   @keyframes cardIn{
     from{opacity:0;transform:translateY(24px);filter:blur(6px);}
     to{opacity:1;transform:translateY(0);filter:blur(0);}
+  }
+
+  /* one-time diagonal shine sweep across the whole card */
+  .shine{
+    position:absolute;top:0;left:-60%;
+    width:40%;height:100%;
+    background:linear-gradient(115deg,transparent 0%,rgba(255,255,255,0.55) 45%,rgba(246,217,152,0.35) 55%,transparent 100%);
+    transform:skewX(-18deg);
+    pointer-events:none;
+    z-index:5;
+    animation:shineSweep 1.9s ease 1.2s 1;
+  }
+  @keyframes shineSweep{
+    0%{left:-60%;}
+    100%{left:130%;}
   }
 
   /* double-rule certificate border */
@@ -122,13 +146,19 @@
     pointer-events:none;
   }
 
-  /* corner marks */
-  .corner{position:absolute;width:22px;height:22px;pointer-events:none;opacity:.55;}
+  /* corner marks: fade in then draw stroke, staggered per corner */
+  .corner{position:absolute;width:22px;height:22px;pointer-events:none;opacity:0;animation:cornerAppear .1s linear .25s forwards;}
   .corner svg{width:100%;height:100%;}
+  .corner path{stroke-dasharray:32;stroke-dashoffset:32;animation:cornerDraw .7s ease forwards;animation-delay:.3s;}
   .corner.tl{top:6px;right:6px;transform:rotate(180deg);}
   .corner.tr{top:6px;left:6px;transform:rotate(270deg);}
   .corner.bl{bottom:6px;right:6px;transform:rotate(90deg);}
   .corner.br{bottom:6px;left:6px;}
+  .corner.tr path{animation-delay:.42s;}
+  .corner.bl path{animation-delay:.54s;}
+  .corner.br path{animation-delay:.66s;}
+  @keyframes cornerAppear{ to{opacity:.55;} }
+  @keyframes cornerDraw{ to{stroke-dashoffset:0;} }
 
   /* ── Medal / wreath ── */
   .medal-area{
@@ -146,6 +176,29 @@
     0%{opacity:0;}
     3%{opacity:1;}
     100%{opacity:1;}
+  }
+
+  .orbit-ring{
+    position:absolute;left:50%;top:52%;
+    width:78%;height:78%;
+    transform:translate(-50%,-50%);
+    border-radius:50%;
+    border:1px dashed rgba(217,164,65,0.35);
+    opacity:0;
+    animation:ringFadeIn .8s ease 1.8s forwards, ringSpin 26s linear infinite;
+  }
+  @keyframes ringFadeIn{ to{opacity:1;} }
+  @keyframes ringSpin{ to{transform:translate(-50%,-50%) rotate(360deg);} }
+
+  .twinkle{
+    position:absolute;color:var(--gold-2);
+    font-size:11px;pointer-events:none;
+    opacity:0;
+    animation:twinkleFlash var(--tdur) ease-in-out var(--tdel) infinite;
+  }
+  @keyframes twinkleFlash{
+    0%,100%{opacity:0;transform:scale(.4) rotate(0deg);}
+    50%{opacity:.9;transform:scale(1) rotate(90deg);}
   }
 
   .medal-glow{
@@ -172,6 +225,7 @@
     display:flex;flex-direction:column;align-items:center;
   }
   .medal-num{
+    display:inline-block;
     font-family:'Tajawal',sans-serif;
     font-weight:800;
     font-size:clamp(2.6rem,7.4vw,3.7rem);
@@ -179,6 +233,12 @@
     background:linear-gradient(155deg,var(--gold-3),var(--gold-2) 45%,var(--gold-1));
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
     letter-spacing:-1px;
+  }
+  .medal-num.pop{ animation:numPop .6s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes numPop{
+    0%{transform:scale(1);}
+    40%{transform:scale(1.16);}
+    100%{transform:scale(1);}
   }
   .medal-pct{
     font-size:clamp(.72rem,2vw,.86rem);
@@ -211,12 +271,30 @@
     color:var(--ink);
     line-height:1.25;
     margin-bottom:clamp(10px,2vw,16px);
+  }
+  .main-title .word{
+    display:inline-block;
     opacity:0;
-    animation:fadeUp .8s cubic-bezier(0.16,1,0.3,1) 1.7s forwards;
+    animation:wordIn .7s cubic-bezier(0.16,1,0.3,1) forwards;
+  }
+  .main-title .word:nth-child(1){animation-delay:1.7s;}
+  .main-title .word:nth-child(2){animation-delay:1.85s;}
+  .main-title .word:nth-child(3){animation-delay:2.05s;}
+  .main-title .word:nth-child(4){animation-delay:2.2s;}
+  @keyframes wordIn{
+    from{opacity:0;transform:translateY(14px) scale(.94);filter:blur(4px);}
+    to{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}
   }
   .main-title .accent{
+    position:relative;
     background:linear-gradient(120deg,var(--gold-3),var(--gold-2));
     -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    background-size:220% 100%;
+    animation:wordIn .7s cubic-bezier(0.16,1,0.3,1) forwards, titleShimmer 3.5s ease 2.6s infinite;
+  }
+  @keyframes titleShimmer{
+    0%,100%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
   }
 
   /* ── Divider ── */
@@ -229,9 +307,22 @@
   }
   .divider .ln{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line),transparent);}
   .divider .dot{
+    position:relative;
     width:6px;height:6px;transform:rotate(45deg);
     background:var(--gold-2);
     box-shadow:0 0 0 3px rgba(217,164,65,0.14);
+  }
+  .divider .dot::after{
+    content:'';
+    position:absolute;inset:-4px;
+    border-radius:2px;
+    border:1px solid var(--gold-2);
+    opacity:0;
+    animation:dotRipple 2.8s ease 2.4s infinite;
+  }
+  @keyframes dotRipple{
+    0%{opacity:.6;transform:scale(1);}
+    100%{opacity:0;transform:scale(2.4);}
   }
 
   /* ── Messages ── */
@@ -247,7 +338,9 @@
   .msg:nth-of-type(3){animation-delay:2.7s;}
 
   .msg-pill{
+    position:relative;
     display:inline-block;
+    overflow:hidden;
     font-weight:700;
     font-size:clamp(.96rem,2.6vw,1.12rem);
     color:var(--ink);
@@ -258,6 +351,19 @@
     margin:8px 0 10px;
     opacity:0;
     animation:fadeUp .55s ease 2.5s forwards;
+  }
+  .msg-pill::after{
+    content:'';
+    position:absolute;top:0;left:-40%;
+    width:30%;height:100%;
+    background:linear-gradient(115deg,transparent,rgba(255,255,255,0.7),transparent);
+    transform:skewX(-18deg);
+    animation:pillShine 4.5s ease 3.4s infinite;
+  }
+  @keyframes pillShine{
+    0%{left:-40%;}
+    22%{left:130%;}
+    100%{left:130%;}
   }
 
   /* ── Ribbon seal footer ── */
@@ -280,9 +386,31 @@
     font-weight:800;
     letter-spacing:.06em;
     border-radius:30px;
+    overflow:hidden;
     box-shadow:0 8px 20px -6px rgba(169,116,31,0.45), 0 1px 0 rgba(255,255,255,0.3) inset;
+    transition:transform .3s cubic-bezier(0.34,1.56,0.64,1), box-shadow .3s ease;
   }
-  .seal-star{font-size:.9em;opacity:.85;}
+  .seal:hover{
+    transform:translateY(-2px) scale(1.04);
+    box-shadow:0 12px 26px -6px rgba(169,116,31,0.55), 0 1px 0 rgba(255,255,255,0.3) inset;
+  }
+  .seal::after{
+    content:'';
+    position:absolute;top:0;left:-45%;
+    width:32%;height:100%;
+    background:linear-gradient(115deg,transparent,rgba(255,255,255,0.55),transparent);
+    transform:skewX(-18deg);
+    animation:pillShine 5s ease 3.8s infinite;
+  }
+  .seal-star{
+    font-size:.9em;opacity:.85;
+    display:inline-block;
+    animation:starSpin 3.5s ease 3.8s infinite;
+  }
+  @keyframes starSpin{
+    0%,100%{transform:rotate(0deg) scale(1);}
+    50%{transform:rotate(180deg) scale(1.25);}
+  }
 
   @keyframes fadeUp{
     from{opacity:0;transform:translateY(14px);filter:blur(3px);}
@@ -312,6 +440,7 @@
 
 <div class="main-wrap">
   <div class="card" id="card">
+    <div class="shine"></div>
 
     <span class="corner tl"><svg viewBox="0 0 22 22"><path d="M2 2 H16 M2 2 V16" stroke="#a9741f" stroke-width="1.4" fill="none"/></svg></span>
     <span class="corner tr"><svg viewBox="0 0 22 22"><path d="M2 2 H16 M2 2 V16" stroke="#a9741f" stroke-width="1.4" fill="none"/></svg></span>
@@ -320,6 +449,7 @@
 
     <div class="medal-area">
       <div class="medal-glow" id="medalGlow"></div>
+      <div class="orbit-ring"></div>
       <svg id="wreathSvg" viewBox="0 0 250 250"></svg>
       <div class="medal-core">
         <span class="medal-num" id="medalNum">0</span>
@@ -329,7 +459,7 @@
 
     <p class="eyebrow"><span class="ln"></span>الدرجة الكاملة<span class="ln"></span></p>
 
-    <h1 class="main-title">ما شاء الله <span class="accent">تبارك الله</span></h1>
+    <h1 class="main-title"><span class="word">ما</span> <span class="word">شاء</span> <span class="word">الله</span> <span class="word accent">تبارك الله</span></h1>
 
     <div class="divider"><span class="ln"></span><span class="dot"></span><span class="ln"></span></div>
 
@@ -466,6 +596,27 @@
 })();
 
 /* ══════════════════════════════════════
+   TWINKLE SPARKLES around the medal
+   ══════════════════════════════════════ */
+(function(){
+  const area = document.querySelector('.medal-area');
+  const spots = [
+    {x:12,y:22},{x:88,y:18},{x:6,y:55},{x:94,y:52},
+    {x:20,y:85},{x:80,y:88},{x:50,y:6},{x:50,y:96}
+  ];
+  spots.forEach((s,i)=>{
+    const t = document.createElement('span');
+    t.className = 'twinkle';
+    t.textContent = '✦';
+    t.style.left = s.x + '%';
+    t.style.top = s.y + '%';
+    t.style.setProperty('--tdur', (2.4 + Math.random()*2.2).toFixed(2) + 's');
+    t.style.setProperty('--tdel', (2.2 + i*0.28).toFixed(2) + 's');
+    area.appendChild(t);
+  });
+})();
+
+/* ══════════════════════════════════════
    NUMBER COUNT-UP + GLOW
    ══════════════════════════════════════ */
 (function(){
@@ -484,6 +635,7 @@
       if(p<1) requestAnimationFrame(tick);
       else{
         el.textContent = target;
+        el.classList.add('pop');
         glow.classList.add('on');
         risePetals();
       }
